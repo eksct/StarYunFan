@@ -66,7 +66,7 @@ export const noteFiles: NoteFile[] = [
 export async function loadMarkdownContent(path: string): Promise<string> {
   try {
     // 使用 fetch 加载文件
-    const response = await fetch(`/src/assets/postDir/${path}`)
+    const response = await fetch(`${import.meta.env.BASE_URL}postDir/${path}`)
     if (!response.ok) {
       throw new Error(`Failed to load markdown file: ${path}`)
     }
