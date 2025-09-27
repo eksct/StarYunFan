@@ -19,6 +19,7 @@ export const noteFiles: NoteFile[] = [
   { path: 'major/Docker/Docker命令.md', title: 'Docker 命令', category: 'Docker' },
   { path: 'major/Docker/DockerFile.md', title: 'DockerFile', category: 'Docker' },
   { path: 'major/Docker/Docker镜像.md', title: 'Docker 镜像', category: 'Docker' },
+  { path: 'major/Docker/Docker容器数据卷.md', title: 'Docker 容器数据卷', category: 'Docker' },
   
   // Redis 相关
   { path: 'major/Redis/安装&连接.md', title: 'Redis 安装&连接', category: 'Redis' },
