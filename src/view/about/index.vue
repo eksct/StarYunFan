@@ -1,76 +1,65 @@
 <template>
-  <div class="about-container">
-    <!-- 关于我部分 -->
-    <section class="about-section">
-      <div class="about-content">
-        <div class="about-header">
-          <h1 class="about-title">关于我</h1>
-          <p class="about-subtitle">Hello, 我是 Seiga</p>
-        </div>
-        
-        <div class="about-body">
-          <div class="about-text">
-            <p class="intro-text">
-              我是一名热爱技术的开发者，专注于前端开发和用户体验设计。
-              喜欢探索新技术，追求代码的优雅和产品的完美。
-            </p>
-            
-            <div class="skills-section">
-              <h3 class="skills-title">技能专长</h3>
-              <div class="skills-grid">
-                <div class="skill-item" v-for="skill in skills" :key="skill.name">
-                  <div class="skill-icon">{{ skill.icon }}</div>
-                  <div class="skill-info">
-                    <h4 class="skill-name">{{ skill.name }}</h4>
-                    <p class="skill-desc">{{ skill.description }}</p>
+  <div class="page-container" :class="{ 'page-loaded': isLoaded }">
+    <div class="about-container">
+      <!-- 关于我部分 -->
+      <section class="about-section main-section" :class="{ 'section-loaded': isLoaded }">
+        <div class="about-content">
+          <div class="about-header header-animation" :class="{ 'header-loaded': isLoaded }">
+            <h1 class="about-title">关于我</h1>
+            <p class="about-subtitle">Hello, 我是 Seiga</p>
+          </div>
+          
+          <div class="about-body">
+            <div class="about-text text-animation" :class="{ 'text-loaded': isLoaded }">
+              <p class="intro-text">
+                我是一名热爱技术的开发者，专注于前端开发和用户体验设计。
+                喜欢探索新技术，追求代码的优雅和产品的完美。
+              </p>
+              
+              <div class="skills-section">
+                <h3 class="skills-title">技能专长</h3>
+                <div class="skills-grid">
+                  <div class="skill-item" v-for="(skill, index) in skills" :key="skill.name" 
+                       :style="{ animationDelay: `${1.2 + index * 0.2}s` }">
+                    <div class="skill-icon">{{ skill.icon }}</div>
+                    <div class="skill-info">
+                      <h4 class="skill-name">{{ skill.name }}</h4>
+                      <p class="skill-desc">{{ skill.description }}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <div class="about-image">
-            <img src="/src/assets/img/Capture001.png" alt="Seiga" class="profile-image" />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 经历时间线 -->
-    <section class="timeline-section">
-      <div class="timeline-content">
-        <h2 class="timeline-title">经历时间线</h2>
-        <div class="timeline">
-          <div class="timeline-item" v-for="(item, index) in timeline" :key="index">
-            <div class="timeline-marker"></div>
-            <div class="timeline-content-item">
-              <div class="timeline-date">{{ item.date }}</div>
-              <h3 class="timeline-item-title">{{ item.title }}</h3>
-              <p class="timeline-description">{{ item.description }}</p>
+            
+            <div class="about-image image-animation" :class="{ 'image-loaded': isLoaded }">
+              <img src="/src/assets/img/Capture001.png" alt="Seiga" class="profile-image" />
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 兴趣爱好 -->
-    <section class="hobbies-section">
-      <div class="hobbies-content">
-        <h2 class="hobbies-title">兴趣爱好</h2>
-        <div class="hobbies-grid">
-          <div class="hobby-card" v-for="hobby in hobbies" :key="hobby.name">
-            <div class="hobby-icon">{{ hobby.icon }}</div>
-            <h3 class="hobby-name">{{ hobby.name }}</h3>
-            <p class="hobby-desc">{{ hobby.description }}</p>
+      <!-- 兴趣爱好 -->
+      <section class="hobbies-section hobbies-animation" :class="{ 'hobbies-loaded': isLoaded }">
+        <div class="hobbies-content">
+          <h2 class="hobbies-title">兴趣爱好</h2>
+          <div class="hobbies-grid">
+            <div class="hobby-card" v-for="(hobby, index) in hobbies" :key="hobby.name"
+                 :style="{ animationDelay: `${1.8 + index * 0.15}s` }">
+              <div class="hobby-icon">{{ hobby.icon }}</div>
+              <h3 class="hobby-name">{{ hobby.name }}</h3>
+              <p class="hobby-desc">{{ hobby.description }}</p>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+
+const isLoaded = ref(false)
 
 const skills = ref([
   {
@@ -85,23 +74,6 @@ const skills = ref([
   },
 ])
 
-const timeline = ref([
-  {
-    date: '2024',
-    title: '个人项目开发',
-    description: '开始专注于个人项目，探索新技术和最佳实践'
-  },
-  {
-    date: '2023',
-    title: '技术学习',
-    description: '深入学习前端框架和现代开发工具'
-  },
-  {
-    date: '2022',
-    title: '编程入门',
-    description: '开始学习编程，对技术产生浓厚兴趣'
-  }
-])
 
 const hobbies = ref([
   {
@@ -125,9 +97,26 @@ const hobbies = ref([
     description: '用镜头记录生活中的美好瞬间'
   }
 ])
-</script>
 
+onMounted(() => {
+  // 页面加载动画
+  setTimeout(() => {
+    isLoaded.value = true
+  }, 100)
+})
+</script>
 <style scoped lang="scss">
+
+// 页面容器动画
+.page-container {
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+  
+  &.page-loaded {
+    opacity: 1;
+  }
+}
+
 .about-container {
   min-height: 100vh;
   padding: 2rem;
@@ -139,6 +128,18 @@ const hobbies = ref([
   margin-bottom: 4rem;
 }
 
+// 主要区域动画
+.main-section {
+  transform: translateY(50px) scale(0.95);
+  opacity: 0;
+  transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+  
+  &.section-loaded {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
 .about-content {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
@@ -146,6 +147,18 @@ const hobbies = ref([
   padding: 3rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+// 头部动画
+.header-animation {
+  transform: translateY(-30px);
+  opacity: 0;
+  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+  
+  &.header-loaded {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .about-header {
@@ -161,11 +174,39 @@ const hobbies = ref([
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 1rem;
+  
+  // 添加标题渐变动画
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease-in-out infinite;
 }
 
 .about-subtitle {
   font-size: 1.5rem;
   color: rgba(255, 255, 255, 0.8);
+}
+
+// 文本动画
+.text-animation {
+  transform: translateX(-50px);
+  opacity: 0;
+  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1) 0.8s;
+  
+  &.text-loaded {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// 图片动画
+.image-animation {
+  transform: translateX(50px) rotate(5deg) scale(0.9);
+  opacity: 0;
+  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1) 1s;
+  
+  &.image-loaded {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
 }
 
 .about-body {
@@ -207,10 +248,15 @@ const hobbies = ref([
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
+  
+  // 技能卡片入场动画
+  transform: translateY(30px) scale(0.9);
+  opacity: 0;
+  animation: skillFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 
   &:hover {
     background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1);
   }
 }
 
@@ -247,11 +293,11 @@ const hobbies = ref([
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-.timeline-section, .hobbies-section {
+.hobbies-section {
   margin-bottom: 4rem;
 }
 
-.timeline-content, .hobbies-content {
+.hobbies-content {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 2rem;
@@ -260,7 +306,7 @@ const hobbies = ref([
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
 }
 
-.timeline-title, .hobbies-title {
+.hobbies-title {
   font-size: 2.5rem;
   font-weight: bold;
   color: white;
@@ -272,61 +318,22 @@ const hobbies = ref([
   background-clip: text;
 }
 
-.timeline {
-  position: relative;
-  padding-left: 2rem;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 1rem;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, #667eea, #764ba2);
-  }
-}
-
-.timeline-item {
-  position: relative;
-  margin-bottom: 3rem;
-  padding-left: 3rem;
-}
-
-.timeline-marker {
-  position: absolute;
-  left: -1.5rem;
-  top: 0.5rem;
-  width: 1rem;
-  height: 1rem;
-  background: #667eea;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-}
-
-.timeline-date {
-  color: #4299e1;
-  font-weight: bold;
-  font-size: 1.125rem;
-  margin-bottom: 0.5rem;
-}
-
-.timeline-item-title {
-  color: white;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.timeline-description {
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6;
-}
-
 .hobbies-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
+}
+
+// 爱好区域动画
+.hobbies-animation {
+  transform: translateY(50px);
+  opacity: 0;
+  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1) 1.4s;
+  
+  &.hobbies-loaded {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .hobby-card {
@@ -336,10 +343,15 @@ const hobbies = ref([
   border-radius: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
+  
+  // 爱好卡片入场动画
+  transform: translateY(30px) scale(0.9);
+  opacity: 0;
+  animation: hobbyFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 
   &:hover {
     background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-5px);
+    transform: translateY(-5px) scale(1.05);
   }
 }
 
@@ -358,6 +370,30 @@ const hobbies = ref([
 .hobby-desc {
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
+}
+
+// 动画关键帧
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes skillFadeIn {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes hobbyFadeIn {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 // 响应式设计
@@ -379,7 +415,7 @@ const hobbies = ref([
     font-size: 2rem;
   }
 
-  .timeline-title, .hobbies-title {
+  .hobbies-title {
     font-size: 2rem;
   }
 }

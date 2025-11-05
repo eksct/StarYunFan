@@ -12,6 +12,10 @@ let routes = [
   {
     path: '/notes',
     component: () => import('@/view/notes/index.vue'),
+  },
+  {
+    path: '/tasks',
+    component: () => import('@/view/Stasks/index.vue'),
   }
 ]
 const router = createRouter({

@@ -7,8 +7,19 @@
             <span class="logo-text">Seiga</span>
           </div>
         </div>
-        <div class="nav-right">
-          <div class="nav-item" v-for = "item in navList" :key="item.id">
+        <div class="nav-right" ref="navRight">
+          <!-- 移动指示器 -->
+          <div 
+            class="nav-indicator" 
+            :style="indicatorStyle"
+          ></div>
+          
+          <div 
+            class="nav-item" 
+            v-for="item in navList" 
+            :key="item.id"
+            :ref="el => setNavItemRef(el, item.id)"
+          >
             <router-link 
               v-if="!item.external" 
               :to="item.url" 
@@ -36,9 +47,20 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useNavStore } from '@/stores/nav'
+
 const nav = useNavStore()
+const navRight = ref<HTMLElement>()
+const navItemRefs = ref<Map<number, HTMLElement>>(new Map())
+
+// 设置导航项引用
+const setNavItemRef = (el: any, id: number) => {
+  if (el && el instanceof HTMLElement) {
+    navItemRefs.value.set(id, el)
+  }
+}
+
 let navList = reactive([
   {
     id: 1,
@@ -54,23 +76,72 @@ let navList = reactive([
   },
   {
     id: 3,
+    name: '任务',
+    url: '/tasks',
+    external: false
+  },
+  {
+    id: 4,
     name: '笔记',
     url: '/notes',
     external: false
   },
   {
-    id:4,
+    id: 5,
     name: "哔哩哔哩",
     url: "https://space.bilibili.com/247835757",
     external: true
   },
   {
-    id: 5,
+    id: 6,  
     name: 'GitHub',
     url: 'https://github.com/eksct',
     external: true
   }
 ])
+
+// 指示器样式
+const indicatorStyle = ref({
+  transform: 'translateX(0px)',
+  width: '0px',
+  opacity: '0'
+})
+
+// 更新指示器位置
+const updateIndicator = async () => {
+  await nextTick()
+  
+  const activeItem = navItemRefs.value.get(nav.activeMenu)
+  if (!activeItem || !navRight.value) {
+    indicatorStyle.value.opacity = '0'
+    return
+  }
+
+  const navRightRect = navRight.value.getBoundingClientRect()
+  const activeItemRect = activeItem.getBoundingClientRect()
+  
+  const offsetLeft = activeItemRect.left - navRightRect.left
+  const width = activeItemRect.width
+
+  indicatorStyle.value = {
+    transform: `translateX(${offsetLeft}px)`,
+    width: `${width}px`,
+    opacity: '1'
+  }
+}
+
+// 监听活动菜单变化
+watch(() => nav.activeMenu, () => {
+  updateIndicator()
+}, { immediate: true })
+
+// 组件挂载后初始化指示器
+onMounted(() => {
+  updateIndicator()
+  
+  // 监听窗口大小变化
+  window.addEventListener('resize', updateIndicator)
+})
 </script>
 
 <style scoped lang="scss">
@@ -110,6 +181,23 @@ let navList = reactive([
 .nav-right {
   display: flex;
   gap: 2rem;
+  position: relative;
+}
+
+// 移动指示器样式
+.nav-indicator {
+  position: absolute;
+  bottom: -0.5rem;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  z-index: 1;
+}
+
+.nav-item {
+  position: relative;
 }
 
 .nav-link {
@@ -118,20 +206,23 @@ let navList = reactive([
   font-weight: 500;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  transform: translateY(0);
 
   &:hover {
     color: white;
     background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   &.active {
     color: white;
     background: rgba(102, 126, 234, 0.2);
+    transform: translateY(-1px);
   }
 
   &.external-link {
@@ -145,10 +236,28 @@ let navList = reactive([
 .external-icon {
   font-size: 0.8rem;
   opacity: 0.7;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
+  transform: translateY(0);
 }
 
 .external-link:hover .external-icon {
   opacity: 1;
+  transform: translateY(-1px);
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .nav-content {
+    padding: 0 1rem;
+  }
+  
+  .nav-right {
+    gap: 1rem;
+  }
+  
+  .nav-link {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
 }
 </style>
