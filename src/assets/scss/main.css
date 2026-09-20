@@ -1,2 +1,4 @@
 @import "tailwindcss";
-@import "./control.css";
+@import "./tokens.css";
+@import "./base.css";
+@import "./prose.css";

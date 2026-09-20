@@ -1,0 +1,269 @@
+/* Markdown 正文排版：行宽、层级、代码、引用、表格 */
+
+.prose {
+  max-width: 68ch;
+  font-size: var(--fs-base);
+  line-height: 1.75;
+  color: var(--c-text-2);
+  word-wrap: break-word;
+}
+
+.prose > * + * {
+  margin-top: 1.1em;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--c-text);
+  scroll-margin-top: 5.5rem;
+}
+
+.prose h1 {
+  font-size: var(--fs-2xl);
+  margin-top: 1.8em;
+}
+
+.prose h2 {
+  font-size: var(--fs-xl);
+  margin-top: 1.8em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.prose h3 {
+  font-size: var(--fs-lg);
+  margin-top: 1.5em;
+}
+
+.prose h4 {
+  font-size: var(--fs-base);
+  margin-top: 1.4em;
+}
+
+.prose h1:first-child,
+.prose h2:first-child {
+  margin-top: 0;
+}
+
+.prose strong {
+  color: var(--c-text);
+  font-weight: 600;
+}
+
+.prose em {
+  color: var(--c-text-2);
+}
+
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: var(--c-accent-border);
+  text-underline-offset: 2px;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+
+.prose li + li {
+  margin-top: 0.35em;
+}
+
+.prose li::marker {
+  color: var(--c-text-3);
+}
+
+.prose blockquote {
+  padding: 0.1em 0 0.1em 1em;
+  border-left: 2px solid var(--c-accent-border);
+  color: var(--c-text-3);
+  font-style: normal;
+}
+
+.prose hr {
+  height: 1px;
+  border: 0;
+  background: var(--c-border);
+  margin: 2.5em 0;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-border);
+}
+
+.prose code {
+  padding: 0.12em 0.4em;
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  color: var(--c-inline-code);
+  background: var(--c-code-bg);
+  border-radius: 4px;
+}
+
+.prose pre {
+  margin: 1.4em 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  background: var(--c-code-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  line-height: 1.6;
+}
+
+.prose pre code {
+  padding: 0;
+  font-size: 0.86em;
+  color: var(--c-text);
+  background: transparent;
+}
+
+.prose table {
+  width: 100%;
+  margin: 1.6em 0;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  display: block;
+  overflow-x: auto;
+}
+
+.prose th,
+.prose td {
+  padding: 0.55em 0.8em;
+  border: 1px solid var(--c-border);
+  text-align: left;
+}
+
+.prose th {
+  color: var(--c-text);
+  font-weight: 600;
+  background: var(--c-surface);
+}
+
+/* 代码块：语言标签 + 复制按钮 */
+
+.code-block {
+  position: relative;
+  margin: 1.4em 0;
+}
+
+.code-block pre {
+  margin: 0;
+}
+
+.code-block-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.6rem 0.4rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--c-text-3);
+  background: var(--c-code-bg);
+  border: 1px solid var(--c-border);
+  border-bottom: 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.code-block-bar + pre {
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.code-copy {
+  padding: 0.15rem 0.6rem;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  color: var(--c-text-3);
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.code-copy:hover {
+  color: var(--c-accent);
+  border-color: var(--c-accent-border);
+}
+
+/* highlight.js 配色，跟随主题切换 */
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--c-text-3);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-doctag,
+.hljs-name,
+.hljs-type {
+  color: #a855f7;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: #0f9d58;
+}
+
+.hljs-number,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-class .hljs-title,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link {
+  color: #d97706;
+}
+
+.hljs-title,
+.hljs-title.function_,
+.hljs-built_in,
+.hljs-function .hljs-title {
+  color: var(--c-accent);
+}
+
+.hljs-attr,
+.hljs-property,
+.hljs-params {
+  color: #0e7490;
+}
+
+.hljs-deletion {
+  color: #dc2626;
+}
+
+:root[data-theme="dark"] .hljs-string,
+:root[data-theme="dark"] .hljs-addition,
+:root[data-theme="dark"] .hljs-attribute {
+  color: #7ee2b8;
+}
+
+:root[data-theme="dark"] .hljs-keyword,
+:root[data-theme="dark"] .hljs-selector-tag,
+:root[data-theme="dark"] .hljs-literal,
+:root[data-theme="dark"] .hljs-type {
+  color: #d8b4fe;
+}
+
+:root[data-theme="dark"] .hljs-number,
+:root[data-theme="dark"] .hljs-symbol,
+:root[data-theme="dark"] .hljs-bullet {
+  color: #fbbf24;
+}
+
+:root[data-theme="dark"] .hljs-attr,
+:root[data-theme="dark"] .hljs-property,
+:root[data-theme="dark"] .hljs-params {
+  color: #7dd3fc;
+}

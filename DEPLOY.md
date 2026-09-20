@@ -70,7 +70,7 @@ pnpm preview
 
 1. 确认文件路径正确
 2. 检查文件编码（推荐 UTF-8）
-3. 确认文件在 `src/assets/postDir/` 目录下
+3. 确认文件在 `public/postDir/` 目录下；笔记目录会在开发/构建时自动生成
 
 ## 更新内容
 

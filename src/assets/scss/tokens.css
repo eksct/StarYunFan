@@ -1,0 +1,89 @@
+/* 设计令牌：全站唯一的颜色、间距、圆角、字体来源，组件只引用变量不写裸值 */
+
+:root {
+  /* 中性色阶 */
+  --c-bg: #f6f7f9;
+  --c-bg-elevated: #ffffff;
+  --c-surface: rgba(255, 255, 255, 0.72);
+  --c-surface-strong: rgba(255, 255, 255, 0.9);
+  --c-border: rgba(17, 24, 39, 0.1);
+  --c-border-strong: rgba(17, 24, 39, 0.18);
+  --c-text: #1a1d24;
+  --c-text-2: #565b66;
+  --c-text-3: #8b909c;
+
+  /* 强调色：全站只保留这一个 */
+  --c-accent: #4f6bed;
+  --c-accent-hover: #3f58d4;
+  --c-accent-soft: rgba(79, 107, 237, 0.1);
+  --c-accent-border: rgba(79, 107, 237, 0.32);
+
+  /* 背景光斑，给毛玻璃提供可以"糊"的内容 */
+  --c-glow-1: rgba(79, 107, 237, 0.16);
+  --c-glow-2: rgba(129, 140, 248, 0.14);
+  --c-grid: rgba(17, 24, 39, 0.035);
+
+  /* 代码块 */
+  --c-code-bg: #f4f5f8;
+  --c-inline-code: #3f58d4;
+
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+
+  --shadow-card: 0 1px 2px rgba(17, 24, 39, 0.04);
+  --shadow-pop: 0 8px 24px rgba(17, 24, 39, 0.08);
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 15px;
+  --fs-lg: 18px;
+  --fs-xl: 22px;
+  --fs-2xl: 30px;
+  --fs-3xl: 40px;
+
+  --content-width: 1120px;
+  --reading-width: 720px;
+}
+
+:root[data-theme="dark"] {
+  --c-bg: #0f1115;
+  --c-bg-elevated: #171a20;
+  --c-surface: rgba(255, 255, 255, 0.05);
+  --c-surface-strong: rgba(255, 255, 255, 0.08);
+  --c-border: rgba(255, 255, 255, 0.1);
+  --c-border-strong: rgba(255, 255, 255, 0.18);
+  --c-text: #e8eaef;
+  --c-text-2: #a8adb8;
+  --c-text-3: #6f7480;
+
+  --c-accent: #8a9cf7;
+  --c-accent-hover: #a3b1fa;
+  --c-accent-soft: rgba(138, 156, 247, 0.14);
+  --c-accent-border: rgba(138, 156, 247, 0.36);
+
+  --c-glow-1: rgba(99, 122, 240, 0.2);
+  --c-glow-2: rgba(129, 140, 248, 0.16);
+  --c-grid: rgba(255, 255, 255, 0.03);
+
+  --c-code-bg: #1b1e25;
+  --c-inline-code: #a3b1fa;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
