@@ -2,33 +2,36 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
+
+# 默认 GITHUB_TOKEN 仅能推同一仓库；推外部仓库 StarYunFanSite 需要 PAT
+permissions:
+  contents: read
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '24'
-        
+
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
       with:
         version: '11.19.0'
-        
+
     - name: Get pnpm store directory
       shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-        
+      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
     - name: Setup pnpm cache
       uses: actions/cache@v4
       with:
@@ -36,16 +39,24 @@ jobs:
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
-          
+
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-      
+
     - name: Build
       run: pnpm run build
-      
-    - name: Deploy to GitHub Pages
+
+    # 仅 master 推送时部署；PR 只构建不发布
+    - name: Deploy to StarYunFanSite (external repo)
+      if: github.ref == 'refs/heads/master'
       uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # 需在 StarYunFan 仓库 Settings → Secrets 添加名为 PERSONAL_TOKEN 的
+        # repo 权限 PAT（用于推送外部仓库 StarYunFanSite）
+        personal_token: ${{ secrets.PERSONAL_TOKEN }}
+        external_repository: eksct/StarYunFanSite
+        publish_branch: master
         publish_dir: ./dist
+        user_name: github-actions[bot]
+        user_email: github-actions[bot]@users.noreply.github.com
+        commit_message: "deploy: ${{ github.sha }}"
