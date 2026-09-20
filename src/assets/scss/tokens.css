@@ -57,9 +57,9 @@
   --c-surface-strong: rgba(255, 255, 255, 0.08);
   --c-border: rgba(255, 255, 255, 0.1);
   --c-border-strong: rgba(255, 255, 255, 0.18);
-  --c-text: #e8eaef;
-  --c-text-2: #a8adb8;
-  --c-text-3: #6f7480;
+  --c-text: #eef1f6;
+  --c-text-2: #b4bac6;
+  --c-text-3: #99a1ae;
 
   --c-accent: #8a9cf7;
   --c-accent-hover: #a3b1fa;
