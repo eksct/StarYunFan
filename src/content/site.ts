@@ -21,9 +21,15 @@ export interface Experience {
   description: string
 }
 
-export interface Milestone {
-  date: string
-  title: string
+export interface Friend {
+  name: string
+  url: string
+  description: string
+}
+
+export interface Tool {
+  name: string
+  url: string
   description: string
 }
 
@@ -86,12 +92,42 @@ export const education = [
   { period: '2021 — 2025', school: '某大学', major: '计算机相关专业' },
 ]
 
-export const milestones: Milestone[] = [
-  // TODO: 时间线是手工维护的，补上真实节点与日期
-  { date: '2024-01', title: '开始系统学习后端', description: '从 Java 基础一路啃到 Spring Boot。' },
-  { date: '2024-06', title: '接触中间件', description: 'Redis、Kafka 挨个上手，边踩坑边记笔记。' },
-  { date: '2025-03', title: '开始写前端', description: '用 Vue 3 搭了这个站，顺手把笔记搬上来。' },
-  { date: '2026-09', title: '站点改版', description: '去掉多余装饰，改成简约风，笔记改成时间线归档。' },
+export const tools: Tool[] = [
+  {
+    name: 'PDF24 Tools',
+    url: 'https://tools.pdf24.org/zh/',
+    description: 'PDF 全能工具箱，合并、拆分、压缩、格式转换等几十个免费在线工具。',
+  },
+  {
+    name: '菜鸟工具',
+    url: 'https://www.jyshare.com/',
+    description: '不止于工具：开发、文本、图片、计算等常用在线小工具合集。',
+  },
+  {
+    name: 'Convertio 电子书转换',
+    url: 'https://convertio.co/zh/mobi-converter/',
+    description: 'MOBI、EPUB、PDF 等电子书格式在线互转。',
+  },
+  {
+    name: 'AllSubConverter 字幕工具',
+    url: 'https://www.allsubconverter.com/zh/',
+    description: '字幕一站式处理：SRT、ASS、VTT 等 11+ 种格式转换、编辑、同步、翻译。',
+  },
+  {
+    name: '草料二维码',
+    url: 'https://cli.im/text',
+    description: '把一段文本快速生成二维码，扫码即得。',
+  },
+  {
+    name: '随机菜谱',
+    url: 'https://cook.yunyoujun.cn',
+    description: '今天吃什么？从菜谱库里随机帮你挑一道。',
+  },
+  {
+    name: 'Hutool AI 文档',
+    url: 'https://doc.hutool.cn/pages/ai/',
+    description: 'Java 工具库 Hutool 的 AI 模块文档，统一封装各大模型接口。',
+  },
 ]
 
 export const projects: Project[] = [
@@ -103,21 +139,13 @@ export const projects: Project[] = [
     period: '2025 — 至今',
     status: '维护中',
   },
+]
+
+export const friends: Friend[] = [
   {
-    name: 'Obsidian 笔记库',
-    description: 'Java、Spring Boot、Redis、Docker 等方向的学习笔记，已归档到本站，共数十篇。',
-    stack: ['Markdown', 'Obsidian'],
-    url: '/notes',
-    period: '2024 — 至今',
-    status: '维护中',
-  },
-  // TODO: 补上真实项目，或删掉这条占位
-  {
-    name: '待补充项目',
-    description: '在 src/content/site.ts 里替换成你自己的项目，包含描述、技术栈、链接与时间。',
-    stack: ['TODO'],
-    period: 'TODO',
-    status: '进行中',
+    name: 'Peanut',
+    url: 'https://peanutbo.github.io/',
+    description: 'Peanut 的技术博客：算法、计算理论、AI 与心理学的学习笔记。',
   },
 ]
 

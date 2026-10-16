@@ -152,6 +152,9 @@ const assetPaths = (await collectAssets(notesRoot)).sort((left, right) => left.l
 const entries = []
 const searchEntries = []
 
+// RSS 用的站点绝对地址（GitHub Pages 部署路径）
+const siteUrl = 'https://eksct.github.io/StarYunFanSite/'
+
 for (const notePath of paths) {
   const absolutePath = path.join(notesRoot, notePath)
   const [raw, stats] = await Promise.all([readFile(absolutePath, 'utf8'), stat(absolutePath)])
@@ -221,3 +224,44 @@ await mkdir(path.dirname(outputFile), { recursive: true })
 await writeFile(outputFile, output, 'utf8')
 await writeFile(searchIndexPath, searchOutput, 'utf8')
 console.log(`Generated ${entries.length} Markdown entries in ${path.relative(projectRoot, outputFile)}`)
+
+// ---- RSS / Atom：把最新笔记生成 public/feed.xml，构建时随 public 拷贝进 dist ----
+const escapeXml = value => value
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&apos;')
+
+const feedEntries = entries
+  .filter(entry => entry.category !== '测试' && entry.path !== 'test.md')
+  .slice(0, 30)
+
+const feedItems = feedEntries.map(entry => {
+  const noteLink = `${siteUrl}#/notes/${entry.path.split('/').map(encodeURIComponent).join('/')}`
+  return `    <item>
+      <title>${escapeXml(entry.title)}</title>
+      <link>${noteLink}</link>
+      <guid isPermaLink="false">${escapeXml(entry.path)}</guid>
+      <pubDate>${entry.updatedAt}</pubDate>
+      <category>${escapeXml(entry.category)}</category>
+      <description>${escapeXml(entry.description)}</description>
+    </item>`
+}).join('\n')
+
+const feed = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Seiga 的笔记</title>
+    <link>${siteUrl}</link>
+    <atom:link href="${siteUrl}feed.xml" rel="self" type="application/rss+xml" />
+    <description>StarYunFan 个人站的笔记归档：Java、Spring Boot、Redis、Docker 等</description>
+    <language>zh-CN</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+${feedItems}
+  </channel>
+</rss>
+`
+
+await writeFile(path.join(projectRoot, 'public', 'feed.xml'), feed, 'utf8')
+console.log(`Generated feed.xml with ${feedEntries.length} items`)

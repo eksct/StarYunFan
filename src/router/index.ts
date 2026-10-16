@@ -25,10 +25,16 @@ const routes = [
     component: () => import('@/view/notes/NoteReader.vue'),
   },
   {
-    path: '/timeline',
-    name: 'timeline',
-    component: () => import('@/view/timeline/index.vue'),
-    meta: { title: '时间线' },
+    path: '/tools',
+    name: 'tools',
+    component: () => import('@/view/tools/index.vue'),
+    meta: { title: '工具' },
+  },
+  {
+    path: '/friends',
+    name: 'friends',
+    component: () => import('@/view/friends/index.vue'),
+    meta: { title: '友链' },
   },
   {
     path: '/projects',

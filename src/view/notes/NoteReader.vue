@@ -54,6 +54,13 @@
           ↑
         </button>
       </transition>
+
+      <!-- 图片灯箱 -->
+      <transition name="fade">
+        <div v-if="lightboxSrc" class="lightbox" role="dialog" aria-label="图片预览" @click="lightboxSrc = ''">
+          <img :src="lightboxSrc" alt="" />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -76,6 +83,7 @@ const error = ref('')
 const activeId = ref('')
 const contentRef = ref<HTMLElement>()
 const showBackTop = ref(false)
+const lightboxSrc = ref('')
 
 let observer: IntersectionObserver | null = null
 
@@ -144,7 +152,15 @@ function scrollTo(id: string) {
 }
 
 async function handleCopy(event: MouseEvent) {
-  const trigger = (event.target as HTMLElement).closest('[data-action="copy"]')
+  const target = event.target as HTMLElement
+
+  // 点击正文图片：打开灯箱
+  if (target instanceof HTMLImageElement && target.src) {
+    lightboxSrc.value = target.src
+    return
+  }
+
+  const trigger = target.closest('[data-action="copy"]')
   if (!trigger) return
 
   const code = trigger.closest('.code-block')?.querySelector('pre')?.textContent ?? ''
@@ -160,12 +176,20 @@ async function handleCopy(event: MouseEvent) {
   }
 }
 
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') lightboxSrc.value = ''
+}
+
 watch(() => route.params.path, load, { immediate: true })
 watch(() => route.fullPath, () => window.scrollTo({ top: 0 }))
 
-onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
+onMounted(() => {
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('keydown', onKeydown)
+})
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('keydown', onKeydown)
   observer?.disconnect()
 })
 </script>
@@ -237,6 +261,25 @@ onBeforeUnmount(() => {
   font-size: var(--fs-sm);
   font-weight: 500;
   transition: color 0.15s ease;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.72);
+  cursor: zoom-out;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
 }
 
 .toc {

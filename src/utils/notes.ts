@@ -112,11 +112,84 @@ export function findNote(path: string): NoteFile | undefined {
   return published.find(note => note.path === path)
 }
 
+// 集合 = 笔记所在的一级文件夹（major/Docker/xx.md → Docker）。
+// 直接放在 major 根下的散文件归入「其他」。
+function collectionOf(note: NoteFile): string {
+  const segments = note.path.split('/')
+  return segments.length >= 3 ? segments[1] : '其他'
+}
+
+export interface Collection {
+  name: string
+  count: number
+  latestDate: string
+}
+
+export function getCollections(): Collection[] {
+  const counter = new Map<string, { count: number; latestDate: string }>()
+
+  for (const note of published) {
+    const name = collectionOf(note)
+    const bucket = counter.get(name)
+    if (bucket) {
+      bucket.count += 1
+      if (note.date > bucket.latestDate) bucket.latestDate = note.date
+    } else {
+      counter.set(name, { count: 1, latestDate: note.date })
+    }
+  }
+
+  return [...counter.entries()]
+    .map(([name, info]) => ({ name, count: info.count, latestDate: info.latestDate }))
+    .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name, 'zh-CN'))
+}
+
+export function getCollectionNotes(name: string): NoteFile[] {
+  return published
+    .filter(note => collectionOf(note) === name)
+    .sort((left, right) => right.date.localeCompare(left.date) || left.title.localeCompare(right.title, 'zh-CN'))
+}
+
+export interface FolderGroup {
+  key: string
+  label: string
+  notes: NoteFile[]
+}
+
+// 集合内部按子文件夹分组（相对集合根目录的完整路径），编程语言这类深嵌套也能看清层级
+export function groupBySubfolder(notes: NoteFile[], collection: string): FolderGroup[] {
+  const groups = new Map<string, NoteFile[]>()
+
+  for (const note of notes) {
+    const segments = note.path.split('/')
+    const relativeDir = segments.slice(2, -1).join('/')
+    const key = relativeDir || '根目录'
+    const bucket = groups.get(key)
+    if (bucket) bucket.push(note)
+    else groups.set(key, [note])
+  }
+
+  return [...groups.entries()]
+    .sort((left, right) => left[0].localeCompare(right[0], 'zh-CN'))
+    .map(([key, notesInGroup]) => ({
+      key,
+      label: key === '根目录' ? collection : key,
+      notes: notesInGroup,
+    }))
+}
+
+// 上一篇 / 下一篇：限定在同一文集（category）内，按日期倒序排列
 export function getSiblings(path: string): { prev?: NoteFile; next?: NoteFile } {
-  const index = published.findIndex(note => note.path === path)
+  const self = findNote(path)
+  if (!self) return {}
+
+  const siblings = published
+    .filter(note => note.category === self.category)
+    .sort((left, right) => right.date.localeCompare(left.date) || left.title.localeCompare(right.title, 'zh-CN'))
+  const index = siblings.findIndex(note => note.path === path)
   if (index < 0) return {}
 
-  return { prev: published[index - 1], next: published[index + 1] }
+  return { prev: siblings[index - 1], next: siblings[index + 1] }
 }
 
 export function readingMinutes(wordCount: number): number {

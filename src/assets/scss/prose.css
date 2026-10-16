@@ -267,3 +267,8 @@
 :root[data-theme="dark"] .hljs-params {
   color: #7dd3fc;
 }
+
+/* 正文图片：点击放大（灯箱在 NoteReader 里），给个可点的暗示 */
+.prose .prose-img {
+  cursor: zoom-in;
+}

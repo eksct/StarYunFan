@@ -68,15 +68,6 @@ function buildCells(isDark: boolean) {
     const poly = voronoi.cellPolygon(i)
     if (!poly || poly.length < 3) continue
 
-    let sx = 0
-    let sy = 0
-    for (const p of poly) {
-      sx += p[0]
-      sy += p[1]
-    }
-    const cx = sx / poly.length
-    const cy = sy / poly.length
-
     let d = ''
     for (let k = 0; k < poly.length; k++) {
       d += (k === 0 ? 'M' : 'L') + poly[k][0].toFixed(1) + ' ' + poly[k][1].toFixed(1)
@@ -87,21 +78,23 @@ function buildCells(isDark: boolean) {
     // 再加轻微抖动，整体像教堂玻璃那样散落但协调
     const zone = Math.floor(rng() * palette.length)
     const hue = palette[zone] + (rng() * 2 - 1) * 8
-    // 暗色模式提亮 + 提饱和，做成「发光」的宝石色调，避免发灰发闷
-    const sat = isDark ? 52 + rng() * 20 : 46 + rng() * 16
-    const light = isDark ? 40 + rng() * 15 : 86 + rng() * 8
-    const op = isDark ? 0.62 : 0.52
+    // 暗色「夜窗」：格子降亮降饱和，玻璃本身暗下去、只留一层深色微彩，
+    // 不再和正文抢视线；光感交给发亮的铅条线来表现。
+    const sat = isDark ? 30 + rng() * 14 : 46 + rng() * 16
+    const light = isDark ? 24 + rng() * 7 : 86 + rng() * 8
+    const op = isDark ? 0.5 : 0.52
 
     next.push({ id: i, d, fill: `hsl(${hue.toFixed(1)} ${sat.toFixed(1)}% ${light.toFixed(1)}%)`, op })
   }
   cells.value = next
 }
 
-const lead = computed(() => (theme.value === 'dark' ? 'rgba(232,236,244,0.32)' : 'rgba(28,32,45,0.22)'))
+// 铅条（came）：暗色下提亮，让边框线成为「透光」的主角
+const lead = computed(() => (theme.value === 'dark' ? 'rgba(236,241,249,0.42)' : 'rgba(28,32,45,0.22)'))
 const leadWidth = 1.3
-// 暗色模式下 vignette 压淡，避免中心被压暗导致图案糊成一团
+// 暗色模式不再叠任何暗幕——灰蓝暗幕会把彩块糊成脏灰，是原先发闷的元凶
 const vignetteColor = computed(() => (theme.value === 'dark' ? '#15181f' : '#ffffff'))
-const vignetteOpacity = computed(() => (theme.value === 'dark' ? 0.35 : 0.82))
+const vignetteOpacity = computed(() => (theme.value === 'dark' ? 0 : 0.82))
 
 function rebuild() {
   buildCells(theme.value === 'dark')

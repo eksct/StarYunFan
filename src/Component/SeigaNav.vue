@@ -30,6 +30,55 @@
         </a>
       </nav>
 
+      <div ref="feedWrapRef" class="feed-wrap">
+        <button
+          type="button"
+          class="nav-theme"
+          aria-label="RSS 订阅"
+          title="RSS 订阅"
+          @click="feedOpen = !feedOpen"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M4 4.5a11.5 11.5 0 0 1 11.5 11.5M4 9a7 7 0 0 1 7 7"
+              fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            <circle cx="5.2" cy="14.8" r="1.4" fill="currentColor" />
+          </svg>
+        </button>
+
+        <transition name="fade">
+          <div v-if="feedOpen" class="feed-pop">
+            <div class="feed-pop-title">订阅本站</div>
+            <button type="button" class="feed-item" @click="copyFeed">
+              <svg v-if="!copied" viewBox="0 0 16 16" aria-hidden="true">
+                <rect x="5" y="5" width="8" height="9" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.2" />
+                <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-5A1.5 1.5 0 0 0 3 3.5v6A1.5 1.5 0 0 0 4.5 11H5" fill="none" stroke="currentColor" stroke-width="1.2" />
+              </svg>
+              <svg v-else viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>{{ copied ? '已复制' : '复制订阅地址' }}</span>
+            </button>
+            <a
+              v-for="reader in readers"
+              :key="reader.name"
+              class="feed-item"
+              :href="reader.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="feed-dot" :style="{ background: reader.color }"></span>
+              <span>通过 {{ reader.name }} 订阅</span>
+            </a>
+            <a class="feed-item" :href="prodFeedUrl" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M6 3h5.5a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6M8.5 8H3m0 0 2-2m-2 2 2 2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>查看 feed.xml</span>
+            </a>
+          </div>
+        </transition>
+      </div>
+
       <button
         type="button"
         class="nav-theme"
@@ -51,6 +100,7 @@
 </template>
 
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { socialLinks } from '@/content/site'
 import { theme, toggleTheme } from '@/composables/useTheme'
@@ -61,7 +111,8 @@ const internalLinks = [
   { name: '首页', url: '/' },
   { name: '关于', url: '/about' },
   { name: '笔记', url: '/notes' },
-  { name: '时间线', url: '/timeline' },
+  { name: '工具', url: '/tools' },
+  { name: '友链', url: '/friends' },
   { name: '项目', url: '/projects' },
 ]
 
@@ -69,6 +120,39 @@ const internalLinks = [
 const isActive = (url: string) => url === '/'
   ? route.path === '/'
   : route.path === url || route.path.startsWith(`${url}/`)
+
+// 外部阅读器订阅必须用线上地址，本地 localhost 订了也没用
+const prodFeedUrl = 'https://eksct.github.io/StarYunFanSite/feed.xml'
+const readers = [
+  { name: 'Feedly', color: '#2bb24c', url: `https://feedly.com/i/subscription/feed/${encodeURIComponent(prodFeedUrl)}` },
+  { name: 'Inoreader', color: '#1a8fdd', url: `https://www.inoreader.com/feed/${encodeURIComponent(prodFeedUrl)}` },
+  { name: 'Follow', color: '#ff5c00', url: 'https://follow.is/' },
+]
+
+// 点击复制订阅地址而非跳页：避免把读者带离站点（XML 页无返回导航）
+const copied = ref(false)
+let copyTimer: ReturnType<typeof setTimeout> | undefined
+
+async function copyFeed() {
+  try {
+    await navigator.clipboard.writeText(prodFeedUrl)
+  } catch {
+    // 剪贴板不可用（如非安全上下文）时退化为选中文本提示
+    window.prompt('RSS 订阅地址：', prodFeedUrl)
+  }
+  copied.value = true
+  clearTimeout(copyTimer)
+  copyTimer = setTimeout(() => (copied.value = false), 1600)
+}
+
+// RSS 弹出面板：点击外部关闭
+const feedOpen = ref(false)
+const feedWrapRef = ref<HTMLElement>()
+function onDocClick(event: MouseEvent) {
+  if (feedOpen.value && !feedWrapRef.value?.contains(event.target as Node)) feedOpen.value = false
+}
+onMounted(() => document.addEventListener('click', onDocClick))
+onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 </script>
 
 <style scoped lang="scss">
@@ -184,6 +268,79 @@ const isActive = (url: string) => url === '/'
 .nav-theme svg {
   width: 16px;
   height: 16px;
+}
+
+.feed-wrap {
+  position: relative;
+}
+
+.feed-pop {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 120;
+  min-width: 11rem;
+  padding: 0.4rem;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.12));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.feed-pop-title {
+  padding: 0.3rem 0.5rem 0.45rem;
+  font-size: var(--fs-xs);
+  color: var(--c-text-3);
+  border-bottom: 1px solid var(--c-border);
+  margin-bottom: 0.25rem;
+}
+
+.feed-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  font-size: var(--fs-sm);
+  color: var(--c-text-2);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.feed-item:hover {
+  color: var(--c-text);
+  background: var(--c-surface-strong);
+}
+
+.feed-item svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.feed-dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 3px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
 @media (max-width: 640px) {

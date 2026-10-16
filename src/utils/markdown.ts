@@ -242,6 +242,16 @@ markdownIt.renderer.rules.fence = (tokens, index) => {
     + `</div>\n`
 }
 
+// 图片：懒加载 + 异步解码，长文里几十张图也不阻塞首屏
+markdownIt.renderer.rules.image = (tokens, index) => {
+  const token = tokens[index]
+  const src = String(token.attrGet('src') ?? '')
+  const alt = escapeHtml(token.content || '')
+  const title = token.attrGet('title')
+
+  return `<img src="${escapeHtml(src)}"${title ? ` title="${escapeHtml(String(title))}"` : ''} alt="${alt}" loading="lazy" decoding="async" class="prose-img" />`
+}
+
 markdownIt.renderer.rules.heading_open = (tokens, index) => {
   const token = tokens[index]
   const level = Number(token.tag.slice(1))
