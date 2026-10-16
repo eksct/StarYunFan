@@ -9,7 +9,13 @@
 
     <div v-else class="reader" :class="{ 'has-toc': toc.length > 1 }">
       <article class="main">
-        <router-link to="/notes" class="back">← 笔记</router-link>
+        <nav class="crumb" aria-label="面包屑">
+          <router-link to="/notes" class="back">← 笔记</router-link>
+          <template v-if="note">
+            <span class="crumb-sep">/</span>
+            <router-link :to="`/notes?c=${encodeURIComponent(note.category)}`" class="crumb-link">{{ note.category }}</router-link>
+          </template>
+        </nav>
 
         <header class="head">
           <h1>{{ note.title }}</h1>
@@ -69,7 +75,7 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { renderMarkdown, type TocItem } from '@/utils/markdown'
-import { findNote, formatDate, getSiblings, loadNoteContent, readingMinutes } from '@/utils/notes'
+import { findNote, formatDate, getSiblings, loadNoteContent, readingMinutes, encodeAssetPath } from '@/utils/notes'
 import type { NoteFile } from '@/utils/notes'
 
 const route = useRoute()
@@ -100,8 +106,18 @@ function notePath(): string {
   return Array.isArray(raw) ? raw.join('/') : raw ?? ''
 }
 
-async function load() {
-  const path = notePath()
+// 覆写 head 里的 OG meta，让分享/抓取工具拿到当前笔记的信息
+function setMeta(property: string, content: string) {
+  let tag = document.head.querySelector<HTMLMetaElement>(`meta[property="${property}"]`)
+  if (!tag) {
+    tag = document.createElement('meta')
+    tag.setAttribute('property', property)
+    document.head.appendChild(tag)
+  }
+  tag.setAttribute('content', content)
+}
+
+async function load() {  const path = notePath()
   note.value = findNote(path)
   showBackTop.value = false
   html.value = ''
@@ -115,6 +131,10 @@ async function load() {
   }
 
   document.title = `${note.value.title} · 笔记 · Seiga`
+  setMeta('og:title', `${note.value.title} · 笔记 · Seiga`)
+  setMeta('og:description', note.value.description || `Seiga 的笔记：${note.value.category} 分类`)
+  setMeta('og:url', `https://eksct.github.io/StarYunFanSite/#/notes/${encodeAssetPath(note.value.path)}`)
+  setMeta('og:type', 'article')
 
   const siblings = getSiblings(path)
   prev.value = siblings.prev
@@ -211,6 +231,26 @@ onBeforeUnmount(() => {
 }
 
 .back:hover {
+  color: var(--c-accent);
+}
+
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--fs-sm);
+}
+
+.crumb-sep {
+  color: var(--c-text-3);
+}
+
+.crumb-link {
+  color: var(--c-text-2);
+  transition: color 0.15s ease;
+}
+
+.crumb-link:hover {
   color: var(--c-accent);
 }
 

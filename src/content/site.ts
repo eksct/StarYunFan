@@ -1,5 +1,4 @@
 // 站点内容配置：所有个人信息、经历、项目集中在这里，页面只负责渲染
-// 标注 TODO 的条目是占位内容，需要替换成真实信息
 import avatarUrl from '@/assets/img/Capture001.jpg'
 
 export interface SocialLink {
@@ -48,9 +47,8 @@ export const profile = {
   avatar: avatarUrl,
   tagline: '在后端与前端之间来回横跳的开发者',
   intro:
-    '把日常学到的东西记下来，慢慢攒成体系。这里放的是我的笔记归档、项目记录和一点生活痕迹。',
-  // TODO: 补真实所在地与联系邮箱
-  location: '中国',
+    '后端开发，日常工作围着 MES 和低代码平台转：设备数据采集、报工链路、安灯系统、和 ERP 打交道。信奉「用笔记对抗遗忘」，这里就是把日常学到的东西慢慢攒成体系的地方——Java、Spring Boot、Redis、Docker，也有点前端和深度学习的痕迹。',
+  location: '',
   email: '',
 }
 
@@ -78,18 +76,12 @@ export const skillGroups: SkillGroup[] = [
 ]
 
 export const experiences: Experience[] = [
-  // TODO: 替换成真实经历
   {
-    period: '2024 — 至今',
+    period: '至今',
     role: '后端开发',
-    org: '某公司',
-    description: '负责业务接口开发与维护，参与系统重构。',
+    org: 'MES / 低代码平台方向',
+    description: '负责设备数据采集（PLC / MQTT）与报工链路、安灯系统软硬联动、ERP（畅捷通 T+）接口对接，以及车间看板和 PDA 终端的前后端维护。',
   },
-]
-
-export const education = [
-  // TODO: 替换成真实教育经历
-  { period: '2021 — 2025', school: '某大学', major: '计算机相关专业' },
 ]
 
 export const tools: Tool[] = [

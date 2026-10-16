@@ -79,6 +79,58 @@
         </transition>
       </div>
 
+      <div ref="shareWrapRef" class="feed-wrap">
+        <button
+          type="button"
+          class="nav-theme"
+          aria-label="分享本页"
+          title="分享本页"
+          @click="shareOpen = !shareOpen"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <circle cx="14.5" cy="5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.4" />
+            <circle cx="5.5" cy="10" r="2.4" fill="none" stroke="currentColor" stroke-width="1.4" />
+            <circle cx="14.5" cy="15" r="2.4" fill="none" stroke="currentColor" stroke-width="1.4" />
+            <path d="M7.7 8.8l4.6-2.6M7.7 11.2l4.6 2.6" fill="none" stroke="currentColor" stroke-width="1.4" />
+          </svg>
+        </button>
+
+        <transition name="fade">
+          <div v-if="shareOpen" class="feed-pop share-pop">
+            <div class="feed-pop-title">分享本页</div>
+            <div class="share-row">
+              <button type="button" class="share-btn" @click="copyPageLink">
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M6.5 9.5a3 3 0 0 0 4.2 0l2-2a3 3 0 0 0-4.2-4.2l-.9.9M9.5 6.5a3 3 0 0 0-4.2 0l-2 2a3 3 0 0 0 4.2 4.2l.9-.9" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+                </svg>
+                <span>{{ pageCopied ? '已复制' : '复制链接' }}</span>
+              </button>
+              <button v-if="canNativeShare" type="button" class="share-btn" @click="nativeShare">
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M8 2v8M8 2L5.5 4.5M8 2l2.5 2.5M3.5 8v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V8" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>系统分享</span>
+              </button>
+            </div>
+            <div class="share-qr">
+              <canvas ref="qrCanvas" width="120" height="120" aria-label="本页二维码"></canvas>
+              <span class="dim">微信扫码打开本页</span>
+            </div>
+            <a
+              v-for="target in shareTargets"
+              :key="target.name"
+              class="feed-item"
+              :href="target.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="feed-dot" :style="{ background: target.color }"></span>
+              <span>分享到 {{ target.name }}</span>
+            </a>
+          </div>
+        </transition>
+      </div>
+
       <button
         type="button"
         class="nav-theme"
@@ -100,7 +152,8 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import QRCode from 'qrcode'
 import { useRoute } from 'vue-router'
 import { socialLinks } from '@/content/site'
 import { theme, toggleTheme } from '@/composables/useTheme'
@@ -124,9 +177,10 @@ const isActive = (url: string) => url === '/'
 // 外部阅读器订阅必须用线上地址，本地 localhost 订了也没用
 const prodFeedUrl = 'https://eksct.github.io/StarYunFanSite/feed.xml'
 const readers = [
-  { name: 'Feedly', color: '#2bb24c', url: `https://feedly.com/i/subscription/feed/${encodeURIComponent(prodFeedUrl)}` },
+  // Feedly 官方格式：feed/ 后接未编码的完整地址
+  { name: 'Feedly', color: '#2bb24c', url: `https://feedly.com/i/subscription/feed/${prodFeedUrl}` },
   { name: 'Inoreader', color: '#1a8fdd', url: `https://www.inoreader.com/feed/${encodeURIComponent(prodFeedUrl)}` },
-  { name: 'Follow', color: '#ff5c00', url: 'https://follow.is/' },
+  { name: 'Follow', color: '#ff5c00', url: `https://app.follow.is/subscribe/${encodeURIComponent(prodFeedUrl)}` },
 ]
 
 // 点击复制订阅地址而非跳页：避免把读者带离站点（XML 页无返回导航）
@@ -145,14 +199,65 @@ async function copyFeed() {
   copyTimer = setTimeout(() => (copied.value = false), 1600)
 }
 
-// RSS 弹出面板：点击外部关闭
+// RSS / 分享 弹出面板：点击外部关闭
 const feedOpen = ref(false)
 const feedWrapRef = ref<HTMLElement>()
+const shareOpen = ref(false)
+const shareWrapRef = ref<HTMLElement>()
 function onDocClick(event: MouseEvent) {
-  if (feedOpen.value && !feedWrapRef.value?.contains(event.target as Node)) feedOpen.value = false
+  const target = event.target as Node
+  if (feedOpen.value && !feedWrapRef.value?.contains(target)) feedOpen.value = false
+  if (shareOpen.value && !shareWrapRef.value?.contains(target)) shareOpen.value = false
 }
 onMounted(() => document.addEventListener('click', onDocClick))
 onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
+
+// ===== 分享本页 =====
+const pageCopied = ref(false)
+let pageCopyTimer: ReturnType<typeof setTimeout> | undefined
+const qrCanvas = ref<HTMLCanvasElement>()
+const canNativeShare = typeof navigator.share === 'function'
+
+const pageUrl = () => window.location.href
+const pageTitle = () => document.title
+
+const shareTargets = computed(() => {
+  const url = encodeURIComponent(pageUrl())
+  const title = encodeURIComponent(pageTitle())
+  return [
+    { name: '微博', color: '#e6162d', url: `https://service.weibo.com/share/share.php?url=${url}&title=${title}` },
+    { name: 'X', color: '#1d9bf0', url: `https://twitter.com/intent/tweet?url=${url}&text=${title}` },
+    { name: 'Telegram', color: '#26a5e4', url: `https://t.me/share/url?url=${url}&text=${title}` },
+  ]
+})
+
+async function copyPageLink() {
+  try {
+    await navigator.clipboard.writeText(pageUrl())
+  } catch {
+    window.prompt('本页链接：', pageUrl())
+  }
+  pageCopied.value = true
+  clearTimeout(pageCopyTimer)
+  pageCopyTimer = setTimeout(() => (pageCopied.value = false), 1600)
+}
+
+async function nativeShare() {
+  try {
+    await navigator.share({ title: pageTitle(), url: pageUrl() })
+  } catch {
+    // 用户取消分享时 AbortError，静默即可
+  }
+}
+
+// 面板打开时把当前页 URL 画成二维码；路由切换后重新生成
+watch([shareOpen, () => route.fullPath], async ([open]) => {
+  if (!open) return
+  await nextTick()
+  if (qrCanvas.value) {
+    await QRCode.toCanvas(qrCanvas.value, pageUrl(), { width: 120, margin: 1 })
+  }
+})
 </script>
 
 <style scoped lang="scss">
@@ -341,6 +446,63 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-4px);
+}
+
+.share-pop {
+  min-width: 12.5rem;
+  padding: 0.5rem;
+}
+
+.share-row {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  padding: 0.4rem 0.55rem;
+  font-size: var(--fs-sm);
+  color: var(--c-text-2);
+  background: var(--c-surface-strong);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.share-btn:hover {
+  color: var(--c-accent);
+  border-color: var(--c-accent-border);
+}
+
+.share-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.share-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0 0.65rem;
+  border-bottom: 1px solid var(--c-border);
+  margin-bottom: 0.35rem;
+}
+
+.share-qr canvas {
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}
+
+.share-qr span {
+  font-size: var(--fs-xs);
 }
 
 @media (max-width: 640px) {

@@ -6,9 +6,9 @@
         <h1 class="name">{{ profile.name }}</h1>
         <p class="tagline">{{ profile.tagline }}</p>
         <p class="meta">
-          <span>{{ profile.location }}</span>
+          <span v-if="profile.location">{{ profile.location }}</span>
           <template v-if="profile.email">
-            <span class="dot">·</span>
+            <span v-if="profile.location" class="dot">·</span>
             <a :href="`mailto:${profile.email}`">{{ profile.email }}</a>
           </template>
         </p>
@@ -53,22 +53,6 @@
     </section>
 
     <section class="block">
-      <h2 class="section-title">教育</h2>
-      <ol class="timeline">
-        <li v-for="item in education" :key="item.school" class="timeline-item">
-          <span class="timeline-dot" aria-hidden="true"></span>
-          <div class="timeline-body">
-            <div class="timeline-top">
-              <h3>{{ item.school }}</h3>
-              <span class="dim">{{ item.period }}</span>
-            </div>
-            <p class="dim">{{ item.major }}</p>
-          </div>
-        </li>
-      </ol>
-    </section>
-
-    <section class="block">
       <h2 class="section-title">兴趣</h2>
       <div class="row chips">
         <span v-for="hobby in hobbies" :key="hobby" class="chip chip-static">{{ hobby }}</span>
@@ -94,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { education, experiences, hobbies, profile, skillGroups, socialLinks } from '@/content/site'
+import { experiences, hobbies, profile, skillGroups, socialLinks } from '@/content/site'
 
 defineOptions({ name: 'AboutView' })
 </script>

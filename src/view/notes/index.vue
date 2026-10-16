@@ -100,6 +100,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import {
   getCollections,
   getCollectionNotes,
@@ -119,6 +120,13 @@ const activeCollection = ref('')
 const notes = getNotes()
 const collections = getCollections()
 const total = notes.length
+
+// 支持深链 /notes?c=集合名（阅读页面包屑、搜索跳转用）
+const route = useRoute()
+const initialCollection = typeof route.query.c === 'string' ? route.query.c : ''
+if (initialCollection && collections.some(c => c.name === initialCollection)) {
+  activeCollection.value = initialCollection
+}
 
 const collectionNotes = computed(() =>
   activeCollection.value ? getCollectionNotes(activeCollection.value) : [])
