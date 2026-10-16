@@ -105,16 +105,6 @@
                 </svg>
                 <span>{{ pageCopied ? '已复制' : '复制链接' }}</span>
               </button>
-              <button v-if="canNativeShare" type="button" class="share-btn" @click="nativeShare">
-                <svg viewBox="0 0 16 16" aria-hidden="true">
-                  <path d="M8 2v8M8 2L5.5 4.5M8 2l2.5 2.5M3.5 8v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V8" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <span>系统分享</span>
-              </button>
-            </div>
-            <div class="share-qr">
-              <canvas ref="qrCanvas" width="120" height="120" aria-label="本页二维码"></canvas>
-              <span class="dim">微信扫码打开本页</span>
             </div>
             <a
               v-for="target in shareTargets"
@@ -152,8 +142,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import QRCode from 'qrcode'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { socialLinks } from '@/content/site'
 import { theme, toggleTheme } from '@/composables/useTheme'
@@ -215,8 +204,6 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 // ===== 分享本页 =====
 const pageCopied = ref(false)
 let pageCopyTimer: ReturnType<typeof setTimeout> | undefined
-const qrCanvas = ref<HTMLCanvasElement>()
-const canNativeShare = typeof navigator.share === 'function'
 
 const pageUrl = () => window.location.href
 const pageTitle = () => document.title
@@ -225,9 +212,10 @@ const shareTargets = computed(() => {
   const url = encodeURIComponent(pageUrl())
   const title = encodeURIComponent(pageTitle())
   return [
+    { name: 'QQ 好友', color: '#12b7f5', url: `https://connect.qq.com/widget/shareqq/index.html?url=${url}&title=${title}` },
+    { name: 'QQ 空间', color: '#fece00', url: `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${url}&title=${title}` },
     { name: '微博', color: '#e6162d', url: `https://service.weibo.com/share/share.php?url=${url}&title=${title}` },
     { name: 'X', color: '#1d9bf0', url: `https://twitter.com/intent/tweet?url=${url}&text=${title}` },
-    { name: 'Telegram', color: '#26a5e4', url: `https://t.me/share/url?url=${url}&text=${title}` },
   ]
 })
 
@@ -241,23 +229,6 @@ async function copyPageLink() {
   clearTimeout(pageCopyTimer)
   pageCopyTimer = setTimeout(() => (pageCopied.value = false), 1600)
 }
-
-async function nativeShare() {
-  try {
-    await navigator.share({ title: pageTitle(), url: pageUrl() })
-  } catch {
-    // 用户取消分享时 AbortError，静默即可
-  }
-}
-
-// 面板打开时把当前页 URL 画成二维码；路由切换后重新生成
-watch([shareOpen, () => route.fullPath], async ([open]) => {
-  if (!open) return
-  await nextTick()
-  if (qrCanvas.value) {
-    await QRCode.toCanvas(qrCanvas.value, pageUrl(), { width: 120, margin: 1 })
-  }
-})
 </script>
 
 <style scoped lang="scss">
@@ -483,26 +454,6 @@ watch([shareOpen, () => route.fullPath], async ([open]) => {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-}
-
-.share-qr {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.5rem 0 0.65rem;
-  border-bottom: 1px solid var(--c-border);
-  margin-bottom: 0.35rem;
-}
-
-.share-qr canvas {
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius-sm);
-  background: #fff;
-}
-
-.share-qr span {
-  font-size: var(--fs-xs);
 }
 
 @media (max-width: 640px) {
