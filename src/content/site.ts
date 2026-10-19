@@ -139,6 +139,26 @@ export const friends: Friend[] = [
     url: 'https://peanutbo.github.io/',
     description: 'Peanut 的技术博客：算法、计算理论、AI 与心理学的学习笔记。',
   },
+  {
+    name: 'Northgreen',
+    url: 'https://northgreen.github.io/',
+    description: '个人主页',
+  },
+  {
+    name: 'mahirozcy',
+    url: 'https://github.com/mahirozcy',
+    description: 'GitHub 主页',
+  },
+  {
+    name: 'TYKMASHIRO',
+    url: 'https://github.com/TYKMASHIRO',
+    description: 'GitHub 主页',
+  },
+  {
+    name: 'btaskel',
+    url: 'https://btaskel.carrd.co/',
+    description: '个人主页',
+  },
 ]
 
 export const hobbies = ['写代码', '看技术文档', '整理笔记', '听音乐']
