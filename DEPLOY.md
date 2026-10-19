@@ -1,87 +1,43 @@
 # 部署指南
 
-## GitHub Pages 部署
+## 仓库与分支
 
-### 1. 准备工作
+- 源码仓库：`eksct/StarYunFan`
+- 发布仓库：`eksct/StarYunFanSite`
+- 部署触发：推送到源码仓库的 `master` 分支；Pull Request 只构建，不发布
+- 发布目标：发布仓库的 `master` 分支根目录
 
-1. 确保项目已推送到 GitHub 仓库
-2. 确保仓库是公开的（GitHub Pages 免费版只支持公开仓库）
+## 配置 GitHub Pages
 
-### 2. 启用 GitHub Pages
+在发布仓库 `eksct/StarYunFanSite` 的 Settings → Pages 中，将发布来源设为 `Deploy from a branch`，选择 `master` 和 `/ (root)`。
 
-1. 进入仓库的 Settings 页面
-2. 滚动到 "Pages" 部分
-3. 在 "Source" 下选择 "GitHub Actions"
-4. 保存设置
+在源码仓库 `eksct/StarYunFan` 的 Settings → Secrets and variables → Actions 中添加 `PERSONAL_TOKEN`。该令牌需要有权限向发布仓库推送内容。工作流通过 `peaceiris/actions-gh-pages` 将 `dist/` 发布到目标仓库。
 
-### 3. 配置 GitHub Actions
-
-项目已包含 `.github/workflows/deploy.yml` 文件，会自动：
-
-- 在推送到 main 分支时触发构建
-- 安装依赖并构建项目
-- 将构建结果部署到 GitHub Pages
-
-### 4. 自定义域名（可选）
-
-如果需要使用自定义域名：
-
-1. 在仓库根目录创建 `CNAME` 文件
-2. 在文件中写入你的域名，例如：`example.com`
-3. 在域名服务商处配置 CNAME 记录指向 `username.github.io`
-
-### 5. 环境变量
-
-如果需要环境变量，在仓库 Settings > Secrets and variables > Actions 中添加：
-
-- `GITHUB_TOKEN`: 通常不需要手动设置，GitHub 会自动提供
-
-## 本地测试
+## 本地开发与构建
 
 ```bash
-# 安装依赖
 pnpm install
-
-# 启动开发服务器
 pnpm dev
-
-# 构建生产版本
 pnpm build
-
-# 预览构建结果
 pnpm preview
 ```
+
+Node.js 版本要求为 20.19+ 或 22.12+，pnpm 使用 11.19.0。
 
 ## 故障排除
 
 ### 构建失败
 
-1. 检查 Node.js 版本（推荐 18+）
-2. 检查 pnpm 版本
-3. 查看 GitHub Actions 日志
+检查 Node.js 与 pnpm 版本，并查看源码仓库 Actions 的构建日志。
 
 ### 页面无法访问
 
-1. 确认 GitHub Pages 已启用
-2. 检查仓库是否为公开
-3. 等待几分钟让 DNS 生效
+确认发布仓库 Pages 发布 `master` 分支根目录，并检查最近一次源码仓库 Actions 是否成功。
 
-### Markdown 文件无法加载
+### 笔记无法加载
 
-1. 确认文件路径正确
-2. 检查文件编码（推荐 UTF-8）
-3. 确认文件在 `public/postDir/` 目录下；笔记目录会在开发/构建时自动生成
+确认 Markdown 文件位于 `public/postDir/`，编码为 UTF-8。
 
 ## 更新内容
 
-每次更新内容后：
-
-1. 提交更改到 main 分支
-2. GitHub Actions 会自动构建和部署
-3. 等待几分钟后访问网站查看更新
-
-## 性能优化
-
-- 图片优化：使用 WebP 格式
-- 代码分割：Vite 已自动处理
-- 缓存策略：GitHub Pages 自动处理静态资源缓存
+将更改推送到源码仓库 `master` 分支。Actions 构建成功后会更新发布仓库，随后等待 GitHub Pages 刷新。
