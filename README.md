@@ -42,7 +42,7 @@ pnpm preview
 ## 部署到 GitHub Pages
 
 1. 将代码推送到 `eksct/StarYunFan` 仓库的 `master` 分支，源码仓库 Actions 会运行测试并构建
-2. `eksct/StarYunFanSite` 仓库的同步工作流每 15 分钟检查一次源码，并将构建结果更新到 `master`
+2. `eksct/StarYunFanSite` 仓库的同步工作流每 5 分钟检查一次源码，并将构建结果更新到 `master`
 3. 在 `eksct/StarYunFanSite` 的 Pages 设置中选择 `Deploy from a branch`，发布分支选 `master`、目录选 `/ (root)`
 4. 需要立即发布时，在发布仓库的 Actions 中手动运行 `Sync source site`。同步工作流只需读取公开源码仓库，不需要跨仓库 PAT
 
