@@ -1,8 +1,9 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import MarkdownIt from 'markdown-it'
 import { escapeHtml, parseFrontmatter, resolveAssetPath } from '../src/utils/noteData.mjs'
+import { normalizeNoteMarkdown, relativeNoteAssetPath } from '../src/utils/normalizeMarkdown.mjs'
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const notesRoot = path.join(projectRoot, 'public', 'postDir')
@@ -20,56 +21,30 @@ for (const note of publishedNotes) {
   if (!noteByTitle.has(note.title)) noteByTitle.set(note.title, note)
 }
 const noteByPath = new Map(publishedNotes.map(note => [note.path, note]))
+const publishedPaths = new Set(publishedNotes.map(note => note.path))
 const styles = [...(await readFile(path.join(distRoot, 'index.html'), 'utf8')).matchAll(/<link[^>]+href="([^\"]+\.css)"[^>]*>/g)]
   .map(([, href]) => `<link rel="stylesheet" href="${escapeHtml(href)}">`)
   .join('\n    ')
 
 function assetUrl(target, notePath) {
-  const relativeToNote = path.posix.normalize(path.posix.join(path.posix.dirname(notePath), target))
+  const relativeToNote = relativeNoteAssetPath(notePath, target)
   const resolved = resolveAssetPath(relativeToNote, metadata.assets)
     ?? resolveAssetPath(target, metadata.assets)
   return resolved ? `${basePath}postDir/${encodePath(resolved)}` : undefined
 }
 
-function normalizeImages(body, notePath) {
-  const embedded = body.replace(/!\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g,
-    (match, target, alt) => {
-      const url = assetUrl(target.trim(), notePath)
-      return url ? `![${alt || target.trim()}](${url})` : `*图片未找到：${target.trim()}*`
-    })
-
-  return embedded.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
-    (match, alt, target) => {
-      if (/^(https?:)?\/\//.test(target) || target.startsWith('data:')) return match
-      const url = assetUrl(decodeTarget(target), notePath)
-      return url ? `![${alt}](${url})` : match
-    })
-}
-
-function decodeTarget(target) {
-  try {
-    return decodeURIComponent(target)
-  } catch {
-    return target
-  }
-}
-
-function normalizeWikiLinks(body) {
-  return body.replace(/(?<!!)\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g,
-    (match, target, alias) => {
-      const keyword = target.trim()
-      const linked = noteByTitle.get(keyword)
-        ?? noteByPath.get(keyword)
-        ?? publishedNotes.find(note => note.path.endsWith(`/${keyword}.md`))
-      return linked
-        ? `[${alias || keyword}](${basePath}${staticPath(linked.path)})`
-        : (alias || keyword)
-    })
-}
-
 function renderBody(raw, notePath) {
   const { body } = parseFrontmatter(raw)
-  const normalized = normalizeWikiLinks(normalizeImages(body, notePath))
+  const normalized = normalizeNoteMarkdown(body, {
+    notePath,
+    resolveAsset: (target, currentPath) => assetUrl(target, currentPath),
+    resolveWikiLink: (target, alias) => {
+      const linked = noteByTitle.get(target)
+        ?? noteByPath.get(target)
+        ?? publishedNotes.find(note => note.path.endsWith(`/${target}.md`))
+      return linked ? `[${alias || target}](${basePath}${staticPath(linked.path)})` : undefined
+    },
+  })
   markdown.renderer.rules.image = (tokens, index) => {
     const token = tokens[index]
     const src = escapeHtml(token.attrGet('src') ?? '')
@@ -78,6 +53,20 @@ function renderBody(raw, notePath) {
   }
   return markdown.render(normalized)
 }
+
+async function removeUnpublishedMarkdown(directory, relativeDirectory = '') {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const relativePath = path.posix.join(relativeDirectory, entry.name)
+    const absolutePath = path.join(directory, entry.name)
+    if (entry.isDirectory()) {
+      await removeUnpublishedMarkdown(absolutePath, relativePath)
+    } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md') && !publishedPaths.has(relativePath)) {
+      await unlink(absolutePath)
+    }
+  }
+}
+
+await removeUnpublishedMarkdown(path.join(distRoot, 'postDir'))
 
 for (const note of publishedNotes) {
   const raw = await readFile(path.join(notesRoot, ...note.path.split('/')), 'utf8')

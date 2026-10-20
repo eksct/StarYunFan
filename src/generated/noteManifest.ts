@@ -693,15 +693,6 @@ export const noteFiles: NoteFile[] = [
     "wordCount": 736,
     "tags": [],
     "description": "stream流 Java中的Stream流是从Java 8引入的一个新特性，主要用于处理集合框架（如List、Set等）的数据，提供了对数据进行声明式操作的能力，简化了代码，并且支持并行操作。通过St"
-  },
-  {
-    "path": "test.md",
-    "title": "test",
-    "category": "测试",
-    "date": "2025-09-27",
-    "wordCount": 144,
-    "tags": [],
-    "description": "测试笔记 这是一个测试笔记文件，用于验证 Markdown 解析功能。 功能测试 代码高亮 列表 - 项目 1 - 项目 2 - 项目 3 表格 功能 状态 说明 ------------------"
   }
 ]
 

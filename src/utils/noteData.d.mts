@@ -14,3 +14,4 @@ export function createAssetIndex(assetPaths: string[]): AssetIndex
 export function resolveAssetPath(target: string, assets: AssetIndex): string | undefined
 export function rssDate(value: string): string
 export function escapeHtml(value: string): string
+export function isDraft(value: unknown): boolean

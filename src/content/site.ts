@@ -35,6 +35,7 @@ export interface Tool {
 export interface Project {
   name: string
   description: string
+  highlights?: string[]
   stack: string[]
   url?: string
   period: string
@@ -125,7 +126,12 @@ export const tools: Tool[] = [
 export const projects: Project[] = [
   {
     name: 'StarYunFan 个人站',
-    description: '你现在看到的这个站。Vue 3 + TypeScript + Vite 纯前端，笔记在构建期扫描成清单，运行时按需加载。',
+    description: 'Vue 3 + TypeScript + Vite 构建的个人站，Markdown 笔记在构建期生成索引和独立阅读页。',
+    highlights: [
+      '生成全文搜索索引、RSS 和站点地图，搜索索引按需加载',
+      '笔记独立静态页包含分享元数据和结构化数据',
+      '构建检查笔记日期、图片引用和双链问题',
+    ],
     stack: ['Vue 3', 'TypeScript', 'Vite', 'Tailwind CSS'],
     url: 'https://github.com/eksct/StarYunFan',
     period: '2025 — 至今',

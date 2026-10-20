@@ -2,7 +2,7 @@ import { readdir, stat, readFile, mkdir, writeFile } from 'node:fs/promises'
 import { execFileSync } from 'node:child_process'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createAssetIndex, escapeHtml, parseFrontmatter, rssDate, toIsoDate } from '../src/utils/noteData.mjs'
+import { createAssetIndex, escapeHtml, isDraft, parseFrontmatter, rssDate, toIsoDate } from '../src/utils/noteData.mjs'
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const notesRoot = path.join(projectRoot, 'public', 'postDir')
@@ -153,6 +153,7 @@ for (const notePath of paths) {
   const title = data.title || getTitle(notePath)
   const category = data.category || getCategory(notePath)
   const tags = toTags(data.tags)
+  if (isDraft(data.draft) || category === '测试' || notePath === 'test.md') continue
 
   entries.push({
     path: notePath,
@@ -170,6 +171,7 @@ for (const notePath of paths) {
     path: notePath,
     title,
     category,
+    tags,
     text: `${title} ${category} ${tags.join(' ')} ${stripForSearch(body)}`,
   })
 }
@@ -203,6 +205,7 @@ export interface SearchEntry {
   path: string
   title: string
   category: string
+  tags: string[]
   text: string
 }
 

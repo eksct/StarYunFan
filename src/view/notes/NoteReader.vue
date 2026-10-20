@@ -171,7 +171,7 @@ async function load() {
 
   try {
     const raw = await loadNoteContent(path)
-    const rendered = renderMarkdown(raw)
+    const rendered = renderMarkdown(raw, path)
     html.value = rendered.html
     toc.value = rendered.toc
 

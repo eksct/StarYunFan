@@ -1,7 +1,6 @@
 // 笔记清单的查询、分组与链接构造
 import dayjs from 'dayjs'
 import { noteFiles, type NoteFile } from '@/generated/noteManifest'
-import { noteSearchIndex } from '@/generated/searchIndex'
 import { encodeAssetPath } from '@/utils/noteUrls'
 
 export { encodeAssetPath, noteUrl } from '@/utils/noteUrls'
@@ -37,18 +36,44 @@ export function getTags(): string[] {
   return [...tags].sort((left, right) => left.localeCompare(right, 'zh-CN'))
 }
 
-export function searchNotes(keyword: string): NoteFile[] {
+let searchIndexPromise: Promise<typeof import('@/generated/searchIndex').noteSearchIndex> | undefined
+
+export async function searchNotes(keyword: string): Promise<NoteFile[]> {
   const query = keyword.trim().toLowerCase()
   if (!query) return published
 
-  // 命中正文索引（标题/分类/标签/正文都已纳入），比仅搜元数据更全
-  const matchedPaths = new Set(
-    noteSearchIndex
-      .filter(entry => entry.text.includes(query))
-      .map(entry => entry.path),
-  )
+  searchIndexPromise ??= import('@/generated/searchIndex').then(module => module.noteSearchIndex)
+  const index = await searchIndexPromise
+  const terms = query.split(/\s+/).filter(Boolean)
+  const notesByPath = new Map(published.map(note => [note.path, note]))
+  const ranked: { note: NoteFile; score: number }[] = []
 
-  return published.filter(note => matchedPaths.has(note.path))
+  for (const entry of index) {
+    const title = entry.title.toLowerCase()
+    const category = entry.category.toLowerCase()
+    const tags = entry.tags.map(tag => tag.toLowerCase())
+    const haystack = entry.text.toLowerCase()
+    if (!terms.every(term => haystack.includes(term))) continue
+
+    let score = 0
+    for (const term of terms) {
+      if (title === term) score += 100
+      else if (title.startsWith(term)) score += 70
+      else if (title.includes(term)) score += 50
+      if (tags.some(tag => tag.includes(term))) score += 35
+      if (category.includes(term)) score += 25
+      if (haystack.includes(term)) score += 10
+    }
+
+    const note = notesByPath.get(entry.path)
+    if (note) ranked.push({ note, score })
+  }
+
+  return ranked
+    .sort((left, right) => right.score - left.score
+      || right.note.date.localeCompare(left.note.date)
+      || left.note.title.localeCompare(right.note.title, 'zh-CN'))
+    .map(result => result.note)
 }
 
 export interface MonthGroup {

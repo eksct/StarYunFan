@@ -22,8 +22,9 @@ import typescript from 'highlight.js/lib/languages/typescript'
 import xml from 'highlight.js/lib/languages/xml'
 import yaml from 'highlight.js/lib/languages/yaml'
 import { noteAssets, noteFiles } from '@/generated/noteManifest'
-import { resolveAssetPath } from '@/utils/noteData.mjs'
+import { parseFrontmatter, resolveAssetPath } from '@/utils/noteData.mjs'
 import { encodeAssetPath, noteUrl } from '@/utils/noteUrls'
+import { normalizeNoteMarkdown, relativeNoteAssetPath } from '@/utils/normalizeMarkdown.mjs'
 
 // 只注册笔记里真正出现的语言，避免把整个 highlight.js 打进包里
 const languages: [string, LanguageFn][] = [
@@ -125,58 +126,6 @@ const escapeHtml = (value: string) => value
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;')
 
-const assetBase = () => `${import.meta.env.BASE_URL}postDir/`
-
-function resolveAsset(target: string): string | undefined {
-  const clean = target.trim().replace(/^\.\//, '').replace(/^["'<]+|["'>]+$/g, '')
-  return resolveAssetPath(clean, noteAssets)
-}
-
-function toAssetUrl(target: string): string | undefined {
-  const resolved = resolveAsset(target)
-  return resolved ? `${assetBase()}${encodeAssetPath(resolved)}` : undefined
-}
-
-// Obsidian 的 ![[图片]] 语法
-function normalizeObsidianImageEmbeds(content: string): string {
-  return content.replace(
-    /!\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g,
-    (match, target: string, alt?: string) => {
-      const url = toAssetUrl(target)
-      if (!url) return `*图片未找到：${target.trim()}*`
-      return `![${(alt || target.trim())}](${url})`
-    },
-  )
-}
-
-// 相对于笔记目录的图片引用
-function normalizeRelativeImages(content: string): string {
-  return content.replace(
-    /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
-    (match, alt: string, target: string) => {
-      if (/^(https?:)?\/\//.test(target) || target.startsWith('data:')) return match
-
-      const url = toAssetUrl(target)
-      return url ? `![${alt}](${url})` : match
-    },
-  )
-}
-
-// Obsidian 的 [[双链]]，能匹配到笔记就转成站内链接
-function normalizeWikiLinks(content: string): string {
-  return content.replace(
-    /(?<!!)\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g,
-    (match, target: string, alias?: string) => {
-      const keyword = target.trim()
-      const linked = noteFiles.find(note => note.title === keyword)
-        ?? noteFiles.find(note => note.path.endsWith(`${keyword}.md`))
-
-      const label = (alias || keyword).trim()
-      return linked ? `[${label}](${noteUrl(linked.path)})` : label
-    },
-  )
-}
-
 let tocBuffer: TocItem[] = []
 const slugCounter = new Map<string, number>()
 
@@ -267,11 +216,25 @@ markdownIt.renderer.rules.heading_open = (tokens, index) => {
   return `<${token.tag} id="${id}">`
 }
 
-export function renderMarkdown(raw: string): { html: string; toc: TocItem[] } {
+export function renderMarkdown(raw: string, notePath: string): { html: string; toc: TocItem[] } {
   tocBuffer = []
   slugCounter.clear()
+  const { body } = parseFrontmatter(raw)
 
-  const normalized = normalizeWikiLinks(normalizeRelativeImages(normalizeObsidianImageEmbeds(raw)))
+  const normalized = normalizeNoteMarkdown(body, {
+    notePath,
+    resolveAsset: (target, currentPath) => {
+      const relativePath = relativeNoteAssetPath(currentPath, target)
+      const resolved = resolveAssetPath(relativePath, noteAssets)
+        ?? resolveAssetPath(target, noteAssets)
+      return resolved ? `${import.meta.env.BASE_URL}postDir/${encodeAssetPath(resolved)}` : undefined
+    },
+    resolveWikiLink: (target, alias) => {
+      const linked = noteFiles.find(note => note.title === target)
+        ?? noteFiles.find(note => note.path === target || note.path.endsWith(`/${target}.md`))
+      return linked ? `[${alias || target}](${noteUrl(linked.path)})` : undefined
+    },
+  })
   const html = markdownIt.render(normalized)
 
   return { html, toc: tocBuffer }

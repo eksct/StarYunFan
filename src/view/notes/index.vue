@@ -55,7 +55,7 @@
         />
 
         <div v-if="keyword.trim()" class="row collection-head">
-          <span class="dim">搜索到 {{ searchResults.length }} 篇</span>
+          <span class="dim">{{ isSearching ? '正在搜索…' : `搜索到 ${searchResults.length} 篇` }}</span>
         </div>
       </div>
 
@@ -99,13 +99,13 @@
         </section>
       </div>
 
-      <div v-if="keyword.trim() && !searchResults.length" class="empty">没有匹配的笔记，换个关键词试试。</div>
+      <div v-if="keyword.trim() && !isSearching && !searchResults.length" class="empty">{{ searchError ? '搜索索引加载失败，请刷新页面重试。' : '没有匹配的笔记，换个关键词试试。' }}</div>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   getCollections,
@@ -140,8 +140,41 @@ const collectionNotes = computed(() =>
 const folderGroups = computed(() =>
   activeCollection.value ? groupBySubfolder(collectionNotes.value, activeCollection.value) : [])
 
-const searchResults = computed<NoteFile[]>(() =>
-  keyword.value.trim() ? searchNotes(keyword.value) : [])
+const searchResults = ref<NoteFile[]>([])
+const isSearching = ref(false)
+const searchError = ref(false)
+let searchTimer: ReturnType<typeof setTimeout> | undefined
+let searchRequest = 0
+
+watch(keyword, value => {
+  const request = ++searchRequest
+  clearTimeout(searchTimer)
+
+  if (!value.trim()) {
+    searchResults.value = []
+    isSearching.value = false
+    searchError.value = false
+    return
+  }
+
+  isSearching.value = true
+  searchError.value = false
+  searchTimer = setTimeout(async () => {
+    try {
+      const results = await searchNotes(value)
+      if (request !== searchRequest) return
+      searchResults.value = results
+    } catch {
+      if (request !== searchRequest) return
+      searchResults.value = []
+      searchError.value = true
+    } finally {
+      if (request === searchRequest) isSearching.value = false
+    }
+  }, 160)
+})
+
+onBeforeUnmount(() => clearTimeout(searchTimer))
 
 // 搜索结果按分类聚拢，避免同类笔记散落交叉
 const searchGroups = computed<FolderGroup[]>(() =>

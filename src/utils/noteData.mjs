@@ -8,13 +8,13 @@ export function parseFrontmatter(raw) {
     if (separatorIndex <= 0) continue
 
     const key = line.slice(0, separatorIndex).trim()
-    const value = line.slice(separatorIndex + 1).trim().replace(/^['"]|['"]$/g, '')
+    const rawValue = line.slice(separatorIndex + 1).trim().replace(/^['"]|['"]$/g, '')
     if (!key) continue
 
-    if (value.startsWith('[') && value.endsWith(']')) {
-      data[key] = value.slice(1, -1).split(',').map(item => item.trim()).filter(Boolean)
+    if (rawValue.startsWith('[') && rawValue.endsWith(']')) {
+      data[key] = rawValue.slice(1, -1).split(',').map(item => item.trim()).filter(Boolean)
     } else {
-      data[key] = value
+      data[key] = rawValue
     }
   }
 
@@ -85,4 +85,8 @@ export function escapeHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
+}
+
+export function isDraft(value) {
+  return value === true || String(value).toLowerCase() === 'true'
 }

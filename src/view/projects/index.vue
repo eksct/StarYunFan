@@ -15,6 +15,10 @@
         <p class="project-period dim">{{ project.period }}</p>
         <p class="project-desc">{{ project.description }}</p>
 
+        <ul v-if="project.highlights?.length" class="project-highlights">
+          <li v-for="highlight in project.highlights" :key="highlight">{{ highlight }}</li>
+        </ul>
+
         <div class="row chips">
           <span v-for="item in project.stack" :key="item" class="chip chip-static">{{ item }}</span>
         </div>
@@ -80,6 +84,17 @@ defineOptions({ name: 'ProjectsView' })
 .project-desc {
   font-size: var(--fs-sm);
   margin-bottom: 1rem;
+}
+
+.project-highlights {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+  color: var(--c-text-2);
+  font-size: var(--fs-sm);
+}
+
+.project-highlights li + li {
+  margin-top: 0.3rem;
 }
 
 .chips {

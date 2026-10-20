@@ -48,7 +48,7 @@ pnpm preview
 
 ## 笔记管理
 
-笔记文件放在 `public/postDir/`，开发或构建时 `scripts/generate-notes-manifest.mjs` 会递归扫描并生成笔记清单、搜索索引和 RSS；生产构建还会为每篇笔记生成独立静态页面和站点地图。
+笔记文件放在 `public/postDir/`，开发或构建时 `scripts/generate-notes-manifest.mjs` 会递归扫描并生成笔记清单、按需加载的搜索索引和 RSS；生产构建还会为每篇已发布笔记生成独立静态页面和站点地图。标记为草稿的 Markdown 不会进入清单、搜索、RSS 或部署产物。
 
 **日期来源**：优先读笔记 frontmatter 里的 `date`；没有时，本地开发使用文件修改时间，GitHub Actions 使用笔记最近一次提交日期。要固定真实编写日期，建议在笔记顶部添加：
 
@@ -59,9 +59,16 @@ tags: [Redis]
 ---
 ```
 
-支持的 frontmatter 字段：`title`、`date`、`category`、`tags`、`description`。
+支持的 frontmatter 字段：`title`、`date`、`category`、`tags`、`description`、`draft`。草稿使用 `draft: true` 标记：
 
-正文兼容 Obsidian 语法：`![[图片]]` 和 `[[双链]]` 会自动转成图片与站内链接。
+```markdown
+---
+title: 尚未发布的笔记
+draft: true
+---
+```
+
+正文兼容 Obsidian 语法：`![[图片]]` 和 `[[双链]]` 会自动转成图片与站内链接，站内阅读器和独立静态页共用链接与图片规范化逻辑。构建会检查无效日期和缺失图片；重复标题、未解析双链会输出提示。
 
 ## 站点内容
 
