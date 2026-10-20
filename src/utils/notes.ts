@@ -2,6 +2,9 @@
 import dayjs from 'dayjs'
 import { noteFiles, type NoteFile } from '@/generated/noteManifest'
 import { noteSearchIndex } from '@/generated/searchIndex'
+import { encodeAssetPath } from '@/utils/noteUrls'
+
+export { encodeAssetPath, noteUrl } from '@/utils/noteUrls'
 
 export type { NoteFile }
 
@@ -198,15 +201,6 @@ export function readingMinutes(wordCount: number): number {
 
 export function formatDate(date: string): string {
   return date ? dayjs(date).format('YYYY-MM-DD') : '未标注'
-}
-
-export function encodeAssetPath(assetPath: string): string {
-  return assetPath.split('/').map(segment => encodeURIComponent(segment)).join('/')
-}
-
-// 路由是 hash 模式，站内链接必须带 # 前缀
-export function noteUrl(path: string): string {
-  return `#/notes/${encodeAssetPath(path)}`
 }
 
 export async function loadNoteContent(path: string): Promise<string> {

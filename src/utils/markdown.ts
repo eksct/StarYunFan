@@ -22,7 +22,8 @@ import typescript from 'highlight.js/lib/languages/typescript'
 import xml from 'highlight.js/lib/languages/xml'
 import yaml from 'highlight.js/lib/languages/yaml'
 import { noteAssets, noteFiles } from '@/generated/noteManifest'
-import { encodeAssetPath, noteUrl } from '@/utils/notes'
+import { resolveAssetPath } from '@/utils/noteData.mjs'
+import { encodeAssetPath, noteUrl } from '@/utils/noteUrls'
 
 // 只注册笔记里真正出现的语言，避免把整个 highlight.js 打进包里
 const languages: [string, LanguageFn][] = [
@@ -128,8 +129,7 @@ const assetBase = () => `${import.meta.env.BASE_URL}postDir/`
 
 function resolveAsset(target: string): string | undefined {
   const clean = target.trim().replace(/^\.\//, '').replace(/^["'<]+|["'>]+$/g, '')
-  const baseName = clean.split('/').pop() ?? clean
-  return noteAssets[baseName] ?? noteAssets[clean]
+  return resolveAssetPath(clean, noteAssets)
 }
 
 function toAssetUrl(target: string): string | undefined {
@@ -156,7 +156,7 @@ function normalizeRelativeImages(content: string): string {
     (match, alt: string, target: string) => {
       if (/^(https?:)?\/\//.test(target) || target.startsWith('data:')) return match
 
-      const url = toAssetUrl(decodeURIComponent(target))
+      const url = toAssetUrl(target)
       return url ? `![${alt}](${url})` : match
     },
   )
@@ -247,9 +247,10 @@ markdownIt.renderer.rules.image = (tokens, index) => {
   const token = tokens[index]
   const src = String(token.attrGet('src') ?? '')
   const alt = escapeHtml(token.content || '')
+  const accessibleLabel = escapeHtml(token.content ? `查看大图：${token.content}` : '查看图片大图')
   const title = token.attrGet('title')
 
-  return `<img src="${escapeHtml(src)}"${title ? ` title="${escapeHtml(String(title))}"` : ''} alt="${alt}" loading="lazy" decoding="async" class="prose-img" />`
+  return `<img src="${escapeHtml(src)}"${title ? ` title="${escapeHtml(String(title))}"` : ''} alt="${alt}" role="button" tabindex="0" aria-label="${accessibleLabel}" loading="lazy" decoding="async" class="prose-img" />`
 }
 
 markdownIt.renderer.rules.heading_open = (tokens, index) => {

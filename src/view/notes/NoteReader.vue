@@ -28,7 +28,14 @@
 
         <div v-if="error" class="empty">{{ error }}</div>
         <div v-else-if="!html" class="empty">加载中…</div>
-        <div v-else ref="contentRef" class="prose" v-html="html" @click="handleCopy"></div>
+        <div
+          v-else
+          ref="contentRef"
+          class="prose"
+          v-html="html"
+          @click="handleCopy"
+          @keydown="handleImageKeydown"
+        ></div>
 
         <nav v-if="prev || next" class="siblings">
           <router-link v-if="prev" :to="`/notes/${prev.path}`" class="sibling">
@@ -63,8 +70,25 @@
 
       <!-- 图片灯箱 -->
       <transition name="fade">
-        <div v-if="lightboxSrc" class="lightbox" role="dialog" aria-label="图片预览" @click="lightboxSrc = ''">
-          <img :src="lightboxSrc" alt="" />
+        <div
+          v-if="lightboxSrc"
+          class="lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label="图片预览"
+          tabindex="-1"
+          @click.self="closeLightbox"
+        >
+          <button
+            ref="lightboxCloseRef"
+            type="button"
+            class="lightbox-close"
+            aria-label="关闭图片预览"
+            @click="closeLightbox"
+          >
+            关闭
+          </button>
+          <img :src="lightboxSrc" :alt="lightboxAlt" />
         </div>
       </transition>
     </div>
@@ -75,7 +99,8 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { renderMarkdown, type TocItem } from '@/utils/markdown'
-import { findNote, formatDate, getSiblings, loadNoteContent, readingMinutes, encodeAssetPath } from '@/utils/notes'
+import { findNote, formatDate, getSiblings, loadNoteContent, readingMinutes } from '@/utils/notes'
+import { staticNoteUrl } from '@/utils/noteUrls'
 import type { NoteFile } from '@/utils/notes'
 
 const route = useRoute()
@@ -90,6 +115,9 @@ const activeId = ref('')
 const contentRef = ref<HTMLElement>()
 const showBackTop = ref(false)
 const lightboxSrc = ref('')
+const lightboxAlt = ref('')
+const lightboxCloseRef = ref<HTMLButtonElement>()
+let lightboxTrigger: HTMLElement | null = null
 
 let observer: IntersectionObserver | null = null
 
@@ -117,7 +145,8 @@ function setMeta(property: string, content: string) {
   tag.setAttribute('content', content)
 }
 
-async function load() {  const path = notePath()
+async function load() {
+  const path = notePath()
   note.value = findNote(path)
   showBackTop.value = false
   html.value = ''
@@ -133,7 +162,7 @@ async function load() {  const path = notePath()
   document.title = `${note.value.title} · 笔记 · Seiga`
   setMeta('og:title', `${note.value.title} · 笔记 · Seiga`)
   setMeta('og:description', note.value.description || `Seiga 的笔记：${note.value.category} 分类`)
-  setMeta('og:url', `https://eksct.github.io/StarYunFanSite/#/notes/${encodeAssetPath(note.value.path)}`)
+  setMeta('og:url', staticNoteUrl(note.value.path))
   setMeta('og:type', 'article')
 
   const siblings = getSiblings(path)
@@ -171,12 +200,26 @@ function scrollTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
+async function openLightbox(image: HTMLImageElement) {
+  lightboxTrigger = image
+  lightboxAlt.value = image.alt
+  lightboxSrc.value = image.src
+  await nextTick()
+  lightboxCloseRef.value?.focus()
+}
+
+function closeLightbox() {
+  if (!lightboxSrc.value) return
+  lightboxSrc.value = ''
+  void nextTick(() => lightboxTrigger?.focus())
+}
+
 async function handleCopy(event: MouseEvent) {
   const target = event.target as HTMLElement
 
   // 点击正文图片：打开灯箱
   if (target instanceof HTMLImageElement && target.src) {
-    lightboxSrc.value = target.src
+    void openLightbox(target)
     return
   }
 
@@ -192,12 +235,24 @@ async function handleCopy(event: MouseEvent) {
     button.textContent = '已复制'
     setTimeout(() => { button.textContent = '复制' }, 1500)
   } catch {
-    error.value = '当前环境不支持复制到剪贴板。'
+    window.prompt('复制失败，请手动复制代码：', code)
   }
 }
 
+function handleImageKeydown(event: KeyboardEvent) {
+  const target = event.target
+  if (!(target instanceof HTMLImageElement) || (event.key !== 'Enter' && event.key !== ' ')) return
+  event.preventDefault()
+  void openLightbox(target)
+}
+
 function onKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape') lightboxSrc.value = ''
+  if (!lightboxSrc.value) return
+  if (event.key === 'Escape') closeLightbox()
+  if (event.key === 'Tab') {
+    event.preventDefault()
+    lightboxCloseRef.value?.focus()
+  }
 }
 
 watch(() => route.params.path, load, { immediate: true })
@@ -312,7 +367,18 @@ onBeforeUnmount(() => {
   justify-content: center;
   padding: 2rem;
   background: rgba(0, 0, 0, 0.72);
-  cursor: zoom-out;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.4rem 0.7rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
 }
 
 .lightbox img {

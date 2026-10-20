@@ -37,20 +37,20 @@ pnpm build
 pnpm preview
 ```
 
-开发环境要求 Node.js 20.19+（推荐 24.x）和 pnpm 11.19.0。
+开发环境要求 Node.js 20.19+ 或 22.13+（推荐 24.x）和 pnpm 11.19.0。
 
 ## 部署到 GitHub Pages
 
-1. 将代码推送到 `eksct/StarYunFan` 仓库的 `master` 分支
-2. Actions 构建后会将静态文件推送到 `eksct/StarYunFanSite` 仓库的 `master` 分支
+1. 将代码推送到 `eksct/StarYunFan` 仓库的 `master` 分支，源码仓库 Actions 会运行测试并构建
+2. `eksct/StarYunFanSite` 仓库的同步工作流每 15 分钟检查一次源码，并将构建结果更新到 `master`
 3. 在 `eksct/StarYunFanSite` 的 Pages 设置中选择 `Deploy from a branch`，发布分支选 `master`、目录选 `/ (root)`
-4. 在源码仓库 `eksct/StarYunFan` 的 Actions secrets 中配置 `PERSONAL_TOKEN`，令牌需要有权推送到发布仓库
+4. 需要立即发布时，在发布仓库的 Actions 中手动运行 `Sync source site`。同步工作流只需读取公开源码仓库，不需要跨仓库 PAT
 
 ## 笔记管理
 
-笔记文件放在 `public/postDir/`，开发或构建时 `scripts/generate-notes-manifest.mjs` 会递归扫描并生成 `src/generated/noteManifest.ts`，包含路径、标题、分类、日期、字数、标签与摘要。
+笔记文件放在 `public/postDir/`，开发或构建时 `scripts/generate-notes-manifest.mjs` 会递归扫描并生成笔记清单、搜索索引和 RSS；生产构建还会为每篇笔记生成独立静态页面和站点地图。
 
-**日期来源**：优先读笔记 frontmatter 里的 `date`，没有则用文件的修改时间。GitHub 构建环境中的文件修改时间不代表笔记的真实编写日期；需要准确归档时，请在笔记顶部添加：
+**日期来源**：优先读笔记 frontmatter 里的 `date`；没有时，本地开发使用文件修改时间，GitHub Actions 使用笔记最近一次提交日期。要固定真实编写日期，建议在笔记顶部添加：
 
 ```markdown
 ---

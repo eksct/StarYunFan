@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Build and verify
 
 on:
   push:
@@ -11,52 +11,30 @@ permissions:
   contents: read
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '24'
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: '11.19.0'
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '11.19.0'
 
-    - name: Get pnpm store directory
-      shell: bash
-      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: Setup pnpm cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+      - name: Test note data helpers
+        run: pnpm test
 
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-
-    - name: Build
-      run: pnpm run build
-
-    # 仅 master 推送时部署；PR 只构建不发布
-    - name: Deploy to StarYunFanSite (external repo)
-      if: github.ref == 'refs/heads/master'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        # 需在 StarYunFan 仓库 Settings → Secrets 添加名为 PERSONAL_TOKEN 的
-        # repo 权限 PAT（用于推送外部仓库 StarYunFanSite）
-        personal_token: ${{ secrets.PERSONAL_TOKEN }}
-        external_repository: eksct/StarYunFanSite
-        publish_branch: master
-        publish_dir: ./dist
-        user_name: github-actions[bot]
-        user_email: github-actions[bot]@users.noreply.github.com
-        commit_message: "deploy: ${{ github.sha }}"
+      - name: Build static site and note pages
+        run: pnpm run build

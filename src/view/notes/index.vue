@@ -46,7 +46,13 @@
     <!-- 集合总览 / 搜索结果 -->
     <template v-else>
       <div class="toolbar">
-        <input v-model="keyword" type="search" class="input search" placeholder="搜索标题、分类、标签、正文…" />
+        <input
+          v-model="keyword"
+          type="search"
+          class="input search"
+          aria-label="搜索笔记"
+          placeholder="搜索标题、分类、标签、正文…"
+        />
 
         <div v-if="keyword.trim()" class="row collection-head">
           <span class="dim">搜索到 {{ searchResults.length }} 篇</span>

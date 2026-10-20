@@ -284,6 +284,24 @@ export const noteSearchIndex: SearchEntry[] = [
     "text": "11 网络编程 Java  11 网络编程 网络编程与以往的javaweb编程不同，javaweb是网页开发，网络编程是与tcp、udp等网络协议打交道。 规则：网络通信协议 tcp/ip参考模型 2. 网络编程基础 2.1 tcp/ip 协议 - tcp（传输控制协议） ：面向连接的协议，提供可靠的数据传输。 - ip（网际协议） ：负责将数据包从源地址发送到目标地址。 2.2 udp 协议 - udp（用户数据报协议） ：无连接的协议，提供不可靠的数据传输，但速度更快。 2.3 socket - socket ：网络通信的端点，用于在客户端和服务器之间传输数据。 - serversocket ：服务器端用于监听客户端连接。"
   },
   {
+    "path": "major/车充平台/充电桩与平台交互逻辑.md",
+    "title": "充电桩与平台交互逻辑",
+    "category": "车充平台",
+    "text": "充电桩与平台交互逻辑 车充平台  充电桩与平台交互逻辑 固件--[mqtt发布up/订阅down]--- emqx<---[mqtt订阅up/发布down]--服务端--- kafka 通过 设置生产者消费者订阅全部的topic，用 指定消息发布的生产者通道，在 设备数据交互中心 设置一个消费者消费方法 ——所有处理用的handler在最初已经全部注册为bean并注入handlermap——校验，获取命令码，根据命令码拿到 里的handler，执行upstreamprocess方法。并构建消息，传输到kafka中，被服务端的kafka监听器监听，处理数据。最后视情况在kafka监听器内通过mqtt返回给固件。理解为服务端罢 kafka毕竟是一个中间件，kafuka+java服务端是一个整体。 一个充电桩与平台交互就是这么一个逻辑。"
+  },
+  {
+    "path": "major/车充平台/随笔.md",
+    "title": "随笔",
+    "category": "车充平台",
+    "text": "随笔 车充平台  随笔 spring boot + kafka + mqtt +emqx +sa-token+redis+mysql+clickhouse+hutool+gradle+mybatis-plus+? 微信小程序+后台管理 重点？ 平常的crud controller应该是不用看了。 我认为重点在于使用mqtt+emqx+kafka的这一段固件消息传输、如何支付、互联互通——功能性的 用到的框架也该看看罢。 硬软通过mqtt发布消息到emqx的自编号下的“topic”，然后服务端订阅/upstream/v2 2/ 下的所有topic，并通过mqtt消费者消费，通过handler再转发给kafka进行处理。"
+  },
+  {
+    "path": "major/车充平台/支付.md",
+    "title": "支付",
+    "category": "车充平台",
+    "text": "支付 车充平台  支付 支付方面的话前端调用后端的发起支付接口，后端判断一下是微信还是其他什么什么的支付方式，塞入神必的apikey，以及指定神必service，最后指定一个32位长度的？神必随机字符串，然后构建请求对象，对着支付接口请求，就支付完了。 充满了神必，毕竟是调用神必的第三方接口。"
+  },
+  {
     "path": "major/初步的学习清单.md",
     "title": "初步的学习清单",
     "category": "初步的学习清单.md",
@@ -294,24 +312,6 @@ export const noteSearchIndex: SearchEntry[] = [
     "title": "未命名",
     "category": "数据库",
     "text": "未命名 数据库  未命名"
-  },
-  {
-    "path": "major/新亚车充平台/充电桩与平台交互逻辑.md",
-    "title": "充电桩与平台交互逻辑",
-    "category": "新亚车充平台",
-    "text": "充电桩与平台交互逻辑 新亚车充平台  充电桩与平台交互逻辑 固件--[mqtt发布up/订阅down]--- emqx<---[mqtt订阅up/发布down]--服务端--- kafka 通过 设置生产者消费者订阅全部的topic，用 指定消息发布的生产者通道，在 设备数据交互中心 设置一个消费者消费方法 ——所有处理用的handler在最初已经全部注册为bean并注入handlermap——校验，获取命令码，根据命令码拿到 里的handler，执行upstreamprocess方法。并构建消息，传输到kafka中，被服务端的kafka监听器监听，处理数据。最后视情况在kafka监听器内通过mqtt返回给固件。理解为服务端罢 kafka毕竟是一个中间件，kafuka+java服务端是一个整体。 一个充电桩与平台交互就是这么一个逻辑。"
-  },
-  {
-    "path": "major/新亚车充平台/随笔.md",
-    "title": "随笔",
-    "category": "新亚车充平台",
-    "text": "随笔 新亚车充平台  随笔 spring boot + kafka + mqtt +emqx +sa-token+redis+mysql+clickhouse+hutool+gradle+mybatis-plus+? 微信小程序+后台管理 重点？ 平常的crud controller应该是不用看了。 我认为重点在于使用mqtt+emqx+kafka的这一段固件消息传输、如何支付、互联互通——功能性的 用到的框架也该看看罢。 硬软通过mqtt发布消息到emqx的自编号下的“topic”，然后服务端订阅/upstream/v2 2/ 下的所有topic，并通过mqtt消费者消费，通过handler再转发给kafka进行处理。"
-  },
-  {
-    "path": "major/新亚车充平台/支付.md",
-    "title": "支付",
-    "category": "新亚车充平台",
-    "text": "支付 新亚车充平台  支付 支付方面的话前端调用后端的发起支付接口，后端判断一下是微信还是其他什么什么的支付方式，塞入神必的apikey，以及指定神必service，最后指定一个32位长度的？神必随机字符串，然后构建请求对象，对着支付接口请求，就支付完了。 充满了神必，毕竟是调用神必的第三方接口。"
   },
   {
     "path": "major/Caffeine本地缓存/缓存策略.md",

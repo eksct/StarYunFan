@@ -5,14 +5,16 @@
   "type": "module",
   "packageManager": "pnpm@11.19.0",
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": "^20.19.0 || >=22.13.0"
   },
   "scripts": {
     "generate-notes": "node scripts/generate-notes-manifest.mjs",
     "predev": "pnpm generate-notes",
     "dev": "vite",
     "prebuild": "pnpm generate-notes",
+    "postbuild": "node scripts/generate-static-notes.mjs",
     "build": "run-p type-check \"build-only {@}\" --",
+    "test": "node --test scripts/note-data.test.mjs",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",

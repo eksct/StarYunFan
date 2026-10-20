@@ -35,6 +35,8 @@
           type="button"
           class="nav-theme"
           aria-label="RSS 订阅"
+          aria-controls="feed-menu"
+          :aria-expanded="feedOpen"
           title="RSS 订阅"
           @click="feedOpen = !feedOpen"
         >
@@ -46,7 +48,7 @@
         </button>
 
         <transition name="fade">
-          <div v-if="feedOpen" class="feed-pop">
+          <div v-if="feedOpen" id="feed-menu" class="feed-pop">
             <div class="feed-pop-title">订阅本站</div>
             <button type="button" class="feed-item" @click="copyFeed">
               <svg v-if="!copied" viewBox="0 0 16 16" aria-hidden="true">
@@ -84,6 +86,8 @@
           type="button"
           class="nav-theme"
           aria-label="分享本页"
+          aria-controls="share-menu"
+          :aria-expanded="shareOpen"
           title="分享本页"
           @click="shareOpen = !shareOpen"
         >
@@ -96,7 +100,7 @@
         </button>
 
         <transition name="fade">
-          <div v-if="shareOpen" class="feed-pop share-pop">
+          <div v-if="shareOpen" id="share-menu" class="feed-pop share-pop">
             <div class="feed-pop-title">分享本页</div>
             <div class="share-row">
               <button type="button" class="share-btn" @click="copyPageLink">
@@ -146,6 +150,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { socialLinks } from '@/content/site'
 import { theme, toggleTheme } from '@/composables/useTheme'
+import { staticNoteUrl } from '@/utils/noteUrls'
 
 const route = useRoute()
 
@@ -205,7 +210,14 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 const pageCopied = ref(false)
 let pageCopyTimer: ReturnType<typeof setTimeout> | undefined
 
-const pageUrl = () => window.location.href
+const pageUrl = () => {
+  if (route.name === 'note') {
+    const rawPath = route.params.path
+    const notePath = Array.isArray(rawPath) ? rawPath.join('/') : rawPath
+    if (notePath) return staticNoteUrl(notePath)
+  }
+  return window.location.href
+}
 const pageTitle = () => document.title
 
 const shareTargets = computed(() => {
