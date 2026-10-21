@@ -2,6 +2,8 @@
 import dayjs from 'dayjs'
 import { noteFiles, type NoteFile } from '@/generated/noteManifest'
 import { encodeAssetPath } from '@/utils/noteUrls'
+import { collectionFor } from '@/content/siteConfig.mjs'
+import { rankEntries, retryableLoader } from '@/utils/search.mjs'
 
 export { encodeAssetPath, noteUrl } from '@/utils/noteUrls'
 
@@ -36,44 +38,23 @@ export function getTags(): string[] {
   return [...tags].sort((left, right) => left.localeCompare(right, 'zh-CN'))
 }
 
-let searchIndexPromise: Promise<typeof import('@/generated/searchIndex').noteSearchIndex> | undefined
+interface SearchEntry { path: string; title: string; category: string; tags: string[]; text: string }
+const loadSearchIndex = retryableLoader(async (): Promise<SearchEntry[]> => {
+  const response = await fetch(`${import.meta.env.BASE_URL}search-index.json`)
+  if (!response.ok) throw new Error('搜索索引加载失败')
+  return response.json()
+})
+export type SearchResult = NoteFile & { snippet: string }
 
-export async function searchNotes(keyword: string): Promise<NoteFile[]> {
+export async function searchNotes(keyword: string): Promise<SearchResult[]> {
   const query = keyword.trim().toLowerCase()
-  if (!query) return published
-
-  searchIndexPromise ??= import('@/generated/searchIndex').then(module => module.noteSearchIndex)
-  const index = await searchIndexPromise
-  const terms = query.split(/\s+/).filter(Boolean)
+  if (!query) return published.map(note => ({ ...note, snippet: note.description }))
+  const index = await loadSearchIndex()
   const notesByPath = new Map(published.map(note => [note.path, note]))
-  const ranked: { note: NoteFile; score: number }[] = []
-
-  for (const entry of index) {
-    const title = entry.title.toLowerCase()
-    const category = entry.category.toLowerCase()
-    const tags = entry.tags.map(tag => tag.toLowerCase())
-    const haystack = entry.text.toLowerCase()
-    if (!terms.every(term => haystack.includes(term))) continue
-
-    let score = 0
-    for (const term of terms) {
-      if (title === term) score += 100
-      else if (title.startsWith(term)) score += 70
-      else if (title.includes(term)) score += 50
-      if (tags.some(tag => tag.includes(term))) score += 35
-      if (category.includes(term)) score += 25
-      if (haystack.includes(term)) score += 10
-    }
-
-    const note = notesByPath.get(entry.path)
-    if (note) ranked.push({ note, score })
-  }
-
-  return ranked
-    .sort((left, right) => right.score - left.score
-      || right.note.date.localeCompare(left.note.date)
-      || left.note.title.localeCompare(right.note.title, 'zh-CN'))
-    .map(result => result.note)
+  return rankEntries(index, query).flatMap(result => {
+    const note = notesByPath.get(result.path)
+    return note ? [{ ...note, snippet: result.snippet }] : []
+  })
 }
 
 export interface MonthGroup {
@@ -143,8 +124,7 @@ export function findNote(path: string): NoteFile | undefined {
 // 集合 = 笔记所在的一级文件夹（major/Docker/xx.md → Docker）。
 // 直接放在 major 根下的散文件归入「其他」。
 function collectionOf(note: NoteFile): string {
-  const segments = note.path.split('/')
-  return segments.length >= 3 ? segments[1] : '其他'
+  return collectionFor(note.path)
 }
 
 export interface Collection {
@@ -228,10 +208,12 @@ export function formatDate(date: string): string {
   return date ? dayjs(date).format('YYYY-MM-DD') : '未标注'
 }
 
-export async function loadNoteContent(path: string): Promise<string> {
-  const response = await fetch(`${import.meta.env.BASE_URL}postDir/${encodeAssetPath(path)}`)
+export interface TocItem { level: number; text: string; id: string }
+export interface RenderedNote { html: string; toc: TocItem[] }
+export async function loadNoteContent(path: string, signal?: AbortSignal): Promise<RenderedNote> {
+  const response = await fetch(`${import.meta.env.BASE_URL}note-data/${encodeAssetPath(path)}.json`, { signal })
   if (!response.ok) {
     throw new Error(`笔记加载失败：${path}`)
   }
-  return response.text()
+  return response.json()
 }

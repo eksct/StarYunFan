@@ -55,7 +55,7 @@
         />
 
         <div v-if="keyword.trim()" class="row collection-head">
-          <span class="dim">{{ isSearching ? '正在搜索…' : `搜索到 ${searchResults.length} 篇` }}</span>
+          <span class="dim" role="status" aria-live="polite">{{ isSearching ? '正在搜索…' : `搜索到 ${searchResults.length} 篇` }}</span>
         </div>
       </div>
 
@@ -75,19 +75,19 @@
       </div>
 
       <div v-else class="timeline">
-        <section v-for="group in searchGroups" :key="group.key" class="group">
+        <section class="group" aria-label="按相关性排序的搜索结果">
           <div class="group-label">
             <span class="group-dot" aria-hidden="true"></span>
-            {{ group.label }}
+            按相关性排序
           </div>
 
           <ul class="group-list">
-            <li v-for="note in group.notes" :key="note.path">
+            <li v-for="note in searchResults" :key="note.path">
               <router-link :to="`/notes/${note.path}`" class="entry">
                 <span class="entry-date">{{ note.date ? note.date.slice(5) : '——' }}</span>
                 <span class="entry-main">
                   <span class="entry-title">{{ note.title }}</span>
-                  <span v-if="note.description" class="entry-desc">{{ note.description }}</span>
+                  <span class="entry-desc search-snippet"><template v-for="(part, index) in highlightSnippet(note.snippet, keyword)" :key="index"><mark v-if="part.match">{{ part.text }}</mark><template v-else>{{ part.text }}</template></template></span>
                 </span>
                 <span class="entry-meta">
                   <span class="chip chip-static">{{ note.category }}</span>
@@ -99,29 +99,26 @@
         </section>
       </div>
 
-      <div v-if="keyword.trim() && !isSearching && !searchResults.length" class="empty">{{ searchError ? '搜索索引加载失败，请刷新页面重试。' : '没有匹配的笔记，换个关键词试试。' }}</div>
+      <div v-if="keyword.trim() && !isSearching && !searchResults.length" class="empty" role="status">{{ searchError ? '搜索索引加载失败。' : '没有匹配的笔记，换个关键词试试。' }} <button v-if="searchError" type="button" class="btn" @click="runSearch(keyword)">重试</button></div>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { highlightSnippet } from '@/utils/search.mjs'
+import { markReaderReady } from '@/utils/pageState'
 import {
   getCollections,
   getCollectionNotes,
   getNotes,
-  groupByCategory,
   groupBySubfolder,
   searchNotes,
-  type FolderGroup,
-  type NoteFile,
+  type SearchResult,
 } from '@/utils/notes'
 
 defineOptions({ name: 'NotesView' })
-
-const keyword = ref('')
-const activeCollection = ref('')
 
 const notes = getNotes()
 const collections = getCollections()
@@ -129,10 +126,15 @@ const total = notes.length
 
 // 支持深链 /notes?c=集合名（阅读页面包屑、搜索跳转用）
 const route = useRoute()
-const initialCollection = typeof route.query.c === 'string' ? route.query.c : ''
-if (initialCollection && collections.some(c => c.name === initialCollection)) {
-  activeCollection.value = initialCollection
-}
+const router = useRouter()
+const keyword = computed({
+  get: () => typeof route.query.q === 'string' ? route.query.q : '',
+  set: value => { void router.replace({ path: '/notes', query: { ...route.query, q: value || undefined } }) },
+})
+const activeCollection = computed({
+  get: () => typeof route.query.c === 'string' && collections.some(c => c.name === route.query.c) ? route.query.c : '',
+  set: value => { void router.push({ path: '/notes', query: { ...route.query, c: value || undefined } }) },
+})
 
 const collectionNotes = computed(() =>
   activeCollection.value ? getCollectionNotes(activeCollection.value) : [])
@@ -140,13 +142,13 @@ const collectionNotes = computed(() =>
 const folderGroups = computed(() =>
   activeCollection.value ? groupBySubfolder(collectionNotes.value, activeCollection.value) : [])
 
-const searchResults = ref<NoteFile[]>([])
+const searchResults = ref<SearchResult[]>([])
 const isSearching = ref(false)
 const searchError = ref(false)
 let searchTimer: ReturnType<typeof setTimeout> | undefined
 let searchRequest = 0
 
-watch(keyword, value => {
+function runSearch(value: string) {
   const request = ++searchRequest
   clearTimeout(searchTimer)
 
@@ -154,6 +156,7 @@ watch(keyword, value => {
     searchResults.value = []
     isSearching.value = false
     searchError.value = false
+    void nextTick(() => { if (request === searchRequest) markReaderReady() })
     return
   }
 
@@ -169,20 +172,17 @@ watch(keyword, value => {
       searchResults.value = []
       searchError.value = true
     } finally {
-      if (request === searchRequest) isSearching.value = false
+      if (request === searchRequest) {
+        isSearching.value = false
+        await nextTick()
+        if (request === searchRequest) markReaderReady()
+      }
     }
   }, 160)
-})
+}
+watch(keyword, runSearch, { immediate: true })
 
-onBeforeUnmount(() => clearTimeout(searchTimer))
-
-// 搜索结果按分类聚拢，避免同类笔记散落交叉
-const searchGroups = computed<FolderGroup[]>(() =>
-  groupByCategory(searchResults.value).map(group => ({
-    key: group.name,
-    label: group.label,
-    notes: group.notes,
-  })))
+onBeforeUnmount(() => { clearTimeout(searchTimer); searchRequest++ })
 </script>
 
 <style scoped lang="scss">
@@ -343,6 +343,8 @@ const searchGroups = computed<FolderGroup[]>(() =>
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.search-snippet { white-space: normal; }
+mark { background: color-mix(in srgb, var(--c-accent) 24%, transparent); color: var(--c-text); border-radius: 2px; }
 
 .entry-meta {
   display: flex;

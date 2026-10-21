@@ -1,29 +1,27 @@
-// 主题状态：跟随系统偏好，用户手动切换后写入 localStorage
 import { ref, watch } from 'vue'
-
 export type ThemeName = 'light' | 'dark'
-
 const STORAGE_KEY = 'site.theme'
-
+const system = window.matchMedia('(prefers-color-scheme: dark)')
+let manual = false
 function initialTheme(): ThemeName {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored === 'light' || stored === 'dark') return stored
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored === 'light' || stored === 'dark') { manual = true; return stored }
+  } catch { /* Storage may be unavailable in private or embedded contexts. */ }
+  return system.matches ? 'dark' : 'light'
 }
-
 export const theme = ref<ThemeName>(initialTheme())
-
-export function applyTheme() {
-  document.documentElement.dataset.theme = theme.value
-}
-
+export function applyTheme() { document.documentElement.dataset.theme = theme.value }
 export function toggleTheme() {
+  manual = true
   theme.value = theme.value === 'dark' ? 'light' : 'dark'
+  try { localStorage.setItem(STORAGE_KEY, theme.value) } catch { /* The session still uses the chosen theme. */ }
 }
-
-watch(theme, value => {
-  localStorage.setItem(STORAGE_KEY, value)
-  applyTheme()
+system.addEventListener('change', event => { if (!manual) theme.value = event.matches ? 'dark' : 'light' })
+window.addEventListener('storage', event => {
+  if (event.key !== STORAGE_KEY) return
+  manual = event.newValue === 'light' || event.newValue === 'dark'
+  theme.value = manual ? event.newValue as ThemeName : system.matches ? 'dark' : 'light'
 })
-
+watch(theme, applyTheme)
 export { STORAGE_KEY }

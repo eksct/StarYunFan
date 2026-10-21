@@ -2,14 +2,16 @@
   <header class="nav">
     <div class="nav-inner">
       <router-link to="/" class="nav-logo">Seiga</router-link>
+      <button ref="mobileToggleRef" type="button" class="nav-theme mobile-toggle" aria-controls="main-navigation" :aria-expanded="mobileOpen" @click="mobileOpen = !mobileOpen">{{ mobileOpen ? '关闭' : '菜单' }}</button>
 
-      <nav class="nav-links" aria-label="主导航">
+      <nav id="main-navigation" ref="mobileNavRef" class="nav-links" :class="{ 'is-open': mobileOpen }" aria-label="主导航" @keydown.esc="closeMobile">
         <router-link
           v-for="item in internalLinks"
           :key="item.url"
           :to="item.url"
           class="nav-link"
           :class="{ 'is-active': isActive(item.url) }"
+          :aria-current="isActive(item.url) ? 'page' : undefined"
         >
           {{ item.name }}
         </router-link>
@@ -30,7 +32,7 @@
         </a>
       </nav>
 
-      <div ref="feedWrapRef" class="feed-wrap">
+      <div ref="feedWrapRef" class="feed-wrap" @keydown.esc="closePopover('feed')" @focusout="closeOnBlur($event, 'feed')">
         <button
           type="button"
           class="nav-theme"
@@ -81,7 +83,7 @@
         </transition>
       </div>
 
-      <div ref="shareWrapRef" class="feed-wrap">
+      <div ref="shareWrapRef" class="feed-wrap" @keydown.esc="closePopover('share')" @focusout="closeOnBlur($event, 'share')">
         <button
           type="button"
           class="nav-theme"
@@ -141,18 +143,26 @@
             fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
         </svg>
       </button>
+      <span role="status" aria-live="polite" class="sr-only">{{ copied || pageCopied ? '链接已复制' : '' }}</span>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { socialLinks } from '@/content/site'
 import { theme, toggleTheme } from '@/composables/useTheme'
 import { staticNoteUrl } from '@/utils/noteUrls'
+import { siteConfig } from '@/content/siteConfig.mjs'
+import { pageTitle } from '@/utils/pageState'
 
 const route = useRoute()
+const mobileOpen = ref(false)
+const mobileToggleRef = ref<HTMLButtonElement>()
+const mobileNavRef = ref<HTMLElement>()
+function closeMobile() { mobileOpen.value = false; mobileToggleRef.value?.focus() }
+watch(mobileOpen, async open => { if (open) { await nextTick(); mobileNavRef.value?.querySelector<HTMLAnchorElement>('a')?.focus() } })
 
 const internalLinks = [
   { name: '首页', url: '/' },
@@ -169,7 +179,7 @@ const isActive = (url: string) => url === '/'
   : route.path === url || route.path.startsWith(`${url}/`)
 
 // 外部阅读器订阅必须用线上地址，本地 localhost 订了也没用
-const prodFeedUrl = 'https://eksct.github.io/StarYunFanSite/feed.xml'
+const prodFeedUrl = siteConfig.siteUrl + 'feed.xml'
 const readers = [
   // Feedly 官方格式：feed/ 后接未编码的完整地址
   { name: 'Feedly', color: '#2bb24c', url: `https://feedly.com/i/subscription/feed/${prodFeedUrl}` },
@@ -198,6 +208,28 @@ const feedOpen = ref(false)
 const feedWrapRef = ref<HTMLElement>()
 const shareOpen = ref(false)
 const shareWrapRef = ref<HTMLElement>()
+function closePopover(kind: 'feed' | 'share') {
+  const wrap = kind === 'feed' ? feedWrapRef : shareWrapRef
+  if (kind === 'feed') feedOpen.value = false
+  else shareOpen.value = false
+  wrap.value?.querySelector<HTMLButtonElement>('button')?.focus()
+}
+function closeOnBlur(event: FocusEvent, kind: 'feed' | 'share') {
+  if ((event.currentTarget as HTMLElement).contains(event.relatedTarget as Node | null)) return
+  if (kind === 'feed') feedOpen.value = false
+  else shareOpen.value = false
+}
+watch(feedOpen, async open => {
+  if (!open) return
+  shareOpen.value = false
+  await nextTick(); feedWrapRef.value?.querySelector<HTMLButtonElement>('#feed-menu button')?.focus()
+})
+watch(shareOpen, async open => {
+  if (!open) return
+  feedOpen.value = false
+  await nextTick(); shareWrapRef.value?.querySelector<HTMLButtonElement>('#share-menu button')?.focus()
+})
+watch(() => route.fullPath, () => { mobileOpen.value = feedOpen.value = shareOpen.value = false })
 function onDocClick(event: MouseEvent) {
   const target = event.target as Node
   if (feedOpen.value && !feedWrapRef.value?.contains(target)) feedOpen.value = false
@@ -218,11 +250,11 @@ const pageUrl = () => {
   }
   return window.location.href
 }
-const pageTitle = () => document.title
 
 const shareTargets = computed(() => {
+  void route.fullPath
   const url = encodeURIComponent(pageUrl())
-  const title = encodeURIComponent(pageTitle())
+  const title = encodeURIComponent(pageTitle.value)
   return [
     { name: 'QQ 好友', color: '#12b7f5', url: `https://connect.qq.com/widget/shareqq/index.html?url=${url}&title=${title}` },
     { name: 'QQ 空间', color: '#fece00', url: `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${url}&title=${title}` },
@@ -241,6 +273,7 @@ async function copyPageLink() {
   clearTimeout(pageCopyTimer)
   pageCopyTimer = setTimeout(() => (pageCopied.value = false), 1600)
 }
+onBeforeUnmount(() => { clearTimeout(copyTimer); clearTimeout(pageCopyTimer) })
 </script>
 
 <style scoped lang="scss">
@@ -264,6 +297,7 @@ async function copyPageLink() {
   align-items: center;
   gap: 1.5rem;
 }
+.nav-theme.mobile-toggle { display: none; width: auto; padding: 0 .5rem; font-size: .8rem; white-space: nowrap; }
 
 .nav-logo {
   font-size: var(--fs-lg);
@@ -469,6 +503,9 @@ async function copyPageLink() {
 }
 
 @media (max-width: 640px) {
+  .nav-theme.mobile-toggle { display: inline-flex; margin-right: auto; }
+  .nav-links { display: none; }
+  .nav-links.is-open { display: flex; position: absolute; top: 100%; left: 0; right: 0; padding: 1rem; flex-wrap: wrap; background: var(--c-bg); border-bottom: 1px solid var(--c-border); box-shadow: 0 8px 20px rgb(0 0 0 / 12%); }
   .nav-inner {
     padding: 0.6rem 1rem;
     gap: 0.75rem;

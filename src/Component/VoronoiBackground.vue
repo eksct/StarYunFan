@@ -3,7 +3,7 @@
 // 让每个单元格大小基本一致（不会外圈越铺越大、也不会大小悬殊），但形状自然错落。
 // 只描边框线（铅条 came），填充用低饱和的柔和色块。
 import { Delaunay } from 'd3-delaunay'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { theme } from '@/composables/useTheme'
 
 // 固定种子的伪随机，保证每次刷新图案一致、不抖动
@@ -40,7 +40,8 @@ function makeSeeds(w: number, h: number, rng: () => number): [number, number][] 
 interface Cell {
   id: number
   d: string
-  fill: string
+  lightFill: string
+  darkFill: string
   op: number
 }
 
@@ -53,7 +54,7 @@ const svgRef = ref<SVGSVGElement>()
 const PALETTE_LIGHT = [222, 244, 266, 198, 168, 32, 350, 282, 210]
 const PALETTE_DARK = [222, 248, 268, 190, 160, 36, 344, 286, 205]
 
-function buildCells(isDark: boolean) {
+function buildCells() {
   const w = width.value
   const h = height.value
   const rng = mulberry32(20240920)
@@ -61,7 +62,6 @@ function buildCells(isDark: boolean) {
 
   const delaunay = Delaunay.from(points)
   const voronoi = delaunay.voronoi([0, 0, w, h])
-  const palette = isDark ? PALETTE_DARK : PALETTE_LIGHT
 
   const next: Cell[] = []
   for (let i = 0; i < points.length; i++) {
@@ -76,15 +76,14 @@ function buildCells(isDark: boolean) {
 
     // 颜色随机分布：每个格子从调色板里随机取一个基色（不再按空间分区成片），
     // 再加轻微抖动，整体像教堂玻璃那样散落但协调
-    const zone = Math.floor(rng() * palette.length)
-    const hue = palette[zone] + (rng() * 2 - 1) * 8
+    const zone = Math.floor(rng() * PALETTE_LIGHT.length)
+    const hueOffset = (rng() * 2 - 1) * 8
     // 暗色「夜窗」：格子降亮降饱和，玻璃本身暗下去、只留一层深色微彩，
     // 不再和正文抢视线；光感交给发亮的铅条线来表现。
-    const sat = isDark ? 30 + rng() * 14 : 46 + rng() * 16
-    const light = isDark ? 24 + rng() * 7 : 86 + rng() * 8
-    const op = isDark ? 0.5 : 0.52
+    const saturation = rng(), lightness = rng()
+    const color = (dark: boolean) => `hsl(${((dark ? PALETTE_DARK : PALETTE_LIGHT)[zone] + hueOffset).toFixed(1)} ${(dark ? 30 + saturation * 14 : 46 + saturation * 16).toFixed(1)}% ${(dark ? 24 + lightness * 7 : 86 + lightness * 8).toFixed(1)}%)`
 
-    next.push({ id: i, d, fill: `hsl(${hue.toFixed(1)} ${sat.toFixed(1)}% ${light.toFixed(1)}%)`, op })
+    next.push({ id: i, d, lightFill: color(false), darkFill: color(true), op: 0.52 })
   }
   cells.value = next
 }
@@ -97,7 +96,7 @@ const vignetteColor = computed(() => (theme.value === 'dark' ? '#15181f' : '#fff
 const vignetteOpacity = computed(() => (theme.value === 'dark' ? 0 : 0.82))
 
 function rebuild() {
-  buildCells(theme.value === 'dark')
+  buildCells()
 }
 
 let raf = 0
@@ -110,7 +109,6 @@ function onResize() {
   })
 }
 
-watch(theme, rebuild)
 onMounted(() => {
   rebuild()
   window.addEventListener('resize', onResize)
@@ -139,8 +137,8 @@ onBeforeUnmount(() => {
       v-for="c in cells"
       :key="c.id"
       :d="c.d"
-      :fill="c.fill"
-      :fill-opacity="c.op"
+      :fill="theme === 'dark' ? c.darkFill : c.lightFill"
+      :fill-opacity="theme === 'dark' ? 0.5 : c.op"
       :stroke="lead"
       :stroke-width="leadWidth"
       stroke-linejoin="round"

@@ -1,4 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { markReaderReady, notesReturnTo, resetReaderReadiness, updatePageMetadata, waitForReader } from '@/utils/pageState'
+
+const scrollPositions = new Map<string, { top: number; left: number }>()
 
 const routes = [
   {
@@ -53,12 +56,27 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
-  scrollBehavior: () => ({ top: 0 }),
+  async scrollBehavior(to, from, savedPosition) {
+    if (to.name === 'note' || (to.name === 'notes' && from.name !== 'notes')) await waitForReader()
+    if (to.hash) {
+      let id = to.hash.slice(1)
+      try { id = decodeURIComponent(id) } catch { /* Keep malformed anchors literal. */ }
+      const element = document.getElementById(id)
+      if (element) return { el: element, top: 88 }
+    }
+    if (savedPosition) return savedPosition
+    if (to.name === 'notes' && from.name === 'notes') return false
+    if (to.name === 'notes') return scrollPositions.get(to.fullPath) || { top: 0 }
+    return { top: 0 }
+  },
 })
 
-router.afterEach(to => {
-  const title = to.meta.title as string | undefined
-  document.title = title ? `${title} · Seiga` : 'Seiga'
+router.beforeEach((to, from) => {
+  scrollPositions.set(from.fullPath, { top: window.scrollY, left: window.scrollX })
+  if (from.name === 'notes') notesReturnTo.value = from.fullPath
+  if ((to.name === 'note' && to.path !== from.path) || (to.name === 'notes' && from.name !== 'notes')) resetReaderReadiness()
+  else if (to.name !== 'note') markReaderReady()
 })
+router.afterEach(to => updatePageMetadata(to))
 
 export default router

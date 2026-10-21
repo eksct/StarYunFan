@@ -1,132 +1,61 @@
 # Seiga 个人主页
 
-一个纯前端的个人站：首页、关于、笔记归档、工具、友链和项目。没有后端，数据要么是构建期生成的静态清单，要么是仓库里的配置文件。
+基于 Vue 3、TypeScript 和 Vite 的纯静态个人站，包括首页、关于、笔记、工具、友链和项目。
 
-## 功能特性
+访问：[eksct.github.io/StarYunFanSite](https://eksct.github.io/StarYunFanSite/)。
 
-- **首页** - 个人介绍、社交链接、最近更新的笔记
-- **关于** - 个人简介、技能、经历与兴趣
-- **笔记** - Markdown 笔记按集合归档，支持全文搜索；阅读页带大纲、代码复制、上下篇
-- **工具 / 友链** - 常用站点与朋友的小站
-- **项目** - 作品集卡片
-- **简约设计** - 单一强调色、统一圆角、轻描边，毛玻璃只用在顶栏与浮层
-- **主题切换** - 浅色 / 深色，默认跟随系统偏好，手动切换后记住选择
-- **移动端适配** - 完全响应式
+## 开发与构建
 
-## 技术栈
+使用 Node.js >=22.13（推荐 24，见 `.node-version`）和 pnpm 11.19.0。
 
-- **前端框架**: Vue 3 + TypeScript
-- **构建工具**: Vite
-- **样式**: Tailwind CSS（仅作基础层）+ SCSS 设计令牌
-- **Markdown 解析**: markdown-it + highlight.js（按需注册语言）
-- **路由**: Vue Router（hash 模式，适配 GitHub Pages）
-
-## 开发
-
-```bash
-# 安装依赖
+```sh
 pnpm install
-
-# 启动开发服务器
 pnpm dev
-
-# 构建生产版本
+pnpm lint
+pnpm test
 pnpm build
-
-# 预览构建结果
+node scripts/verify-dist.mjs
 pnpm preview
 ```
 
-开发环境要求 Node.js 20.19+ 或 22.13+（推荐 24.x）和 pnpm 11.19.0。
+`build` 包含类型检查。`build-only` 和直接 `vite build` 同样执行公开内容校验、附件白名单、文章预渲染和静态页面生成。`pnpm generate-notes` 可单独刷新清单。开发服务器会在笔记变动后重新生成并刷新页面。
 
-## 部署到 GitHub Pages
+## 笔记发布
 
-1. 将代码推送到 `eksct/StarYunFan` 仓库的 `master` 分支，源码仓库 Actions 会运行测试并构建
-2. `eksct/StarYunFanSite` 仓库的同步工作流每 5 分钟检查一次源码，并将构建结果更新到 `master`
-3. 在 `eksct/StarYunFanSite` 的 Pages 设置中选择 `Deploy from a branch`，发布分支选 `master`、目录选 `/ (root)`
-4. 需要立即发布时，在发布仓库的 Actions 中手动运行 `Sync source site`。同步工作流只需读取公开源码仓库，不需要跨仓库 PAT
+Markdown 与附件放在 `public/postDir/`。构建会生成公开笔记清单、按需加载的搜索 JSON、站内阅读 JSON、独立 HTML 文章、RSS 和 sitemap。浏览器无需下载 Markdown 解析器或代码高亮器。
 
-## 笔记管理
+Vite 的公开目录是自动生成的 `.generated-public/`。网站仅发布 `src/content/siteConfig.mjs` 中列出的根文件，以及公开文章实际引用的图片；不会直接复制笔记库，不会发布原始 Markdown、隐藏目录、Obsidian 配置、草稿或草稿专用附件。
 
-笔记文件放在 `public/postDir/`，开发或构建时 `scripts/generate-notes-manifest.mjs` 会递归扫描并生成笔记清单、按需加载的搜索索引和 RSS；生产构建还会为每篇已发布笔记生成独立静态页面和站点地图。标记为草稿的 Markdown 不会进入清单、搜索、RSS 或部署产物。
-
-**日期来源**：优先读笔记 frontmatter 里的 `date`；没有时，本地开发使用文件修改时间，GitHub Actions 使用笔记最近一次提交日期。要固定真实编写日期，建议在笔记顶部添加：
+支持的 frontmatter 字段：`title`、`publishedAt`、`updatedAt`、`date`、`category`、`tags`、`description`、`draft`。使用 YAML，字段名称、类型、日期及重复字段会在构建时检查。
 
 ```markdown
 ---
-date: 2025-03-10
-tags: [Redis]
+title: 缓存笔记
+publishedAt: 2025-03-10
+updatedAt: 2026-10-21
+category: Java
+tags: [Java, Cache]
+description: 本地缓存的使用记录
+draft: false
 ---
 ```
 
-支持的 frontmatter 字段：`title`、`date`、`category`、`tags`、`description`、`draft`。草稿使用 `draft: true` 标记：
+`draft: true` 的笔记不进入任何索引或发布产物。`test.md` 与分类为 `测试` 的笔记同样排除。`date` 兼容旧的发布日期写法；不填写日期时，发布日与更新日分别使用 Git 首次及最近提交日，无 Git 历史时回退到文件日期。批量导入的笔记如需真实写作日期，应显式填写。
 
-```markdown
----
-title: 尚未发布的笔记
-draft: true
----
-```
+正文支持标准 Markdown 链接、图片标题，以及 `![[图片]]`、`[[笔记路径|别名]]`、`[[笔记#标题]]`、`[[笔记#^块ID]]`。链接优先完整路径、当前文件夹相对路径，其次唯一后缀或唯一标题。同名歧义、未发布目标、缺失图片或失效锚点会阻止构建，代码示例中的链接语法不会被修改。页面只展示一个 H1，站内阅读与独立文章正文完全共用。
 
-正文兼容 Obsidian 语法：`![[图片]]` 和 `[[双链]]` 会自动转成图片与站内链接，站内阅读器和独立静态页共用链接与图片规范化逻辑。构建会检查无效日期和缺失图片；重复标题、未解析双链会输出提示。
+## 配置
 
-## 站点内容
+- `src/content/site.ts`：个人资料、经历、项目、工具、友链与社交链接。
+- `src/content/siteConfig.mjs`：站名、站点 URL、部署路径、公开根文件与分类/集合规则。
+- `scripts/lib/`：构建期 Markdown 渲染、内容收集和静态页面生成。
+- `src/generated/`：自动生成的笔记清单和元数据，请修改原始笔记。
+- `docs/static-site-improvements.md`：本轮 18 项实现与验证说明。
 
-`src/content/site.ts` 是个人信息、技能、经历、项目、工具、友链和社交链接的配置来源。
+## 部署
 
-## 项目结构
+1. 源码推送至 `eksct/StarYunFan` 的 `master`；Actions 执行 lint、回归、构建、类型检查及产物校验。
+2. `eksct/StarYunFanSite` 的同步工作流每 5 分钟检查源码变更，通过验证后更新发布分支。可在发布仓库 Actions 手动运行 `Sync source site` 提前触发。
+3. 发布仓库的 GitHub Pages 使用 `master` 分支根目录。独立文章页提供 canonical、Open Graph 和 BlogPosting 元信息，适合直接分享。
 
-```
-src/
-├── assets/scss/          # tokens.css 设计令牌 / base.css 基础层 / prose.css 正文排版
-├── composables/          # useTheme 主题状态
-├── content/              # site.ts 站点内容配置
-├── generated/            # 自动生成的笔记与图片清单
-├── Component/            # 导航栏等公共组件
-├── utils/                # notes.ts 清单查询 / markdown.ts 渲染
-├── view/                 # 页面组件
-│   ├── welcome/          # 首页
-│   ├── about/            # 关于
-│   ├── notes/            # 笔记归档 + NoteReader 阅读页
-│   ├── projects/         # 项目
-│   └── not-found/        # 404
-└── router/               # 路由配置
-
-public/postDir/            # Markdown 笔记及其附件
-```
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-pnpm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-pnpm dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-pnpm build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
-```
+同步工作流读取公开源码，不依赖跨仓库 PAT。站点不需要后台服务。

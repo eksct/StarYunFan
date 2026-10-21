@@ -5,16 +5,13 @@
   "type": "module",
   "packageManager": "pnpm@11.19.0",
   "engines": {
-    "node": "^20.19.0 || >=22.13.0"
+    "node": ">=22.13.0"
   },
   "scripts": {
-    "generate-notes": "node scripts/generate-notes-manifest.mjs && node scripts/check-notes.mjs",
-    "predev": "pnpm generate-notes",
+    "generate-notes": "node scripts/generate-notes-manifest.mjs",
     "dev": "vite",
-    "prebuild": "pnpm generate-notes",
-    "postbuild": "node scripts/generate-static-notes.mjs",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "test": "node --test scripts/note-data.test.mjs",
+    "build": "vite build && pnpm type-check",
+    "test": "node --test scripts/*.test.mjs",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
@@ -36,17 +33,16 @@
     "@tsconfig/node22": "^22.0.2",
     "@types/node": "^22.16.5",
     "@vitejs/plugin-vue": "^6.0.1",
-    "@vitejs/plugin-vue-jsx": "^5.0.1",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.31.0",
     "eslint-plugin-vue": "~10.3.0",
     "jiti": "^2.4.2",
-    "npm-run-all2": "^8.0.4",
     "sass-embedded": "^1.93.2",
+    "sharp": "^0.35.5",
     "typescript": "~5.8.0",
     "vite": "^7.0.6",
-    "vite-plugin-vue-devtools": "^8.0.0",
-    "vue-tsc": "^3.0.4"
+    "vue-tsc": "^3.0.4",
+    "yaml": "^2.9.1"
   }
 }

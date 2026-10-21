@@ -10,10 +10,10 @@
     <div v-else class="reader" :class="{ 'has-toc': toc.length > 1 }">
       <article class="main">
         <nav class="crumb" aria-label="面包屑">
-          <router-link to="/notes" class="back">← 笔记</router-link>
+          <router-link :to="notesReturnTo" class="back">← 笔记</router-link>
           <template v-if="note">
             <span class="crumb-sep">/</span>
-            <router-link :to="`/notes?c=${encodeURIComponent(note.category)}`" class="crumb-link">{{ note.category }}</router-link>
+            <router-link :to="{ path: '/notes', query: { c: collectionFor(note.path) } }" class="crumb-link">{{ collectionFor(note.path) }}</router-link>
           </template>
         </nav>
 
@@ -21,13 +21,18 @@
           <h1>{{ note.title }}</h1>
           <div class="row meta">
             <span class="chip chip-static">{{ note.category }}</span>
-            <span class="dim">{{ formatDate(note.date) }}</span>
+            <span class="dim">发布 {{ formatDate(note.publishedAt) }}</span>
+            <span v-if="note.updatedAt !== note.publishedAt" class="dim">更新 {{ formatDate(note.updatedAt) }}</span>
             <span class="dim">{{ note.wordCount }} 字 · 约 {{ readingMinutes(note.wordCount) }} 分钟</span>
           </div>
         </header>
 
-        <div v-if="error" class="empty">{{ error }}</div>
-        <div v-else-if="!html" class="empty">加载中…</div>
+        <details v-if="toc.length" class="mobile-toc">
+          <summary>文章大纲</summary>
+          <nav aria-label="文章大纲"><ul><li v-for="item in toc" :key="item.id"><button type="button" class="toc-link" @click="scrollTo(item.id)">{{ item.text }}</button></li></ul></nav>
+        </details>
+        <div v-if="error" class="empty" role="alert">{{ error }} <button type="button" class="btn" @click="load">重试</button></div>
+        <div v-else-if="loading" class="empty" role="status">加载中…</div>
         <div
           v-else
           ref="contentRef"
@@ -36,6 +41,7 @@
           @click="handleCopy"
           @keydown="handleImageKeydown"
         ></div>
+        <p class="sr-only" role="status" aria-live="polite">{{ copyStatus }}</p>
 
         <nav v-if="prev || next" class="siblings">
           <router-link v-if="prev" :to="`/notes/${prev.path}`" class="sibling">
@@ -97,13 +103,21 @@
 
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { renderMarkdown, type TocItem } from '@/utils/markdown'
+import { useRoute, useRouter } from 'vue-router'
+import type { TocItem } from '@/utils/notes'
 import { findNote, formatDate, getSiblings, loadNoteContent, readingMinutes } from '@/utils/notes'
-import { staticNoteUrl } from '@/utils/noteUrls'
+import { collectionFor } from '@/content/siteConfig.mjs'
+import { markReaderReady, notesReturnTo } from '@/utils/pageState'
 import type { NoteFile } from '@/utils/notes'
 
 const route = useRoute()
+const router = useRouter()
+const loading = ref(false)
+const copyStatus = ref('')
+let controller: AbortController | undefined
+let requestId = 0
+const copyTimers = new Set<ReturnType<typeof setTimeout>>()
+const scrollBehavior = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' as const : 'smooth' as const
 
 const note = ref<NoteFile | undefined>()
 const prev = ref<NoteFile | undefined>()
@@ -126,7 +140,7 @@ function onScroll() {
 }
 
 function scrollTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  window.scrollTo({ top: 0, behavior: scrollBehavior() })
 }
 
 function notePath(): string {
@@ -134,18 +148,12 @@ function notePath(): string {
   return Array.isArray(raw) ? raw.join('/') : raw ?? ''
 }
 
-// 覆写 head 里的 OG meta，让分享/抓取工具拿到当前笔记的信息
-function setMeta(property: string, content: string) {
-  let tag = document.head.querySelector<HTMLMetaElement>(`meta[property="${property}"]`)
-  if (!tag) {
-    tag = document.createElement('meta')
-    tag.setAttribute('property', property)
-    document.head.appendChild(tag)
-  }
-  tag.setAttribute('content', content)
-}
-
 async function load() {
+  const request = ++requestId
+  controller?.abort()
+  controller = new AbortController()
+  observer?.disconnect()
+  closeLightbox()
   const path = notePath()
   note.value = findNote(path)
   showBackTop.value = false
@@ -153,32 +161,38 @@ async function load() {
   error.value = ''
   toc.value = []
   activeId.value = ''
+  prev.value = next.value = undefined
+  loading.value = true
 
   if (!note.value) {
-    document.title = '笔记未找到 · Seiga'
+    loading.value = false
+    markReaderReady()
     return
   }
-
-  document.title = `${note.value.title} · 笔记 · Seiga`
-  setMeta('og:title', `${note.value.title} · 笔记 · Seiga`)
-  setMeta('og:description', note.value.description || `Seiga 的笔记：${note.value.category} 分类`)
-  setMeta('og:url', staticNoteUrl(note.value.path))
-  setMeta('og:type', 'article')
 
   const siblings = getSiblings(path)
   prev.value = siblings.prev
   next.value = siblings.next
 
   try {
-    const raw = await loadNoteContent(path)
-    const rendered = renderMarkdown(raw, path)
+    const rendered = await loadNoteContent(path, controller.signal)
+    if (request !== requestId) return
     html.value = rendered.html
     toc.value = rendered.toc
+    loading.value = false
 
     await nextTick()
+    if (request !== requestId) return
     observeHeadings()
-  } catch {
+  } catch (failure) {
+    if (request !== requestId || (failure instanceof DOMException && failure.name === 'AbortError')) return
     error.value = '这篇笔记加载失败了，请稍后重试。'
+  } finally {
+    if (request === requestId) {
+      loading.value = false
+      await nextTick()
+      if (request === requestId) markReaderReady()
+    }
   }
 }
 
@@ -197,7 +211,8 @@ function observeHeadings() {
 }
 
 function scrollTo(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  void router.replace({ ...route, hash: '#' + id })
+  document.getElementById(id)?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
 }
 
 async function openLightbox(image: HTMLImageElement) {
@@ -216,6 +231,12 @@ function closeLightbox() {
 
 async function handleCopy(event: MouseEvent) {
   const target = event.target as HTMLElement
+  const link = target.closest<HTMLAnchorElement>('a[data-note-path]')
+  if (link && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && event.button === 0) {
+    event.preventDefault()
+    void router.push({ name: 'note', params: { path: link.dataset.notePath }, hash: link.dataset.noteAnchor ? '#' + link.dataset.noteAnchor : '' })
+    return
+  }
 
   // 点击正文图片：打开灯箱
   if (target instanceof HTMLImageElement && target.src) {
@@ -233,7 +254,9 @@ async function handleCopy(event: MouseEvent) {
     await navigator.clipboard.writeText(code)
     const button = trigger as HTMLElement
     button.textContent = '已复制'
-    setTimeout(() => { button.textContent = '复制' }, 1500)
+    copyStatus.value = '代码已复制'
+    const timer = setTimeout(() => { button.textContent = '复制'; copyStatus.value = ''; copyTimers.delete(timer) }, 1500)
+    copyTimers.add(timer)
   } catch {
     window.prompt('复制失败，请手动复制代码：', code)
   }
@@ -256,13 +279,15 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 watch(() => route.params.path, load, { immediate: true })
-watch(() => route.fullPath, () => window.scrollTo({ top: 0 }))
 
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('keydown', onKeydown)
 })
 onBeforeUnmount(() => {
+  requestId++
+  controller?.abort()
+  copyTimers.forEach(clearTimeout)
   window.removeEventListener('scroll', onScroll)
   window.removeEventListener('keydown', onKeydown)
   observer?.disconnect()
@@ -275,6 +300,9 @@ onBeforeUnmount(() => {
   grid-template-columns: minmax(0, 1fr);
   gap: 2.5rem;
 }
+.main { min-width: 0; }
+.mobile-toc { display: none; margin-bottom: 1.5rem; }
+.mobile-toc summary { cursor: pointer; }
 
 .reader.has-toc {
   grid-template-columns: minmax(0, 1fr) 13rem;
@@ -480,6 +508,7 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 900px) {
+  .mobile-toc { display: block; }
   .reader.has-toc {
     grid-template-columns: minmax(0, 1fr);
   }

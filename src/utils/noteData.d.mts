@@ -4,7 +4,7 @@ export interface AssetIndex {
 }
 
 export interface ParsedFrontmatter {
-  data: Record<string, string | string[]>
+  data: Record<string, string | string[] | boolean>
   body: string
 }
 

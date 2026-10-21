@@ -1,6 +1,7 @@
 /* Markdown 正文排版：行宽、层级、代码、引用、表格 */
 
 .prose {
+  min-width: 0;
   max-width: 68ch;
   font-size: var(--fs-base);
   line-height: 1.75;
@@ -130,6 +131,15 @@
   display: block;
   overflow-x: auto;
 }
+
+.table-scroll { max-width: 100%; overflow-x: auto; }
+.table-scroll table { display: table; margin: 0; }
+.article-title-anchor { display: block; scroll-margin-top: 5.5rem; }
+[id^="block-"] { scroll-margin-top: 5.5rem; }
+.image-dialog { max-width: 95vw; max-height: 95vh; padding: 1rem; border: 1px solid var(--c-border); border-radius: 8px; background: var(--c-bg); color: var(--c-text); }
+.image-dialog::backdrop { background: rgb(0 0 0 / 75%); }
+.image-dialog img { display: block; max-width: 85vw; max-height: 80vh; object-fit: contain; }
+.image-dialog button { display: block; margin: 0 0 1rem auto; cursor: pointer; }
 
 .prose th,
 .prose td {

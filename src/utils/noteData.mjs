@@ -1,23 +1,27 @@
+import { parseDocument } from 'yaml'
+
 export function parseFrontmatter(raw) {
   const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(raw)
-  if (!match) return { data: {}, body: raw }
-
-  const data = {}
-  for (const line of match[1].split(/\r?\n/)) {
-    const separatorIndex = line.indexOf(':')
-    if (separatorIndex <= 0) continue
-
-    const key = line.slice(0, separatorIndex).trim()
-    const rawValue = line.slice(separatorIndex + 1).trim().replace(/^['"]|['"]$/g, '')
-    if (!key) continue
-
-    if (rawValue.startsWith('[') && rawValue.endsWith(']')) {
-      data[key] = rawValue.slice(1, -1).split(',').map(item => item.trim()).filter(Boolean)
+  if (!match) {
+    if (/^---\r?\n/.test(raw)) throw new Error('Frontmatter 缺少结束分隔线')
+    return { data: {}, body: raw }
+  }
+  const document = parseDocument(match[1], { uniqueKeys: true, maxAliasCount: 0 })
+  if (document.errors.length) throw new Error('Frontmatter 格式错误：' + document.errors[0].message)
+  const data = document.toJS({ maxAliasCount: 0 }) ?? {}
+  if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Frontmatter 必须是字段映射')
+  const allowed = ['title', 'date', 'publishedAt', 'updatedAt', 'category', 'tags', 'description', 'draft']
+  for (const [key, value] of Object.entries(data)) {
+    if (!allowed.includes(key)) throw new Error('未知 Frontmatter 字段：' + key)
+    if (key === 'draft') {
+      if (typeof value !== 'boolean') throw new Error('draft 必须为 true 或 false')
+    } else if (key === 'tags') {
+      if (!(typeof value === 'string' || (Array.isArray(value) && value.every(tag => typeof tag === 'string' && tag.trim())))) throw new Error('tags 必须是字符串或字符串列表')
     } else {
-      data[key] = rawValue
+      if (typeof value !== 'string' || !value.trim()) throw new Error(key + ' 必须是非空字符串')
+      if (['date', 'publishedAt', 'updatedAt'].includes(key) && (!/^\d{4}-\d{2}-\d{2}$/.test(value) || !toIsoDate(value))) throw new Error('无效日期：' + value)
     }
   }
-
   return { data, body: raw.slice(match[0].length) }
 }
 

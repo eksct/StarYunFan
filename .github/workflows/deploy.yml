@@ -32,8 +32,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Test note data helpers
+      - name: Lint source
+        run: pnpm lint
+
+      - name: Test publishing and reading regressions
         run: pnpm test
 
       - name: Build static site and note pages
         run: pnpm run build
+
+      - name: Verify production files
+        run: node scripts/verify-dist.mjs
