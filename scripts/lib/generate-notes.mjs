@@ -62,10 +62,11 @@ export async function generateNotes(root = projectRoot) {
     catch (error) { throw new Error(`${notePath}: ${error.message}`) }
     if (!isPublishedNote(notePath, parsed.data)) continue
     const { data, body } = parsed
-    notes.push({ path: notePath, title: data.title || path.posix.basename(notePath, '.md'), category: categoryFor(notePath, data),
+    const title = data.title || path.posix.basename(notePath, '.md')
+    notes.push({ path: notePath, title, category: categoryFor(notePath, data),
       ...noteDates(data, dates.get(notePath), toIsoDate((await stat(absolute)).mtime)),
       tags: Array.isArray(data.tags) ? data.tags : (data.tags || '').split(/[,，\s]+/).filter(Boolean),
-      description: data.description || '', body, prepared: prepareNote(body) })
+      description: data.description || '', body, prepared: prepareNote(body, title) })
   }
   const imageInfo = new Map(), referenced = new Set()
   for (const note of notes) {
@@ -82,9 +83,10 @@ export async function generateNotes(root = projectRoot) {
       width = metadata.width; height = metadata.height
       const compressed = await sharp(buffer).webp({ quality: 86, effort: 5 }).toBuffer()
       if (compressed.length < buffer.length * .95) { output = compressed; outputPath = asset + '.webp' }
-    } else if (/\.gif$/i.test(asset)) {
+    } else if (/\.(gif|svg)$/i.test(asset)) {
       const metadata = await sharp(buffer).metadata(); width = metadata.width; height = metadata.pageHeight || metadata.height
     }
+    if (!(width > 0 && height > 0)) throw new Error(`${asset}: 无法确定图片尺寸`)
     imageInfo.set(asset, { outputPath, width, height })
     const destination = path.join(stage, 'postDir', outputPath)
     await mkdir(path.dirname(destination), { recursive: true }); await writeFile(destination, output)

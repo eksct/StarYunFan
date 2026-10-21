@@ -132,6 +132,7 @@ const lightboxSrc = ref('')
 const lightboxAlt = ref('')
 const lightboxCloseRef = ref<HTMLButtonElement>()
 let lightboxTrigger: HTMLElement | null = null
+let savedBodyStyle: { overflow: string; paddingRight: string } | undefined
 
 let observer: IntersectionObserver | null = null
 
@@ -183,6 +184,7 @@ async function load() {
 
     await nextTick()
     if (request !== requestId) return
+    prepareImages()
     observeHeadings()
   } catch (failure) {
     if (request !== requestId || (failure instanceof DOMException && failure.name === 'AbortError')) return
@@ -194,6 +196,21 @@ async function load() {
       if (request === requestId) markReaderReady()
     }
   }
+}
+
+function prepareImages() {
+  contentRef.value?.querySelectorAll<HTMLImageElement>('.prose-img').forEach(image => {
+    const failed = () => {
+      if (image.classList.contains('image-failed')) return
+      image.removeAttribute('role')
+      image.removeAttribute('tabindex')
+      image.removeAttribute('aria-label')
+      image.alt = '图片加载失败：' + image.alt
+      image.classList.add('image-failed')
+    }
+    image.addEventListener('error', failed, { once: true })
+    if (image.complete && !image.naturalWidth) failed()
+  })
 }
 
 function observeHeadings() {
@@ -216,6 +233,13 @@ function scrollTo(id: string) {
 }
 
 async function openLightbox(image: HTMLImageElement) {
+  if (!image.complete || !image.naturalWidth) return
+  if (!savedBodyStyle) {
+    savedBodyStyle = { overflow: document.body.style.overflow, paddingRight: document.body.style.paddingRight }
+    const scrollbar = window.innerWidth - document.documentElement.clientWidth
+    if (scrollbar) document.body.style.paddingRight = `${parseFloat(getComputedStyle(document.body).paddingRight) + scrollbar}px`
+    document.body.style.overflow = 'hidden'
+  }
   lightboxTrigger = image
   lightboxAlt.value = image.alt
   lightboxSrc.value = image.src
@@ -224,6 +248,11 @@ async function openLightbox(image: HTMLImageElement) {
 }
 
 function closeLightbox() {
+  if (savedBodyStyle) {
+    document.body.style.overflow = savedBodyStyle.overflow
+    document.body.style.paddingRight = savedBodyStyle.paddingRight
+    savedBodyStyle = undefined
+  }
   if (!lightboxSrc.value) return
   lightboxSrc.value = ''
   void nextTick(() => lightboxTrigger?.focus())
@@ -234,7 +263,9 @@ async function handleCopy(event: MouseEvent) {
   const link = target.closest<HTMLAnchorElement>('a[data-note-path]')
   if (link && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && event.button === 0) {
     event.preventDefault()
-    void router.push({ name: 'note', params: { path: link.dataset.notePath }, hash: link.dataset.noteAnchor ? '#' + link.dataset.noteAnchor : '' })
+    const query: Record<string, string[]> = {}
+    new URLSearchParams(link.dataset.noteQuery).forEach((value, key) => { (query[key] ??= []).push(value) })
+    void router.push({ name: 'note', params: { path: link.dataset.notePath }, query, hash: link.dataset.noteAnchor ? '#' + link.dataset.noteAnchor : '' })
     return
   }
 
@@ -291,6 +322,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll)
   window.removeEventListener('keydown', onKeydown)
   observer?.disconnect()
+  closeLightbox()
 })
 </script>
 
@@ -346,6 +378,7 @@ onBeforeUnmount(() => {
 .head h1 {
   font-size: var(--fs-2xl);
   max-width: 22ch;
+  overflow-wrap: anywhere;
 }
 
 .meta {
@@ -368,6 +401,8 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 0.15rem;
   max-width: 45%;
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: var(--c-text);
 }
 

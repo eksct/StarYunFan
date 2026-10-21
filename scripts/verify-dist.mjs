@@ -28,6 +28,10 @@ for (const note of notes) {
 }
 for (const [file, page] of pages) {
   for (const [, href] of page.html.matchAll(/href="([^"]+)"/g)) {
+    if (href.startsWith(siteConfig.basePath + 'postDir/')) {
+      const url = new URL(href.replaceAll('&amp;', '&'), siteConfig.siteUrl)
+      assert.ok(files.includes(decodeURIComponent(url.pathname.slice(siteConfig.basePath.length))), `${file}: missing attachment ${href}`)
+    }
     if (!href.startsWith(siteConfig.basePath + 'notes/')) continue
     const url = new URL(href, siteConfig.siteUrl)
     const destination = decodeURIComponent(url.pathname.slice(siteConfig.basePath.length))

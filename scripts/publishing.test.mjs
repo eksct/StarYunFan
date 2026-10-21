@@ -11,7 +11,7 @@ import { parseFrontmatter } from '../src/utils/noteData.mjs'
 import { collectionFor, siteConfig } from '../src/content/siteConfig.mjs'
 import { highlightSnippet, rankEntries, retryableLoader } from '../src/utils/search.mjs'
 
-const makeNote = (file, body = '', title = path.posix.basename(file, '.md')) => ({ path: file, title, body, prepared: prepareNote(body) })
+const makeNote = (file, body = '', title = path.posix.basename(file, '.md')) => ({ path: file, title, body, prepared: prepareNote(body, title) })
 
 test('wiki and Markdown links resolve paths and preserve heading/block anchors without guessing ambiguous titles', () => {
   const a = makeNote('major/A/简介.md', '# 简介\n## 基本用法\n- 内容 ^item')
@@ -32,13 +32,95 @@ test('wiki and Markdown links resolve paths and preserve heading/block anchors w
 })
 
 test('code examples stay literal; image titles and dimensions survive token transformations', () => {
-  const current = makeNote('major/A/note.md', '# 标题\n`[[Missing]] ![[secret.png]]`\n\n```text\n[[Missing]]\n![[secret.png]]\n```\n\n![替代](../image/pic.png "图片标题")\n\n## Same\n## Same')
+  const current = makeNote('major/A/note.md', '# 标题\n`[[Missing]] ![[secret.png]]`\n\n```text\n[[Missing]]\n![[secret.png]]\n```\n\n![替代](../image/pic.png "图片标题")\n\n## Same\n## Same', '标题')
   const result = renderNote(current, [current], ['major/image/pic.png'], new Map([['major/image/pic.png', { outputPath: 'major/image/pic.png.webp', width: 100, height: 50 }]]))
   assert.deepEqual(result.diagnostics, [])
   assert.deepEqual(result.assets, ['major/image/pic.png'])
   assert.match(result.html, /<code>\[\[Missing\]\] !\[\[secret.png\]\]<\/code>/)
   assert.match(result.html, /title="图片标题" width="100" height="50"/)
   assert.deepEqual(result.toc.map(item => item.id), ['same', 'same-1'])
+})
+
+test('BOM and empty frontmatter preserve publication fields and body boundaries', () => {
+  for (const newline of ['\n', '\r\n']) {
+    assert.deepEqual(parseFrontmatter(['\uFEFF---', 'draft: true', '---', 'Body'].join(newline)), { data: { draft: true }, body: 'Body' })
+    assert.deepEqual(parseFrontmatter(['---', '---', 'Body'].join(newline)), { data: {}, body: 'Body' })
+  }
+  assert.deepEqual(parseFrontmatter('---\n---'), { data: {}, body: '' })
+  assert.deepEqual(parseFrontmatter('Text\n---\ndraft: true\n---'), { data: {}, body: 'Text\n---\ndraft: true\n---' })
+  assert.throws(() => parseFrontmatter('\uFEFF---\ndraft: true'), /缺少结束分隔线/)
+})
+
+test('only an actual duplicate page title is hidden; real first sections remain readable', () => {
+  const note = makeNote('major/A/Val and Var.md', '# @val\nVal body\n# @var\nVar body')
+  const result = renderNote(note, [note], [])
+  assert.match(result.html, /<h2 id="val">@val<\/h2>/)
+  assert.deepEqual(result.toc.map(item => item.text), ['@val', '@var'])
+  const duplicate = makeNote('major/A/title.md', '# title\nBody')
+  assert.match(renderNote(duplicate, [duplicate], []).html, /class="article-title-anchor"/)
+  assert.doesNotMatch(result.html, /<h1/)
+})
+
+test('all heading and block IDs stay unique without taking another heading natural ID', () => {
+  const note = makeNote('major/A/note.md', '## Same\n## Same\n## Same-1\n## block-item\n\nText ^item\n\nMore ^item\n\n## article\n## main-content\n\n[[#^item]]\n[[#Same-1]]')
+  const result = renderNote(note, [note], [])
+  assert.deepEqual(result.diagnostics, [])
+  const ids = [...result.html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1])
+  assert.equal(ids.length, new Set(ids).size)
+  assert.ok(!ids.includes('article') && !ids.includes('main-content'))
+  assert.deepEqual(result.toc.slice(0, 3).map(item => item.id), ['same', 'same-2', 'same-1'])
+  assert.match(result.html, /data-note-anchor="block-item-1"/)
+  assert.match(result.html, /data-note-anchor="same-1"/)
+})
+
+test('URL parsing distinguishes outside Markdown, queries, encoded filenames and remote images', () => {
+  const target = makeNote('major/A/C#.md', '## Section')
+  const percent = makeNote('major/A/100%20.md', '# Percent')
+  const current = makeNote('major/A/note.md', '[external](https://example.com/README.md)\n[query](C%23.md?view=1&x=2#Section)\n[percent](100%2520.md)\n![remote](//example.com/pic.png)')
+  const result = renderNote(current, [current, target, percent], [])
+  assert.deepEqual(result.diagnostics, [])
+  assert.match(result.html, /href="https:\/\/example.com\/README.md"/)
+  assert.match(result.html, /C%23.md.html\?view=1&amp;x=2#section/)
+  assert.match(result.html, /data-note-query="view=1&amp;x=2"/)
+  assert.match(result.html, /100%2520.md.html/)
+  assert.match(result.html, /src="\/\/example.com\/pic.png"/)
+})
+
+test('linked local images enter the allowlist, use their output URL and unsupported attachments fail explicitly', () => {
+  const note = makeNote('major/A/note.md', '[download](pic.png?download=1#preview)')
+  const result = renderNote(note, [note], ['major/A/pic.png'], new Map([['major/A/pic.png', { outputPath: 'major/A/pic.png.webp' }]]))
+  assert.deepEqual(result.diagnostics, [])
+  assert.deepEqual(result.assets, ['major/A/pic.png'])
+  assert.match(result.html, /href="\/StarYunFanSite\/postDir\/major\/A\/pic.png.webp\?download=1#preview"/)
+  for (const file of ['missing.png', 'unsupported.pdf']) {
+    const invalid = makeNote('major/A/note.md', `[download](${file})`)
+    assert.match(renderNote(invalid, [invalid], []).diagnostics[0], /不支持或找不到本地附件/)
+  }
+})
+
+test('real generation excludes BOM drafts and publishes linked images and sized SVGs', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'seiga-publish-edge-'))
+  async function put(file, content) { const target = path.join(root, file); await mkdir(path.dirname(target), { recursive: true }); await writeFile(target, content) }
+  try {
+    await mkdir(path.join(root, 'public'), { recursive: true })
+    for (const file of siteConfig.publicFiles) await copyFile(path.join(projectRoot, 'public', file), path.join(root, 'public', file))
+    await put('public/postDir/major/A/draft.md', '\uFEFF---\ndraft: true\n---\n![[secret.png]]')
+    await put('public/postDir/major/A/note.md', '---\n---\n![fixed](fixed.svg)\n![viewbox](viewbox.svg)\n[download](linked.png)')
+    await put('public/postDir/major/A/fixed.svg', '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10"><rect width="20" height="10"/></svg>')
+    await put('public/postDir/major/A/viewbox.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 30"><rect width="40" height="30"/></svg>')
+    const png = await sharp({ create: { width: 16, height: 12, channels: 3, background: '#369' } }).png().toBuffer()
+    await put('public/postDir/major/A/linked.png', png)
+    await put('public/postDir/major/A/secret.png', png)
+    await generateNotes(root)
+    const files = await readdir(path.join(root, '.generated-public'), { recursive: true })
+    assert.ok(!files.some(file => /draft|secret/.test(file)))
+    assert.ok(files.some(file => file.includes('linked.png')))
+    const { notes } = JSON.parse(await readFile(path.join(root, 'src/generated/noteMetadata.json')))
+    assert.equal(notes.length, 1)
+    const data = JSON.parse(await readFile(path.join(root, '.generated-public/note-data/major/A/note.md.json')))
+    assert.match(data.html, /width="20" height="10"/)
+    assert.match(data.html, /width="40" height="30"/)
+  } finally { await rm(root, { recursive: true, force: true }) }
 })
 
 test('frontmatter validates field names, types, real dates and duplicate keys', () => {

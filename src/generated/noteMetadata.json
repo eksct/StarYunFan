@@ -1,6 +1,17 @@
 {
   "notes": [
     {
+      "path": "major/编程语言/JAVA/设计模式.md",
+      "title": "设计模式",
+      "category": "Java",
+      "publishedAt": "2025-09-27",
+      "updatedAt": "2026-10-21",
+      "date": "2026-10-21",
+      "tags": [],
+      "description": "目录 七大原则 * 单一职责原则 * 开闭原则 * 里氏替换原则 * 依赖倒置原则 * 接口隔离原则 * 合成复用原则 * 迪米特法则 创建型设计模式 * 工厂方法 * 抽象工厂 * 建造者 * 单例",
+      "wordCount": 2607
+    },
+    {
       "path": "major/车充平台/充电桩与平台交互逻辑.md",
       "title": "充电桩与平台交互逻辑",
       "category": "车充平台",
@@ -162,8 +173,8 @@
       "updatedAt": "2026-09-20",
       "date": "2026-09-20",
       "tags": [],
-      "description": "由Lombok提供，类似于c++中的auto关键字，自动推断字段类型，不过只能在局部变量使用 示例： 注意：由于val在Lombok中是一个实际的类，所以要导入才可使用。 使用了val的局部变量，会自",
-      "wordCount": 142
+      "description": "@val 由Lombok提供，类似于c++中的auto关键字，自动推断字段类型，不过只能在局部变量使用 示例： 注意：由于val在Lombok中是一个实际的类，所以要导入才可使用。 使用了val的局部",
+      "wordCount": 143
     },
     {
       "path": "major/编程语言/JAVA/JAVASE/00关键字.md",
@@ -327,8 +338,8 @@
       "updatedAt": "2026-09-20",
       "date": "2026-09-20",
       "tags": [],
-      "description": "一、项目目标 开发一个轻量级 单机服务器监控系统，用户可通过浏览器实时查看本机状态（CPU、内存、磁盘、网络等），并支持用户认证、历史数据存储、告警与可视化展示。 项目以 低成本、易安装、轻量化 为目",
-      "wordCount": 1026
+      "description": "📑 单机监控系统（Web 端）项目文档 一、项目目标 开发一个轻量级 单机服务器监控系统，用户可通过浏览器实时查看本机状态（CPU、内存、磁盘、网络等），并支持用户认证、历史数据存储、告警与可视化展",
+      "wordCount": 1038
     },
     {
       "path": "major/初步的学习清单.md",
@@ -338,8 +349,8 @@
       "updatedAt": "2026-09-20",
       "date": "2026-09-20",
       "tags": [],
-      "description": "🎯 目标：强化中间件实战能力，整合进中型项目，迈向后端架构师之路 📅 总时长：约 3~6 个月，按模块分阶段进行 ✅ 模块一：Redis 实战专题（第 1 月） 📌 学习目标： 掌握缓存策略、分",
-      "wordCount": 1063
+      "description": "🧭 Java 后端进阶中间件 & 类库学习计划（Markdown 学习清单） 🎯 目标：强化中间件实战能力，整合进中型项目，迈向后端架构师之路 📅 总时长：约 3~6 个月，按模块分阶段进行 ✅",
+      "wordCount": 1082
     },
     {
       "path": "major/Caffeine本地缓存/缓存策略.md",
@@ -463,17 +474,6 @@
       "wordCount": 767
     },
     {
-      "path": "major/编程语言/JAVA/设计模式.md",
-      "title": "设计模式",
-      "category": "Java",
-      "publishedAt": "2025-09-27",
-      "updatedAt": "2026-09-20",
-      "date": "2026-09-20",
-      "tags": [],
-      "description": "目录 七大原则 * 单一职责原则 * 开闭原则 * 里氏替换原则 * 依赖倒置原则 * 接口隔离原则 * 合成复用原则 * 迪米特法则 创建型设计模式 * 工厂方法 * 抽象工厂 * 建造者 * 单例",
-      "wordCount": 2607
-    },
-    {
       "path": "major/Redis/数据类型.md",
       "title": "数据类型",
       "category": "Redis",
@@ -547,8 +547,8 @@
       "updatedAt": "2026-09-20",
       "date": "2026-09-20",
       "tags": [],
-      "description": "什么是镜像（Image） 镜像 是一种轻量级、可执行的独立软件包，用于打包应用程序及其运行环境。它包含了运行某个程序所需的一切内容，例如： 应用代码 运行时环境 系统工具 系统库 配置文件 镜像是 容",
-      "wordCount": 783
+      "description": "Docker 镜像详解 什么是镜像（Image） 镜像 是一种轻量级、可执行的独立软件包，用于打包应用程序及其运行环境。它包含了运行某个程序所需的一切内容，例如： 应用代码 运行时环境 系统工具 系统",
+      "wordCount": 788
     },
     {
       "path": "major/Docker/Docker命令.md",
@@ -558,8 +558,8 @@
       "updatedAt": "2026-09-20",
       "date": "2026-09-20",
       "tags": [],
-      "description": "功能分类 命令示例 说明 镜像操作 docker images 查看本地镜像 docker pull nginx:[latest:版本] 拉取远程镜像 docker rmi <镜像ID或名字> 删除镜",
-      "wordCount": 444
+      "description": "Docker 最常用命令速查表 功能分类 命令示例 说明 镜像操作 docker images 查看本地镜像 docker pull nginx:[latest:版本] 拉取远程镜像 docker r",
+      "wordCount": 453
     },
     {
       "path": "major/Docker/Docker容器数据卷.md",

@@ -1,12 +1,13 @@
 import { parseDocument } from 'yaml'
 
 export function parseFrontmatter(raw) {
-  const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(raw)
-  if (!match) {
-    if (/^---\r?\n/.test(raw)) throw new Error('Frontmatter 缺少结束分隔线')
-    return { data: {}, body: raw }
-  }
-  const document = parseDocument(match[1], { uniqueKeys: true, maxAliasCount: 0 })
+  raw = raw.replace(/^\uFEFF/, '')
+  const opening = /^---\r?\n/.exec(raw)
+  if (!opening) return { data: {}, body: raw }
+  const remainder = raw.slice(opening[0].length)
+  const closing = /^---[\t ]*(?:\r?\n|$)/m.exec(remainder)
+  if (!closing) throw new Error('Frontmatter 缺少结束分隔线')
+  const document = parseDocument(remainder.slice(0, closing.index), { uniqueKeys: true, maxAliasCount: 0 })
   if (document.errors.length) throw new Error('Frontmatter 格式错误：' + document.errors[0].message)
   const data = document.toJS({ maxAliasCount: 0 }) ?? {}
   if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Frontmatter 必须是字段映射')
@@ -22,7 +23,7 @@ export function parseFrontmatter(raw) {
       if (['date', 'publishedAt', 'updatedAt'].includes(key) && (!/^\d{4}-\d{2}-\d{2}$/.test(value) || !toIsoDate(value))) throw new Error('无效日期：' + value)
     }
   }
-  return { data, body: raw.slice(match[0].length) }
+  return { data, body: remainder.slice(closing.index + closing[0].length) }
 }
 
 export function toIsoDate(value) {

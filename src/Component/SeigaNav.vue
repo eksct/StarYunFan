@@ -196,7 +196,9 @@ async function copyFeed() {
     await navigator.clipboard.writeText(prodFeedUrl)
   } catch {
     // 剪贴板不可用（如非安全上下文）时退化为选中文本提示
+    copied.value = false
     window.prompt('RSS 订阅地址：', prodFeedUrl)
+    return
   }
   copied.value = true
   clearTimeout(copyTimer)
@@ -267,7 +269,9 @@ async function copyPageLink() {
   try {
     await navigator.clipboard.writeText(pageUrl())
   } catch {
+    pageCopied.value = false
     window.prompt('本页链接：', pageUrl())
+    return
   }
   pageCopied.value = true
   clearTimeout(pageCopyTimer)
