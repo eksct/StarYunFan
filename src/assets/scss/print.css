@@ -1,0 +1,32 @@
+@page { margin: 16mm; }
+@media print {
+  :root, :root[data-theme="dark"] {
+    color-scheme: light;
+    --c-bg: #fff !important;
+    --c-bg-elevated: #fff !important;
+    --c-text: #000 !important;
+    --c-text-2: #222 !important;
+    --c-text-3: #444 !important;
+    --c-accent: #222 !important;
+    --c-inline-code: #222 !important;
+    --c-code-bg: #f5f5f5 !important;
+    --c-border: #bbb !important;
+  }
+  *, *::before, *::after { box-shadow: none !important; text-shadow: none !important; animation: none !important; transition: none !important; }
+  body { background: #fff !important; color: #000 !important; padding: 0 !important; overflow: visible !important; }
+  body::before, .voronoi-bg, .nav, .skip-link, .toc, .mobile-toc, .static-toc, .siblings, .static-siblings,
+  .static-tools, .print-button, .back-top, .crumb, .static-note-header nav, .static-note-header > a,
+  .code-copy, .image-dialog, #interaction-status, .site-load-error { display: none !important; }
+  .page, .container, .reading-surface, .static-note { width: 100% !important; max-width: none !important; padding: 0 !important; margin: 0 !important; border: 0 !important; border-radius: 0 !important; }
+  .reader { display: block !important; max-width: none !important; }
+  .prose { max-width: none !important; }
+  .prose pre, .prose pre code { white-space: pre-wrap !important; overflow-wrap: anywhere; }
+  .prose pre, .table-scroll { overflow: visible !important; }
+  .prose table { display: table; width: 100%; table-layout: fixed; overflow: visible; }
+  .prose th, .prose td { overflow-wrap: anywhere; }
+  .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 { break-after: avoid; }
+  .prose img, .prose tr { break-inside: avoid; }
+  .prose img { max-height: 240mm; object-fit: contain; }
+  .prose p { orphans: 3; widows: 3; }
+  .hljs, .hljs * { color: #222 !important; background: transparent !important; }
+}

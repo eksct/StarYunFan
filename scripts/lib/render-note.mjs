@@ -105,7 +105,7 @@ export function prepareNote(body, title = '') {
         }
         token.tag = 'h2'; tokens[index + 2].tag = 'h2'
       }
-      if (['h2', 'h3'].includes(token.tag)) toc.push({ level: Number(token.tag.slice(1)), text, id })
+      if (/^h[2-6]$/.test(token.tag)) toc.push({ level: Number(token.tag.slice(1)), text, id })
     }
     if (token.type === 'inline') {
       const last = token.children?.at(-1)
@@ -195,5 +195,7 @@ export function renderNote(note, notes, assets, imageInfo = new Map()) {
   renderer.rules.table_close = () => '</table></div>\n'
   const html = renderer.render(prepared.tokens, md.options, {})
   const text = prepared.tokens.filter(token => token.type === 'inline').map(token => inlineText(token.children)).join(' ').replace(/\s+/g, ' ').trim()
-  return { html, toc: prepared.toc, text, assets: [...referencedAssets], diagnostics }
+  const searchText = prepared.tokens.map(token => token.type === 'inline' ? inlineText(token.children)
+    : ['fence', 'code_block'].includes(token.type) ? token.content : '').join(' ').replace(/\s+/g, ' ').trim()
+  return { html, toc: prepared.toc, text, searchText, assets: [...referencedAssets], diagnostics }
 }

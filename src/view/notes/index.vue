@@ -7,15 +7,19 @@
       </div>
     </header>
 
-    <!-- 集合内视图 -->
-    <template v-if="activeCollection">
-      <div class="toolbar collection-bar">
-        <div class="row collection-head">
-          <button type="button" class="btn" @click="activeCollection = ''">← 全部集合</button>
-          <h2 class="collection-title">{{ activeCollection }}</h2>
-          <span class="dim">{{ collectionNotes.length }} 篇</span>
-        </div>
+    <div class="toolbar">
+      <div v-if="activeCollection" class="row collection-head">
+        <button type="button" class="btn" @click="activeCollection = ''">← 全部集合</button>
+        <h2 class="collection-title">{{ activeCollection }}</h2>
+        <span class="dim">{{ collectionNotes.length }} 篇</span>
       </div>
+      <input v-model="keyword" type="search" class="input search" aria-label="搜索笔记"
+        :placeholder="activeCollection ? `搜索 ${activeCollection} 内的笔记…` : '搜索标题、分类、标签、正文、代码…'" />
+      <span v-if="keyword.trim()" class="dim" role="status" aria-live="polite">{{ isSearching ? '正在搜索…' : searchError ? searchError : `搜索到 ${filteredResults.length} 篇` }}</span>
+    </div>
+
+    <!-- 集合内视图 -->
+    <template v-if="activeCollection && !keyword.trim()">
 
       <div class="timeline">
         <section v-for="group in folderGroups" :key="group.key" class="group">
@@ -45,20 +49,6 @@
 
     <!-- 集合总览 / 搜索结果 -->
     <template v-else>
-      <div class="toolbar">
-        <input
-          v-model="keyword"
-          type="search"
-          class="input search"
-          aria-label="搜索笔记"
-          placeholder="搜索标题、分类、标签、正文…"
-        />
-
-        <div v-if="keyword.trim()" class="row collection-head">
-          <span class="dim" role="status" aria-live="polite">{{ isSearching ? '正在搜索…' : `搜索到 ${searchResults.length} 篇` }}</span>
-        </div>
-      </div>
-
       <!-- 无关键词：集合卡片 -->
       <div v-if="!keyword.trim()" class="collection-grid">
         <button
@@ -82,7 +72,7 @@
           </div>
 
           <ul class="group-list">
-            <li v-for="note in searchResults" :key="note.path">
+            <li v-for="note in filteredResults" :key="note.path">
               <router-link :to="`/notes/${note.path}`" class="entry">
                 <span class="entry-date">{{ note.date ? note.date.slice(5) : '——' }}</span>
                 <span class="entry-main">
@@ -99,7 +89,7 @@
         </section>
       </div>
 
-      <div v-if="keyword.trim() && !isSearching && !searchResults.length" class="empty" role="status">{{ searchError ? '搜索索引加载失败。' : '没有匹配的笔记，换个关键词试试。' }} <button v-if="searchError" type="button" class="btn" @click="runSearch(keyword)">重试</button></div>
+      <div v-if="keyword.trim() && !isSearching && !filteredResults.length" class="empty" role="status">{{ searchError || '没有匹配的笔记，换个关键词试试。' }} <button v-if="searchError" type="button" class="btn" @click="runSearch(keyword)">重试</button></div>
     </template>
   </div>
 </template>
@@ -109,6 +99,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { highlightSnippet } from '@/utils/search.mjs'
 import { markReaderReady } from '@/utils/pageState'
+import { collectionFor } from '@/content/siteConfig.mjs'
 import {
   getCollections,
   getCollectionNotes,
@@ -143,8 +134,10 @@ const folderGroups = computed(() =>
   activeCollection.value ? groupBySubfolder(collectionNotes.value, activeCollection.value) : [])
 
 const searchResults = ref<SearchResult[]>([])
+const filteredResults = computed(() => activeCollection.value
+  ? searchResults.value.filter(note => collectionFor(note.path) === activeCollection.value) : searchResults.value)
 const isSearching = ref(false)
-const searchError = ref(false)
+const searchError = ref('')
 let searchTimer: ReturnType<typeof setTimeout> | undefined
 let searchRequest = 0
 
@@ -155,22 +148,23 @@ function runSearch(value: string) {
   if (!value.trim()) {
     searchResults.value = []
     isSearching.value = false
-    searchError.value = false
+    searchError.value = ''
     void nextTick(() => { if (request === searchRequest) markReaderReady() })
     return
   }
 
   isSearching.value = true
-  searchError.value = false
+  searchResults.value = []
+  searchError.value = ''
   searchTimer = setTimeout(async () => {
     try {
       const results = await searchNotes(value)
       if (request !== searchRequest) return
       searchResults.value = results
-    } catch {
+    } catch (error) {
       if (request !== searchRequest) return
       searchResults.value = []
-      searchError.value = true
+      searchError.value = error instanceof Error ? error.message : '搜索加载失败，请重试。'
     } finally {
       if (request === searchRequest) {
         isSearching.value = false

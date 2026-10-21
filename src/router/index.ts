@@ -78,5 +78,9 @@ router.beforeEach((to, from) => {
   else if (to.name !== 'note') markReaderReady()
 })
 router.afterEach(to => updatePageMetadata(to))
+router.onError((_error, to) => {
+  markReaderReady()
+  window.dispatchEvent(new CustomEvent('site:navigation-error', { detail: { path: to.fullPath } }))
+})
 
 export default router

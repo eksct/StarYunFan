@@ -16,7 +16,9 @@
 .prose h1,
 .prose h2,
 .prose h3,
-.prose h4 {
+.prose h4,
+.prose h5,
+.prose h6 {
   color: var(--c-text);
   scroll-margin-top: 5.5rem;
 }
@@ -42,6 +44,7 @@
   font-size: var(--fs-base);
   margin-top: 1.4em;
 }
+.prose h5, .prose h6 { font-size: var(--fs-base); margin-top: 1.3em; font-weight: 600; }
 
 .prose h1:first-child,
 .prose h2:first-child {

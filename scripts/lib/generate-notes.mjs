@@ -100,7 +100,7 @@ export async function generateNotes(root = projectRoot) {
     metadata.wordCount = words
     metadata.description ||= result.text.slice(0, 100)
     entries.push(metadata)
-    search.push({ path: note.path, title: note.title, category: note.category, tags: note.tags, text: `${note.title} ${note.category} ${note.tags.join(' ')} ${result.text}` })
+    search.push({ path: note.path, title: note.title, category: note.category, tags: note.tags, text: `${note.title} ${note.category} ${note.tags.join(' ')} ${result.searchText}` })
     const destination = path.join(stage, 'note-data', note.path + '.json')
     await mkdir(path.dirname(destination), { recursive: true }); await writeFile(destination, JSON.stringify({ html: result.html, toc: result.toc }))
   }

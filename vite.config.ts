@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { generateNotes, projectRoot } from './scripts/lib/generate-notes.mjs'
 import { generateStaticNotes } from './scripts/lib/static-pages.mjs'
+import { verifyDist } from './scripts/verify-dist.mjs'
 import { siteConfig } from './src/content/siteConfig.mjs'
 import { escapeHtml } from './src/utils/noteData.mjs'
 
@@ -52,7 +53,12 @@ export default defineConfig(async ({ isPreview }): Promise<UserConfig> => {
           },
         },
         configResolved(config: ResolvedConfig) { outDir = config.build.outDir; building = config.command === 'build' },
-        async closeBundle() { if (building) await generateStaticNotes(projectRoot, outDir) },
+        async closeBundle() {
+          if (building) {
+            await generateStaticNotes(projectRoot, outDir)
+            await verifyDist(projectRoot, outDir)
+          }
+        },
         configurePreviewServer(server) {
           server.middlewares.use(serveNoteData(path.resolve(projectRoot, outDir)))
         },

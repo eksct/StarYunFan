@@ -10,6 +10,50 @@ import { prepareNote, renderNote, resolveNote } from './lib/render-note.mjs'
 import { parseFrontmatter } from '../src/utils/noteData.mjs'
 import { collectionFor, siteConfig } from '../src/content/siteConfig.mjs'
 import { highlightSnippet, rankEntries, retryableLoader } from '../src/utils/search.mjs'
+import { findSiblings, compareNotes } from '../src/utils/noteOrder.mjs'
+import { fetchJson } from '../src/utils/fetchJson.mjs'
+import { createServer } from 'node:http'
+
+test('search includes fenced and indented examples while descriptions and word counts keep prose semantics', () => {
+  const note = makeNote('major/A/note.md', '正文\n\n```java\nSingletonPattern.create();\n```\n\n    indentedExample();\n\n#### Four\n##### Five\n###### Six')
+  const result = renderNote(note, [note], [])
+  assert.doesNotMatch(result.text, /SingletonPattern|indentedExample/)
+  assert.match(result.searchText, /SingletonPattern/)
+  assert.match(result.searchText, /indentedExample/)
+  assert.deepEqual(result.toc.map(item => item.level), [4, 5, 6])
+  assert.equal(rankEntries([{ ...note, tags: [], category: 'A', text: result.searchText }], 'SingletonPattern').length, 1)
+})
+
+test('lesson navigation uses natural filename order and never crosses directories', () => {
+  const notes = ['A/10.md', 'B/03.md', 'A/02.md', 'A/01.md'].map(path => ({ path }))
+  assert.deepEqual([...notes].filter(n => n.path.startsWith('A/')).sort(compareNotes).map(n => n.path), ['A/01.md', 'A/02.md', 'A/10.md'])
+  assert.deepEqual(findSiblings(notes, 'A/02.md'), { prev: notes[3], next: notes[0] })
+  assert.deepEqual(findSiblings(notes, 'B/03.md'), { prev: undefined, next: undefined })
+  assert.deepEqual(findSiblings(notes, 'missing'), {})
+})
+
+test('JSON fetch deadline covers a stalled body, handles cancellation and exposes failures for retry', async () => {
+  const server = createServer((request, response) => {
+    if (request.url === '/stall') { response.writeHead(200, { 'Content-Type': 'application/json' }); response.flushHeaders(); return }
+    if (request.url === '/bad') { response.end('<html>not JSON</html>'); return }
+    if (request.url === '/error') { response.writeHead(503); response.end(); return }
+    response.end('{"ok":true}')
+  })
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+  const base = `http://127.0.0.1:${server.address().port}`
+  try {
+    await assert.rejects(fetchJson(base + '/stall', { timeoutMs: 100 }), { name: 'TimeoutError' })
+    const controller = new AbortController()
+    controller.abort()
+    await assert.rejects(fetchJson(base + '/stall', { signal: controller.signal }), { name: 'AbortError' })
+    await assert.rejects(fetchJson(base + '/bad'), SyntaxError)
+    await assert.rejects(fetchJson(base + '/error'), /503/)
+    assert.deepEqual(await fetchJson(base + '/ok'), { ok: true })
+  } finally {
+    server.closeAllConnections()
+    await new Promise(resolve => server.close(resolve))
+  }
+})
 
 const makeNote = (file, body = '', title = path.posix.basename(file, '.md')) => ({ path: file, title, body, prepared: prepareNote(body, title) })
 

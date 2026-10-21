@@ -3,7 +3,7 @@ export const siteConfig = Object.freeze({
   siteUrl: 'https://eksct.github.io/StarYunFanSite/',
   name: 'Seiga',
   description: 'Seiga 的个人站：笔记归档、学习时间线与项目记录。',
-  publicFiles: ['favicon.ico', 'og-image.jpg', 'note-interactions.js'],
+  publicFiles: ['favicon.ico', 'og-image.jpg', 'note-interactions.js', 'site-recovery.js'],
 })
 
 export const encodePath = value => value.split('/').map(encodeURIComponent).join('/')

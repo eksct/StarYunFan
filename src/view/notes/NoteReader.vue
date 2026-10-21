@@ -8,7 +8,7 @@
     </div>
 
     <div v-else class="reader" :class="{ 'has-toc': toc.length > 1 }">
-      <article class="main">
+      <article class="main reading-surface">
         <nav class="crumb" aria-label="面包屑">
           <router-link :to="notesReturnTo" class="back">← 笔记</router-link>
           <template v-if="note">
@@ -25,11 +25,12 @@
             <span v-if="note.updatedAt !== note.publishedAt" class="dim">更新 {{ formatDate(note.updatedAt) }}</span>
             <span class="dim">{{ note.wordCount }} 字 · 约 {{ readingMinutes(note.wordCount) }} 分钟</span>
           </div>
+          <button type="button" class="btn print-button" @click="printNote">打印 / 保存 PDF</button>
         </header>
 
         <details v-if="toc.length" class="mobile-toc">
           <summary>文章大纲</summary>
-          <nav aria-label="文章大纲"><ul><li v-for="item in toc" :key="item.id"><button type="button" class="toc-link" @click="scrollTo(item.id)">{{ item.text }}</button></li></ul></nav>
+          <nav aria-label="文章大纲"><ul><li v-for="item in toc" :key="item.id" :style="{ paddingInlineStart: `${(item.level - 2) * 0.7}rem` }"><button type="button" class="toc-link" @click="scrollTo(item.id)">{{ item.text }}</button></li></ul></nav>
         </details>
         <div v-if="error" class="empty" role="alert">{{ error }} <button type="button" class="btn" @click="load">重试</button></div>
         <div v-else-if="loading" class="empty" role="status">加载中…</div>
@@ -60,7 +61,7 @@
       <aside v-if="toc.length > 1" class="toc" aria-label="大纲">
         <div class="toc-title">大纲</div>
         <ul>
-          <li v-for="item in toc" :key="item.id" :class="`toc-${item.level}`">
+          <li v-for="item in toc" :key="item.id" :style="{ paddingInlineStart: `${(item.level - 2) * 0.7}rem` }">
             <button type="button" class="toc-link" :class="{ 'is-active': activeId === item.id }" @click="scrollTo(item.id)">
               {{ item.text }}
             </button>
@@ -74,29 +75,11 @@
         </button>
       </transition>
 
-      <!-- 图片灯箱 -->
-      <transition name="fade">
-        <div
-          v-if="lightboxSrc"
-          class="lightbox"
-          role="dialog"
-          aria-modal="true"
-          aria-label="图片预览"
-          tabindex="-1"
-          @click.self="closeLightbox"
-        >
-          <button
-            ref="lightboxCloseRef"
-            type="button"
-            class="lightbox-close"
-            aria-label="关闭图片预览"
-            @click="closeLightbox"
-          >
-            关闭
-          </button>
-          <img :src="lightboxSrc" :alt="lightboxAlt" />
-        </div>
-      </transition>
+      <dialog ref="lightboxRef" class="image-dialog" aria-label="图片预览"
+        @click.self="closeLightbox" @cancel.prevent="closeLightbox" @close="closeLightbox">
+        <button ref="lightboxCloseRef" type="button" @click="closeLightbox">关闭图片预览</button>
+        <img v-if="lightboxSrc" :src="lightboxSrc" :alt="lightboxAlt" />
+      </dialog>
     </div>
   </div>
 </template>
@@ -130,7 +113,9 @@ const contentRef = ref<HTMLElement>()
 const showBackTop = ref(false)
 const lightboxSrc = ref('')
 const lightboxAlt = ref('')
+const lightboxRef = ref<HTMLDialogElement>()
 const lightboxCloseRef = ref<HTMLButtonElement>()
+const printNote = () => window.print()
 let lightboxTrigger: HTMLElement | null = null
 let savedBodyStyle: { overflow: string; paddingRight: string } | undefined
 
@@ -188,7 +173,8 @@ async function load() {
     observeHeadings()
   } catch (failure) {
     if (request !== requestId || (failure instanceof DOMException && failure.name === 'AbortError')) return
-    error.value = '这篇笔记加载失败了，请稍后重试。'
+    error.value = failure instanceof Error && failure.name === 'TimeoutError'
+      ? '加载超时，请重试。' : '这篇笔记加载失败了，请稍后重试。'
   } finally {
     if (request === requestId) {
       loading.value = false
@@ -215,7 +201,7 @@ function prepareImages() {
 
 function observeHeadings() {
   observer?.disconnect()
-  const headings = contentRef.value?.querySelectorAll('h2[id], h3[id]')
+  const headings = contentRef.value?.querySelectorAll('h2[id], h3[id], h4[id], h5[id], h6[id]')
   if (!headings?.length) return
 
   observer = new IntersectionObserver(entries => {
@@ -244,10 +230,12 @@ async function openLightbox(image: HTMLImageElement) {
   lightboxAlt.value = image.alt
   lightboxSrc.value = image.src
   await nextTick()
+  lightboxRef.value?.showModal()
   lightboxCloseRef.value?.focus()
 }
 
 function closeLightbox() {
+  if (lightboxRef.value?.open) lightboxRef.value.close()
   if (savedBodyStyle) {
     document.body.style.overflow = savedBodyStyle.overflow
     document.body.style.paddingRight = savedBodyStyle.paddingRight
@@ -255,7 +243,7 @@ function closeLightbox() {
   }
   if (!lightboxSrc.value) return
   lightboxSrc.value = ''
-  void nextTick(() => lightboxTrigger?.focus())
+  void nextTick(() => { if (lightboxTrigger?.isConnected) lightboxTrigger.focus() })
 }
 
 async function handleCopy(event: MouseEvent) {
@@ -300,27 +288,16 @@ function handleImageKeydown(event: KeyboardEvent) {
   void openLightbox(target)
 }
 
-function onKeydown(event: KeyboardEvent) {
-  if (!lightboxSrc.value) return
-  if (event.key === 'Escape') closeLightbox()
-  if (event.key === 'Tab') {
-    event.preventDefault()
-    lightboxCloseRef.value?.focus()
-  }
-}
-
 watch(() => route.params.path, load, { immediate: true })
 
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true })
-  window.addEventListener('keydown', onKeydown)
 })
 onBeforeUnmount(() => {
   requestId++
   controller?.abort()
   copyTimers.forEach(clearTimeout)
   window.removeEventListener('scroll', onScroll)
-  window.removeEventListener('keydown', onKeydown)
   observer?.disconnect()
   closeLightbox()
 })
@@ -333,6 +310,7 @@ onBeforeUnmount(() => {
   gap: 2.5rem;
 }
 .main { min-width: 0; }
+.print-button { margin-top: 1rem; }
 .mobile-toc { display: none; margin-bottom: 1.5rem; }
 .mobile-toc summary { cursor: pointer; }
 
@@ -376,8 +354,8 @@ onBeforeUnmount(() => {
 }
 
 .head h1 {
-  font-size: var(--fs-2xl);
-  max-width: 22ch;
+  font-size: clamp(1.5rem, 4vw, var(--fs-2xl));
+  max-width: 100%;
   overflow-wrap: anywhere;
 }
 
@@ -421,36 +399,6 @@ onBeforeUnmount(() => {
   transition: color 0.15s ease;
 }
 
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background: rgba(0, 0, 0, 0.72);
-}
-
-.lightbox-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.4rem 0.7rem;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-}
-
-.lightbox img {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
-}
-
 .toc {
   position: sticky;
   top: 5.5rem;
@@ -458,6 +406,10 @@ onBeforeUnmount(() => {
   max-height: calc(100vh - 8rem);
   overflow-y: auto;
   font-size: var(--fs-sm);
+  padding: 1rem;
+  background: var(--c-bg-elevated);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
 }
 
 .toc-title {
@@ -474,9 +426,7 @@ onBeforeUnmount(() => {
   margin: 0;
 }
 
-.toc-3 {
-  padding-left: 0.85rem;
-}
+.mobile-toc ul { list-style: none; padding: 0; }
 
 .toc-link {
   display: block;
@@ -490,6 +440,7 @@ onBeforeUnmount(() => {
   border: 0;
   cursor: pointer;
   line-height: 1.5;
+  overflow-wrap: anywhere;
   transition: color 0.15s ease;
 }
 

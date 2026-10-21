@@ -127,22 +127,11 @@
         </transition>
       </div>
 
-      <button
-        type="button"
-        class="nav-theme"
-        :aria-label="theme === 'dark' ? '切换到浅色' : '切换到深色'"
-        @click="toggleTheme"
-      >
-        <svg v-if="theme === 'dark'" viewBox="0 0 20 20" aria-hidden="true">
-          <circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.4" />
-          <path d="M10 2.4v2M10 15.6v2M2.4 10h2M15.6 10h2M4.6 4.6l1.4 1.4M14 14l1.4 1.4M15.4 4.6L14 6M6 14l-1.4 1.4"
-            fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
-        </svg>
-        <svg v-else viewBox="0 0 20 20" aria-hidden="true">
-          <path d="M15.5 12.6A6.2 6.2 0 0 1 7.4 4.5a6.4 6.4 0 1 0 8.1 8.1Z"
-            fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
-        </svg>
-      </button>
+      <select v-model="themeMode" class="nav-theme theme-select" aria-label="外观主题" @change="setTheme(themeMode)">
+        <option value="system">自动</option>
+        <option value="light">浅色</option>
+        <option value="dark">深色</option>
+      </select>
       <span role="status" aria-live="polite" class="sr-only">{{ copied || pageCopied ? '链接已复制' : '' }}</span>
     </div>
   </header>
@@ -152,7 +141,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { socialLinks } from '@/content/site'
-import { theme, toggleTheme } from '@/composables/useTheme'
+import { themeMode, setTheme } from '@/composables/useTheme'
 import { staticNoteUrl } from '@/utils/noteUrls'
 import { siteConfig } from '@/content/siteConfig.mjs'
 import { pageTitle } from '@/utils/pageState'
@@ -385,6 +374,8 @@ onBeforeUnmount(() => { clearTimeout(copyTimer); clearTimeout(pageCopyTimer) })
   cursor: pointer;
   transition: all 0.15s ease;
 }
+
+.nav-theme.theme-select { width: 4.6rem; padding: 0 .25rem; font: inherit; font-size: .8rem; background: var(--c-bg); }
 
 .nav-theme:hover {
   color: var(--c-accent);

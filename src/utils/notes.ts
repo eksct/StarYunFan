@@ -4,6 +4,8 @@ import { noteFiles, type NoteFile } from '@/generated/noteManifest'
 import { encodeAssetPath } from '@/utils/noteUrls'
 import { collectionFor } from '@/content/siteConfig.mjs'
 import { rankEntries, retryableLoader } from '@/utils/search.mjs'
+import { compareNotes, findSiblings } from '@/utils/noteOrder.mjs'
+import { fetchJson } from '@/utils/fetchJson.mjs'
 
 export { encodeAssetPath, noteUrl } from '@/utils/noteUrls'
 
@@ -40,9 +42,13 @@ export function getTags(): string[] {
 
 interface SearchEntry { path: string; title: string; category: string; tags: string[]; text: string }
 const loadSearchIndex = retryableLoader(async (): Promise<SearchEntry[]> => {
-  const response = await fetch(`${import.meta.env.BASE_URL}search-index.json`)
-  if (!response.ok) throw new Error('搜索索引加载失败')
-  return response.json()
+  const data = await fetchJson(`${import.meta.env.BASE_URL}search-index.json`)
+  if (!Array.isArray(data) || !data.every(item => item && typeof item.path === 'string'
+    && typeof item.title === 'string' && typeof item.category === 'string' && typeof item.text === 'string'
+    && Array.isArray(item.tags) && item.tags.every((tag: unknown) => typeof tag === 'string'))) {
+    throw new Error('搜索索引格式无效，请重试。')
+  }
+  return data
 })
 export type SearchResult = NoteFile & { snippet: string }
 
@@ -155,7 +161,7 @@ export function getCollections(): Collection[] {
 export function getCollectionNotes(name: string): NoteFile[] {
   return published
     .filter(note => collectionOf(note) === name)
-    .sort((left, right) => right.date.localeCompare(left.date) || left.title.localeCompare(right.title, 'zh-CN'))
+    .sort(compareNotes)
 }
 
 export interface FolderGroup {
@@ -182,22 +188,13 @@ export function groupBySubfolder(notes: NoteFile[], collection: string): FolderG
     .map(([key, notesInGroup]) => ({
       key,
       label: key === '根目录' ? collection : key,
-      notes: notesInGroup,
+      notes: [...notesInGroup].sort(compareNotes),
     }))
 }
 
-// 上一篇 / 下一篇：限定在同一文集（category）内，按日期倒序排列
+// 和集合内列表一致：同目录、文件名自然顺序（02 在 10 前）。
 export function getSiblings(path: string): { prev?: NoteFile; next?: NoteFile } {
-  const self = findNote(path)
-  if (!self) return {}
-
-  const siblings = published
-    .filter(note => note.category === self.category)
-    .sort((left, right) => right.date.localeCompare(left.date) || left.title.localeCompare(right.title, 'zh-CN'))
-  const index = siblings.findIndex(note => note.path === path)
-  if (index < 0) return {}
-
-  return { prev: siblings[index - 1], next: siblings[index + 1] }
+  return findSiblings(published, path)
 }
 
 export function readingMinutes(wordCount: number): number {
@@ -211,9 +208,12 @@ export function formatDate(date: string): string {
 export interface TocItem { level: number; text: string; id: string }
 export interface RenderedNote { html: string; toc: TocItem[] }
 export async function loadNoteContent(path: string, signal?: AbortSignal): Promise<RenderedNote> {
-  const response = await fetch(`${import.meta.env.BASE_URL}note-data/${encodeAssetPath(path)}.json`, { signal })
-  if (!response.ok) {
-    throw new Error(`笔记加载失败：${path}`)
+  const data = await fetchJson(`${import.meta.env.BASE_URL}note-data/${encodeAssetPath(path)}.json`, { signal })
+  if (!data || typeof data !== 'object' || !('html' in data) || typeof data.html !== 'string'
+    || !('toc' in data) || !Array.isArray(data.toc) || !data.toc.every(item => item
+      && Number.isInteger(item.level) && item.level >= 2 && item.level <= 6
+      && typeof item.id === 'string' && typeof item.text === 'string')) {
+    throw new Error('笔记数据格式无效，请重试。')
   }
-  return response.json()
+  return { html: data.html, toc: data.toc }
 }
