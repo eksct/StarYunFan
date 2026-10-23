@@ -62,12 +62,16 @@ const latestNotes = getNotes().slice(0, 5)
   display: flex;
   align-items: flex-start;
   gap: 2rem;
-  padding: 3rem 0 1rem;
+  min-height: clamp(320px, 43vh, 440px);
+  padding: 4rem 0 3rem;
 }
+.hero-text { max-width: 34rem; }
+.latest { width: 100%; max-width: 790px; background: color-mix(in srgb, var(--c-bg-elevated) 88%, transparent); }
 
 .avatar {
   width: 6rem;
   height: 6rem;
+  margin-top: .5rem;
   flex-shrink: 0;
   border-radius: 50%;
   object-fit: cover;
@@ -75,7 +79,7 @@ const latestNotes = getNotes().slice(0, 5)
 }
 
 .hero-name {
-  font-size: var(--fs-3xl);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
   margin-bottom: 0.25rem;
 }
 
@@ -149,7 +153,11 @@ const latestNotes = getNotes().slice(0, 5)
     flex-direction: column;
     gap: 1.25rem;
     padding-top: 1.5rem;
+    min-height: auto;
+    align-items: flex-start;
   }
+
+  .avatar { margin-top: 0; }
 
   .hero-name {
     font-size: var(--fs-2xl);

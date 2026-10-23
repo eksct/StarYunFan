@@ -14,7 +14,7 @@
   }
   *, *::before, *::after { box-shadow: none !important; text-shadow: none !important; animation: none !important; transition: none !important; }
   body { background: #fff !important; color: #000 !important; padding: 0 !important; overflow: visible !important; }
-  body::before, .voronoi-bg, .nav, .skip-link, .toc, .mobile-toc, .static-toc, .siblings, .static-siblings,
+  body::before, .glass-scene, .nav, .skip-link, .toc, .mobile-toc, .static-toc, .siblings, .static-siblings,
   .static-tools, .print-button, .back-top, .crumb, .static-note-header nav, .static-note-header > a,
   .code-copy, .image-dialog, #interaction-status, .site-load-error { display: none !important; }
   .page, .container, .reading-surface, .static-note { width: 100% !important; max-width: none !important; padding: 0 !important; margin: 0 !important; border: 0 !important; border-radius: 0 !important; }

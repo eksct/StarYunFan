@@ -15,7 +15,7 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* 固定在底层的基底色：Voronoi 背景会覆盖它，无 JS 时仍有一层柔和底 */
+/* 固定在装饰背景下方的基底色，无 JS 时仍保持页面主题底色 */
 body::before {
   content: "";
   position: fixed;
