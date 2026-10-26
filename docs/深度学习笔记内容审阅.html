@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>深度学习笔记内容审阅 · 18 篇逐项说明</title>
+<style>
+:root{--ink:#23312e;--muted:#5d6d67;--accent:#12634e;--border:#d9e2dd;--paper:#fff;--wash:#f3f6f2;--code:#eef2f0;--sidebar:300px;scroll-behavior:auto}
+*{box-sizing:border-box}body{margin:0;background:var(--wash);color:var(--ink);font:17px/1.85 "Microsoft YaHei","PingFang SC",system-ui,sans-serif}a{color:var(--accent);text-underline-offset:4px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}a:focus-visible,summary:focus-visible{outline:3px solid #b96f16;outline-offset:4px;border-radius:3px}::selection{background:#d2eddf}.skip{position:fixed;top:-100px;left:16px;padding:10px 18px;background:white;z-index:10}.skip:focus{top:8px}.layout{display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);gap:38px;max-width:1320px;margin:auto;padding:30px 32px 70px}.sidebar{position:sticky;top:22px;align-self:start;max-height:calc(100vh - 44px);overflow:auto;padding:0 16px 20px 0;scrollbar-width:thin}.brand{font-size:12px;letter-spacing:.14em;font-weight:700;color:var(--muted);margin:0 0 7px}.overview{font-size:14px;color:var(--muted);margin:0 0 19px}.toc>summary{font-size:18px;font-weight:700;cursor:pointer;margin-bottom:12px}.toc>ol{list-style:none;padding:0;margin:0}.toc>ol>li{border-top:1px solid var(--border);padding:9px 0}.nav-row{display:flex;align-items:flex-start;gap:8px;justify-content:space-between}.nav-row>a{font-size:14px;line-height:1.6;text-decoration:none;color:var(--ink)}.count{flex-shrink:0;font-size:11px;min-width:21px;text-align:center;border-radius:10px;background:#e3ece6;color:var(--accent)}.issue-links>summary{font-size:12px;color:var(--muted);cursor:pointer;width:fit-content;margin-top:3px}.issue-links ul{list-style:none;padding:0 0 0 10px;border-left:2px solid var(--border);margin:8px 0}.issue-links li{line-height:1.55;margin:8px 0}.issue-links a{font-size:13px;text-decoration:none}.side-footer{font-size:13px;margin-top:20px}main{min-width:0;background:var(--paper);border:1px solid var(--border);border-radius:12px;padding:38px 45px 52px;box-shadow:0 6px 30px #19382b05}.document-meta{font-size:13px;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:25px}.document-meta a{margin-left:12px}h1{font-size:32px;line-height:1.4;letter-spacing:.01em;margin:0 0 23px;font-weight:750}h2{font-size:23px;line-height:1.55;margin:58px -15px 22px;padding:14px 15px;background:#f0f6f2;border-left:4px solid var(--accent);border-radius:0 6px 6px 0;scroll-margin-top:24px}h3{font-size:19px;line-height:1.65;margin:36px 0 16px;padding-top:22px;border-top:1px solid var(--border);scroll-margin-top:20px;color:#163f32}h2+p{font-size:14px;color:var(--muted)}p{margin:15px 0;overflow-wrap:anywhere}strong{font-weight:700}code{font-family:"Cascadia Code",Consolas,"Microsoft YaHei",monospace;font-size:.89em;padding:.14em .34em;border-radius:4px;background:var(--code);overflow-wrap:anywhere}pre{padding:19px 20px;background:#f1f4f2;border:1px solid var(--border);border-radius:7px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;font-size:14px}pre code{padding:0;background:none;font-size:inherit}blockquote{border-left:3px solid var(--border);padding-left:18px;margin:20px 0;color:var(--muted)}table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.75;margin:24px 0}th,td{text-align:left;vertical-align:top;border:1px solid var(--border);padding:12px 14px;overflow-wrap:anywhere}th{background:#edf3ee}td:first-child{width:24%;font-weight:600}ul,ol{padding-left:24px}h2:target,h3:target{background:#fff4d6;outline:2px solid #edcd7f;outline-offset:6px}.priority{margin-top:28px;padding:18px 20px;border:1px solid var(--border);border-radius:8px;background:#f9fbf8}.priority h2{font-size:17px;margin:0 0 10px;padding:0;border:0;background:none}.priority ul{display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;list-style:none;padding:0;margin:0}.priority a{font-size:14px;line-height:1.65;text-decoration:none}.top-link{display:block;text-align:right;margin-top:45px;font-size:14px}
+@media(min-width:1100px){:root{--sidebar:305px}.layout{gap:44px}main{padding:42px 52px 60px}}
+@media(max-width:850px){.layout{display:block;padding:18px 16px 36px}.sidebar{position:static;max-height:none;padding:0;margin-bottom:18px}.brand{margin-bottom:3px}.overview{margin-bottom:10px}.toc{background:white;border:1px solid var(--border);border-radius:8px;padding:12px 16px}.toc>summary{margin-bottom:0;font-size:16px}.toc[open]>summary{margin-bottom:12px}.side-footer{display:none}main{padding:26px 25px 36px}.priority ul{grid-template-columns:1fr}}
+@media(max-width:480px){body{font-size:16px;line-height:1.85}.layout{padding:14px 10px 24px}main{padding:24px 20px 32px}h1{font-size:27px}h2{font-size:21px;margin:44px -8px 20px;padding:12px 10px}h3{font-size:18px;margin-top:30px}pre{padding:14px 12px;font-size:13px}.document-meta{font-size:12px}.document-meta a{display:block;margin-left:0}th,td{padding:9px 10px}table{font-size:14px}td:first-child{width:29%}.priority{padding:16px}}
+@media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}}
+@media print{body{font:11pt/1.65 "Microsoft YaHei",sans-serif;background:white}.layout{display:block;padding:0;max-width:none}.sidebar,.skip,.priority,.top-link,.document-meta a{display:none}main{border:0;box-shadow:none;padding:0}h1{font-size:24pt}h2{font-size:17pt;margin:25pt 0 12pt;break-after:avoid}h3{font-size:13pt;break-after:avoid;margin-top:18pt}p{orphans:3;widows:3}pre{break-inside:avoid}a{color:inherit;text-decoration:none}h2:target,h3:target{outline:0;background:none}@page{size:A4;margin:18mm}}
+</style></head><body><a href="#main" class="skip">跳到正文</a><div class="layout"><aside class="sidebar" aria-label="阅读导航"><p class="brand">学习笔记 · 内容审阅</p><p class="overview">18 篇笔记 / 82 项审阅记录<br>原句、解释与正确理解逐项对照</p><details class="toc" open><summary>按笔记定位</summary><ol><li><div class="nav-row"><a href="#note-01">01 线性回归</a><span class="count" aria-label="6 条记录">6</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-01-1">01.1 “倒置”在这里指转置 公式没有错</a></li><li><a href="#issue-01-2">01.2 真实答案不是模型的预测</a></li><li><a href="#issue-01-3">01.3 全量遍历是在为引出小批量方法作铺垫</a></li><li><a href="#issue-01-4">01.4 正规方程中的逆矩阵并不总是存在</a></li><li><a href="#issue-01-5">01.5 SGD 不保证每一步都下降或最终到达全局谷底</a></li><li><a href="#issue-01-6">01.6 正态噪声假设不是对所有预测误差的事实描述</a></li></ul></details></li><li><div class="nav-row"><a href="#note-02">02 Softmax 回归</a><span class="count" aria-label="4 条记录">4</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-02-1">02.1 教材切换了权重矩阵的排法 笔记需要保留这项说明</a></li><li><a href="#issue-02-2">02.2 类别编号可以作为标签使用</a></li><li><a href="#issue-02-3">02.3 只看真实类别概率需要硬标签条件</a></li><li><a href="#issue-02-4">02.4 交叉熵不是仅在猜错时付出的费用</a></li></ul></details></li><li><div class="nav-row"><a href="#note-03">03 多层感知机</a><span class="count" aria-label="2 条记录">2</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-03-1">03.1 教材确实用单调性解释线性模型的限制</a></li><li><a href="#issue-03-2">03.2 不是每个线性层后都必须再加激活函数</a></li></ul></details></li><li><div class="nav-row"><a href="#note-04">04 多层感知机的从零开始实现</a><span class="count" aria-label="3 条记录">3</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-04-1">04.1 示例混入了 Python 不接受的注释和标点</a></li><li><a href="#issue-04-2">04.2 第二层偏置实际全为零</a></li><li><a href="#issue-04-3">04.3 训练函数的参数不匹配所引用的 D2L 写法</a></li></ul></details></li><li><div class="nav-row"><a href="#note-05">05 多层感知机的简洁实现</a><span class="count" aria-label="2 条记录">2</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-05-1">05.1 两个是总层数而不是新增层数</a></li><li><a href="#issue-05-2">05.2 片段依赖其他地方定义的变量</a></li></ul></details></li><li><div class="nav-row"><a href="#note-06">06 模型选择 欠拟合和过拟合</a><span class="count" aria-label="3 条记录">3</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-06-1">06.1 欠拟合的简短定义来自教材 须结合前文的高误差背景</a></li><li><a href="#issue-06-2">06.2 过拟合的解释应结合笔记已有的泛化上下文理解</a></li><li><a href="#issue-06-3">06.3 时间顺序与群组划分属于 K 折交叉验证的扩展实践知识</a></li></ul></details></li><li><div class="nav-row"><a href="#note-07">07 权重衰减</a><span class="count" aria-label="2 条记录">2</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-07-1">07.1 权重衰减和 L2 正则化不是在所有优化器里都等价</a></li><li><a href="#issue-07-2">07.2 权重小只是某种复杂度约束而不是通用判据</a></li></ul></details></li><li><div class="nav-row"><a href="#note-08">08 暂退法 Dropout</a><span class="count" aria-label="2 条记录">2</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-08-1">08.1 被置零的是激活值 不代表相关参数一定不更新</a></li><li><a href="#issue-08-2">08.2 除以保留概率保证的是局部期望</a></li></ul></details></li><li><div class="nav-row"><a href="#note-09">09 数值稳定性和模型初始化</a><span class="count" aria-label="6 条记录">6</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-09-1">09.1 不同矩阵连乘不能只看各自的特征值</a></li><li><a href="#issue-09-2">09.2 数值很大不等于已经发生浮点溢出</a></li><li><a href="#issue-09-3">09.3 ReLU 和 Xavier 都不是任意深度的稳定保证</a></li><li><a href="#issue-09-4">09.4 打破对称性不等于所有参数都必须随机</a></li><li><a href="#issue-09-5">09.5 Kaiming 不是把 Xavier 的方差一律乘以二</a></li><li><a href="#issue-09-6">09.6 ReLU 恰好把方差减半的说法不够准确</a></li></ul></details></li><li><div class="nav-row"><a href="#note-10">10 环境和分布偏移</a><span class="count" aria-label="3 条记录">3</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-10-1">10.1 协变量偏移还要求输入与答案的条件关系不变</a></li><li><a href="#issue-10-2">10.2 概念偏移不总是换任务 也不总要从零训练</a></li><li><a href="#issue-10-3">10.3 混淆矩阵估计标签比例需要验证集和可解条件</a></li></ul></details></li><li><div class="nav-row"><a href="#note-11">11 深度学习计算</a><span class="count" aria-label="9 条记录">9</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-11-1">11.1 层不一定有可学习参数 自动求导也不由 Module 单独提供</a></li><li><a href="#issue-11-2">11.2 Sequential 可以装入内部带残差的模块</a></li><li><a href="#issue-11-3">11.3 退化问题不能简单等同于梯度消失</a></li><li><a href="#issue-11-4">11.4 残差结构不保证加层后永远不会变差</a></li><li><a href="#issue-11-5">11.5 Inception 的时间早于 ResNet</a></li><li><a href="#issue-11-6">11.6 state_dict 不只包含 float32 参数</a></li><li><a href="#issue-11-7">11.7 MyLinear 的前向计算把权重从计算图中分离了</a></li><li><a href="#issue-11-8">11.8 注册为 buffer 不会自动取消张量求梯度</a></li><li><a href="#issue-11-9">11.9 有几处文本不能直接作为 Python 执行</a></li></ul></details></li><li><div class="nav-row"><a href="#note-12">12 卷积神经网络</a><span class="count" aria-label="7 条记录">7</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-12-1">12.1 卷积的平移等变不等于整个网络平移不变</a></li><li><a href="#issue-12-2">12.2 共享的是卷积权重 不是图片本身的参数</a></li><li><a href="#issue-12-3">12.3 池化步幅没有不能大于窗口的普遍限制</a></li><li><a href="#issue-12-4">12.4 输出尺寸公式是一个特例 要说明 padding 的含义</a></li><li><a href="#issue-12-5">12.5 卷积核数量和参数数量混在了一起</a></li><li><a href="#issue-12-6">12.6 池化没有可学习权重 不等于不参与训练</a></li><li><a href="#issue-12-7">12.7 Conv2d 示例用了非 Python 的注释</a></li></ul></details></li><li><div class="nav-row"><a href="#note-13">13 现代卷积神经网络</a><span class="count" aria-label="9 条记录">9</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-13-1">13.1 AlexNet 推广了 ReLU 不是发明了 ReLU</a></li><li><a href="#issue-13-2">13.2 裁剪尺寸要区分原论文和复现版本</a></li><li><a href="#issue-13-3">13.3 两个全连接层的参数本身不是将近 1 GB</a></li><li><a href="#issue-13-4">13.4 VGG 的每个块不一定都把通道翻倍</a></li><li><a href="#issue-13-5">13.5 NiN 的非线性不能只归因于 1×1 卷积</a></li><li><a href="#issue-13-6">13.6 GoogLeNet 同时使用深度和多分支结构</a></li><li><a href="#issue-13-7">13.7 BatchNorm 除以尺度 不会把每层最终输出锁死为标准分布</a></li><li><a href="#issue-13-8">13.8 DenseNet 的直接密集连接主要在同一个稠密块内</a></li><li><a href="#issue-13-9">13.9 DenseNet 不具有比所有普通网络都更高的计算复杂度</a></li></ul></details></li><li><div class="nav-row"><a href="#note-14">14 循环神经网络</a><span class="count" aria-label="10 条记录">10</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-14-1">14.1 普通 RNN 传递的是隐藏状态 不一定反馈预测值</a></li><li><a href="#issue-14-2">14.2 固定历史窗口是建模选择 不是说更早历史本来就没用</a></li><li><a href="#issue-14-3">14.3 知道准确概率分布不代表能准确知道未来的每个结果</a></li><li><a href="#issue-14-4">14.4 时间先后和统计预测不等于已经证明因果</a></li><li><a href="#issue-14-5">14.5 多步预测不必变直线 误差也不总按指数增长</a></li><li><a href="#issue-14-6">14.6 28 个字符和未知词编号属于特定教材实现</a></li><li><a href="#issue-14-7">14.7 n 元语法看的是前 n−1 个词 齐普夫定律也不是统计动作</a></li><li><a href="#issue-14-8">14.8 X 是输入 Y 才是标签</a></li><li><a href="#issue-14-9">14.9 时间维度和隐藏状态形状取决于接口约定</a></li><li><a href="#issue-14-10">14.10 完整 BPTT 不意味着一定梯度爆炸</a></li></ul></details></li><li><div class="nav-row"><a href="#note-15">15 现代循环神经网络</a><span class="count" aria-label="5 条记录">5</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-15-1">15.1 更新门为 0.3 时 原文的百分比写反了</a></li><li><a href="#issue-15-2">15.2 重置门关闭 不代表最终状态已经完全清空</a></li><li><a href="#issue-15-3">15.3 单位矩阵不是全一矩阵</a></li><li><a href="#issue-15-4">15.4 细胞状态是随样本变化的状态 不是可学习参数本身</a></li><li><a href="#issue-15-5">15.5 细胞状态更新后还需要生成隐藏状态</a></li></ul></details></li><li><div class="nav-row"><a href="#note-16">16 附加芝士</a><span class="count" aria-label="6 条记录">6</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-16-1">16.1 LayerNorm 归一化哪些轴需要看配置</a></li><li><a href="#issue-16-2">16.2 RMSNorm 的加速比例不是固定常数</a></li><li><a href="#issue-16-3">16.3 研究证据不能写成归一化唯一有效机制的定论</a></li><li><a href="#issue-16-4">16.4 LLaMA 的模型开放程度和商业条件要按版本区分</a></li><li><a href="#issue-16-5">16.5 SVM 小节只有名字 没有知识内容</a></li><li><a href="#issue-16-6">16.6 利普希茨常数和雅可比的关系要注明范围</a></li></ul></details></li><li><div class="nav-row"><a href="#note-17">17 How Does Batch Normalization Help Optimization</a><span class="count" aria-label="1 条记录">1</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-17-1">17.1 目前是阅读书签 还没有可复用的论文结论</a></li></ul></details></li><li><div class="nav-row"><a href="#note-18">18 超参数调优</a><span class="count" aria-label="2 条记录">2</span></div><details class="issue-links"><summary>展开问题</summary><ul><li><a href="#issue-18-1">18.1 指标要区分单个检测框和整套检测结果</a></li><li><a href="#issue-18-2">18.2 调参需要独立验证和可比较的测量条件</a></li></ul></details></li><li><div class="nav-row"><a href="#glossary">遇到术语时查这里</a></div></li><li><div class="nav-row"><a href="#preservation">格式调整与内容保留</a></div></li></ol></details><div class="side-footer"><a href="#glossary">术语速查</a> · <a href="#top">回到开头</a><br>也可用浏览器查找编号或关键词</div></aside><main id="main"><div class="document-meta">2026.10.26 · 本地审阅文档<a href="%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E5%86%85%E5%AE%B9%E5%AE%A1%E9%98%85.md">查看 Markdown 原稿</a></div><h1 id="top">深度学习笔记内容审阅</h1>
+<p>审阅日期：2026 年 10 月 26 日。范围：博客中本次导入的 18 篇深度学习笔记。</p>
+<p>共整理 82 项审阅记录。这个数字包含确定错误、需要限定的说法、术语建议、代码与版本问题、尚未写完整的内容，<strong>不表示有 82 个确定的知识错误</strong>。按下文编号查找，可以直接定位到一条记录。</p>
+<p>这份文档帮助你区分三种情况：确实需要纠正的知识或代码错误、需要补充适用条件的简化说法，以及还没有写完整的学习记录。它不是要求你重写全部笔记。原文中合理的直觉可以保留，但不能让直觉替代公式的条件。</p>
+<p><strong>首次排版时没有把内容修正写回笔记。</strong> 当时只调整标题、段落、列表、引用和代码块，保留原有内容与日期。后续按你的明确要求，已单独修正《线性回归》的平方误差公式，以及《多层感知机的从零开始实现》《多层感知机的简洁实现》中的相关问题，并同步更新这三篇的原始学习目录副本。具体状态在对应条目注明；“原句”保留审阅时的文字，不能据此认为当前笔记仍有同样问题。</p>
+<p>每个问题都给出原句、问题所在和可以直接采用的正确理解。代码问题依据 Python 语法与 PyTorch、D2L 的接口说明检查，没有进行完整的模型训练。涉及具体实现时，以文中说明的接口和你实际安装的版本为准。</p>
+<p><strong>建议先读这八处：</strong> 15.1 更新门比例、15.3 单位矩阵、11.7 前向计算中的 <code>.data</code>、11.4 残差连接的保证范围、11.8 buffer 与梯度、09.5 Kaiming 初始化、02.1 Softmax 矩阵维度、14.1 RNN 隐藏状态。它们会直接影响你理解模型或编写训练代码。每条先读“原句”，再读解释，最后用“正确理解”重新建立概念；不必一次记住所有 API 细节。</p>
+<p>读公式时记住：<code>x</code> 是输入，<code>y</code> 是真实答案，<code>ŷ</code> 是预测；<code>w</code>、<code>b</code> 是模型要学习的权重和偏置。<code>N</code> 通常表示一批样本的数量，<code>D</code> 表示每个样本的特征数，<code>C</code> 表示类别或通道数。矩阵形状中的 <code>×</code> 表示行数与列数，不是说要把两个维度相乘成一个数。</p>
+<h2 id="note-01">01 线性回归</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92.md">线性回归</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_linear-networks/linear-regression.html">D2L 线性回归</a>。</p>
+<h3 id="issue-01-1">01.1 “倒置”在这里指转置 公式没有错</h3>
+<p><strong>判断：术语建议，不是知识或计算错误。</strong> 原句：<code>ŷ = w^T x + b (w的倒置)</code>。</p>
+<p>公式中的 <code>w^T</code> 已明确表示转置，括号里的“倒置”可以结合这个符号理解为行列交换。原文没有说要计算逆矩阵，不能仅凭“倒置”这个用词认定作者混淆了转置与求逆。</p>
+<p><strong>术语建议：</strong> 正式的数学名称是“转置”。写成“w 的转置”更便于与教材术语对应，但原句的公式和所表达的转置含义可以保留。</p>
+<h3 id="issue-01-2">01.2 真实答案不是模型的预测</h3>
+<p><strong>后续修订：</strong> 本条所述平方误差公式已按要求单独修正为 <code>l⁽ⁱ⁾(w, b) = ½(ŷ⁽ⁱ⁾ − y⁽ⁱ⁾)²</code>，同步更新博客副本与原始学习目录中的《线性回归》。下面保留审阅时的原句与解释；这是初次排版完成后的内容修订。</p>
+<p><strong>判断：术语与公式容易误导。</strong> 原句：“预测的结果称为目标”；平方误差中又把真实值写成带有 <code>w、b</code> 的 <code>y</code>。</p>
+<p>监督学习中的目标或标签是数据里已有的真实答案 <code>y</code>，模型给出的结果是预测 <code>ŷ</code>。通常变化的是预测，标签不会随着模型参数一起变化。</p>
+<p><strong>正确理解：</strong> 一套房的成交价是标签，模型算出的估价是预测。单样本平方损失可以写成 <code>½(ŷ − y)²</code>，其中 <code>ŷ = wᵀx + b</code>。</p>
+<h3 id="issue-01-3">01.3 全量遍历是在为引出小批量方法作铺垫</h3>
+<p><strong>判断：上下文衔接建议，不应判为确定的概念混用。</strong> 原文相邻两句：“每一次更新参数之前，我们必须遍历整个数据集”；“通常会在每次需要计算更新的时候随机抽取一小批样本，这种变体叫做小批量随机梯度下降”。</p>
+<p>结合后一句，前一句可以理解为介绍全批量梯度下降的计算开销，随后引出只抽取一小批样本的变体。不能只截取前一句，就认定作者把小批量更新理解成每次必须遍历全部数据。两句之间没有明确的转折，而且都位于“小批量随机梯度下降”标题下，容易让读者暂时误判前一句的适用对象。</p>
+<p><strong>衔接建议：</strong> 可表述为“全批量梯度下降每次更新参数都要使用整个数据集，计算开销较大。为减少单次更新的开销，可以随机抽取一小批样本来估计梯度，这种变体叫做小批量随机梯度下降。”这是将已有上下文连接得更明确，不是纠正已确认的知识错误。本次未据此改写笔记正文。</p>
+<h3 id="issue-01-4">01.4 正规方程中的逆矩阵并不总是存在</h3>
+<p><strong>判断：缺少适用条件。</strong> 原句：<code>w* = (X^T X)⁻¹ X^T y</code>；后面又说参数“只能是用随机梯度下降一遍一遍算”。</p>
+<p>这个逆矩阵公式要求 <code>XᵀX</code> 可逆。如果特征重复或线性相关，逆可能不存在；即使存在，实际计算也常用更稳定的最小二乘求解方法。单独的偏置还需要加入全为 1 的特征列，或作相应的数据中心化处理。</p>
+<p><strong>正确理解：</strong> 线性回归可以用最小二乘求解，也可以迭代优化，不是只能用 SGD。无唯一解时可使用伪逆、QR 或 SVD 等方法；这些方法的目的都是处理线性方程，而不是让不存在的逆矩阵强行存在。</p>
+<h3 id="issue-01-5">01.5 SGD 不保证每一步都下降或最终到达全局谷底</h3>
+<p><strong>判断：表达过满。</strong> 原句：“SGD会不断向梯度的负方向前进，直到谷底”。</p>
+<p>SGD 使用的是小批次对整体梯度的估计，有随机波动。对于一般深度网络，不能承诺每一步都降低整体损失，也不能承诺到达全局最优。</p>
+<p><strong>正确理解：</strong> 它尝试沿着估计的下降方向更新参数；是否稳定收敛还受学习率、数据、初始化和问题本身影响。对满足特定条件的凸问题，可以讨论更严格的收敛结论。</p>
+<h3 id="issue-01-6">01.6 正态噪声假设不是对所有预测误差的事实描述</h3>
+<p><strong>判断：缺少条件。</strong> 原句：“噪声即误差，通常一个模型的真实值跟预测值误差很小，很小的概率误差会大”。</p>
+<p>观测噪声是数据生成过程中的随机扰动；当前模型的残差还可能包含模型没学好、模型形式不合适等影响。残差不必天然是小的，也不必服从正态分布。</p>
+<p><strong>正确理解：</strong> 在线性关系加独立、零均值、等方差高斯噪声的假设下，最大化似然与最小化平方误差对应。这是选择损失函数的一种推导，不能据此断言实际数据一定满足该假设。</p>
+<h2 id="note-02">02 Softmax 回归</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/softmax%E5%9B%9E%E5%BD%92.md">softmax回归</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_linear-networks/softmax-regression.html">D2L Softmax 回归</a>、<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html">PyTorch CrossEntropyLoss</a>。</p>
+<h3 id="issue-02-1">02.1 教材切换了权重矩阵的排法 笔记需要保留这项说明</h3>
+<p><strong>判断：矩阵形状的说明缺失，不能直接判为作者理解错误。</strong> 笔记先给出 <code>O = Wx + b</code> 和 <code>W = 类别数 × 特征数</code>，又给出批量公式 <code>O = XW + b</code>。核对 D2L 原文后可确认：教材自身在两处采用了不同形状的 W，并在批量公式前重新说明了形状。</p>
+<p>D2L 的 3.4.2 节用 4 个特征、3 个类别举例，写 <code>o = Wx + b</code>，明确 W 是 <code>3×4</code>。3.4.5 节改用批量数据，明确 X 是“样本数×特征数”、W 是“特征数×类别数”，再写 <code>O = XW + b</code>。因此两处公式可以分别成立，关键是后一个 W 的行列排法已经改变。笔记省略了后一次形状说明，读者容易以为还沿用前一个 W。</p>
+<p><strong>易懂的记法：</strong> “单样本公式里，W 按类别数×特征数排列；批量公式采用教材接下来的约定，将 W 按特征数×类别数排列，所以写 O = XW + b。”如果想始终沿用同一个“类别数×特征数”的 W，批量公式就写 <code>O = XWᵀ + b</code>。</p>
+<p><strong>符号补充：</strong> 原文 o、O 表示 Softmax 之前的得分，ŷ、Ŷ 表示 Softmax 之后的预测概率。帽子表示预测值，不改变矩阵的行列数；转置则用上标 T 或 <code>ᵀ</code> 表示。这里的形状切换不能通过给 O 加帽子来解决。</p>
+<h3 id="issue-02-2">02.2 类别编号可以作为标签使用</h3>
+<p><strong>判断：容易误解。</strong> 原句：“为什么要这样设计，而不是直接用 1、2、3 数字？”随后说数字会让模型误以为类别有大小关系。</p>
+<p>把类别编号直接当成连续数值做回归，确实可能引入错误的大小关系。但把编号交给分类损失，让它表示“第几个类别”，不会自动引入这样的大小关系。</p>
+<p><strong>正确理解：</strong> <code>CrossEntropyLoss</code> 可以接收类别索引标签，通常无需手动把标签转成独热向量。比如 0 表示猫、1 表示狗、2 表示鸡，损失函数把 1 当成“选择狗的那一列”，不是把狗理解成猫的两倍。</p>
+<h3 id="issue-02-3">02.3 只看真实类别概率需要硬标签条件</h3>
+<p><strong>判断：需要补条件。</strong> 原句：“它只关注真实类别对应的那个预测概率”。</p>
+<p>这对单标签分类的独热目标成立，损失为真实类别预测概率的负对数。但标签平滑、知识蒸馏和其他软标签任务中，目标分布可能有多个非零分量。</p>
+<p><strong>正确理解：</strong> 一般交叉熵是对各类别的 <code>−目标概率 × log(预测概率)</code> 求和。独热标签把这项求和简化成一个类别；它不是交叉熵的唯一形式。</p>
+<h3 id="issue-02-4">02.4 交叉熵不是仅在猜错时付出的费用</h3>
+<p><strong>判断：定义不准确。</strong> 原句：“交叉熵的大小表示猜测值在错误情况下需要支付的费用（比特）”。</p>
+<p>即使预测类别正确，只要给真实类别的概率不是 1，交叉熵通常仍大于 0。它可理解为按真实分布平均、使用预测分布编码所需的长度；这个解释还取决于对数的底。</p>
+<p><strong>正确理解：</strong> 真实类别概率从 0.6 提高到 0.9，两次都可能判对，但后者损失更小。用以 2 为底的对数时单位是比特；深度学习库通常用自然对数，此时单位是 nat。固定真实分布时，交叉熵等于真实分布的熵加 KL 散度。</p>
+<h2 id="note-03">03 多层感知机</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA.md">多层感知机</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/mlp.html">D2L 多层感知机</a>。</p>
+<h3 id="issue-03-1">03.1 教材确实用单调性解释线性模型的限制</h3>
+<p><strong>判断：原笔记符合教材此处的说明，可保留；以下属于可选补充。</strong> 笔记原句：“它认为输入和输出之间是‘单调’的关系，也就是说，一个特征变大，输出一定会跟着变大（或变小），而且变化的速度是恒定的。”不能只截取“单调”两个字，就认定笔记把线性模型的限制仅仅理解为单调性。</p>
+<p>D2L《多层感知机》4.1.1.1 节明确写道：“例如，线性意味着单调假设：任何特征的增大都会导致模型输出的增大（如果对应的权重为正），或者导致模型输出的减小（如果对应的权重为负）。”随后用体温与死亡率的例子说明限制。笔记沿用了这一解释方向。</p>
+<p><strong>可选补充：</strong> 可以加上“其他特征保持不变时”，让一个特征变化的讨论更明确。教材后面还说明，可以把“体温与 37 摄氏度的距离”作为新特征，帮助线性模型处理原始体温对应的非单调关系。这是特征预处理的补充，与前面的单调性说明并不矛盾，也不构成原笔记的知识错误。</p>
+<h3 id="issue-03-2">03.2 不是每个线性层后都必须再加激活函数</h3>
+<p><strong>判断：表达过满。</strong> 原句：“必须在每一层的线性变换之后，加一个非线性函数”；“ReLU……不容易出现‘梯度消失’”。</p>
+<p>隐藏层通常需要非线性，才能避免连续仿射变换折叠成一个仿射变换，但输出层是否加激活取决于任务。回归输出可以不加；PyTorch 分类损失通常直接接收 logits，也不需要先做 Softmax。</p>
+<p><strong>正确理解：</strong> ReLU 的正半轴导数是 1，减轻了某类饱和问题，但它不保证整网梯度正常。负半轴的导数为 0，可能出现神经元长期不激活；其他权重矩阵也仍会影响梯度大小。</p>
+<h2 id="note-04">04 多层感知机的从零开始实现</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA%E7%9A%84%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AE%9E%E7%8E%B0.md">多层感知机的从零开始实现</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/mlp-scratch.html">D2L 对应实现</a>。</p>
+<h3 id="issue-04-1">04.1 示例混入了 Python 不接受的注释和标点</h3>
+<p><strong>状态：已修正，已同步原始笔记与博客副本。</strong> 对照 D2L 的 PyTorch 版本，修正了注释、标点、代码缩进与代码块排版。较长的解释文字放在代码块外，简短注释使用 Python 的 <code>#</code>。</p>
+<p><strong>审阅时的问题：确定的语法问题。</strong> 原句包括 <code>from torch import nn //神经网络模块</code>、<code>num_epochs, lr = 10，0.1</code>，以及代码中的 <code>&lt;!--说明--&gt;</code>。</p>
+<p>Python 单行注释使用 <code>#</code>，不是 <code>//</code>；赋值语句中的分隔逗号必须是英文逗号；HTML 注释不能直接放进 Python 程序。整段原样复制无法作为 Python 文件运行。</p>
+<p><strong>当前写法示意：</strong></p>
+<pre><code class="language-python">from torch import nn  # 神经网络模块
+num_epochs, lr = 10, 0.1
+</code></pre>
+<h3 id="issue-04-2">04.2 第二层偏置实际全为零</h3>
+<p><strong>状态：已修正，已同步原始笔记与博客副本。</strong> 现在明确写成“b2 有 10 个零”，并分别说明两层偏置的长度。</p>
+<p><strong>审阅时的问题：确定的注释错误。</strong> 原句：“2层的偏置量10填充”；对应代码是 <code>torch.zeros(num_outputs, requires_grad=True)</code>。</p>
+<p><code>zeros</code> 用零填充；<code>num_outputs = 10</code> 表示张量有 10 个元素，不表示每个元素的数值是 10。</p>
+<p><strong>正确理解：</strong> 这段代码创建 10 个可求梯度的初始零偏置。把“长度”和“填充值”分开记忆。</p>
+<h3 id="issue-04-3">04.3 训练函数的参数不匹配所引用的 D2L 写法</h3>
+<p><strong>状态：已按所引用 D2L 页面的 PyTorch 版本修正，已同步原始笔记与博客副本。</strong> 损失函数改为 <code>nn.CrossEntropyLoss(reduction='none')</code>，先创建优化器实例，再把它传给训练函数。自定义 ReLU 和模型的展开、矩阵乘法写法也与该版本对齐。</p>
+<p><strong>审阅时的问题：接口不匹配。</strong> 原句：<code>d2l.train_ch3(..., torch.optim.SGD, lr, params)</code>。</p>
+<p>所引用页面的 PyTorch 版先创建优化器实例，再把它作为最后一个参数传给 <code>train_ch3</code>。笔记把优化器类、学习率和参数列表分开传入，与该页面展示的调用方式不同。</p>
+<p><strong>正确理解：</strong> 对照该页面的写法应是：</p>
+<pre><code class="language-python">updater = torch.optim.SGD(params, lr=lr)
+d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, updater)
+</code></pre>
+<p>这里的 <code>reduction='none'</code> 是“先保留每个样本的损失”，由本节 D2L 训练函数负责合并损失、反向传播和统计。当前笔记已经采用这一设置，并说明模型直接输出类别得分，不需要先手动调用 Softmax。</p>
+<h2 id="note-05">05 多层感知机的简洁实现</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA%E7%9A%84%E7%AE%80%E6%B4%81%E5%AE%9E%E7%8E%B0.md">多层感知机的简洁实现</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/mlp-concise.html">D2L 对应实现</a>。</p>
+<h3 id="issue-05-1">05.1 两个是总层数而不是新增层数</h3>
+<p><strong>状态：已将表述写得更明确，已同步原始笔记与博客副本。</strong> 现在写成“总共有两个全连接层，相比之前增加了一个带激活函数的隐藏层”。</p>
+<p><strong>来源核对：这句确实出自 D2L 原文，不应归为笔记作者独有的知识错误。</strong> 原句：“相比，唯一的区别是我们添加了2个全连接层（之前我们只添加了1个全连接层）”。这可以理解为现在使用两个全连接层，代码的总层数没有错。</p>
+<p>代码总共有两个 <code>Linear</code>：<code>784→256</code> 和 <code>256→10</code>；相比只有一个输出线性层的 Softmax 回归，是净增加一个线性层，并在中间加入 ReLU。</p>
+<p><strong>正确理解：</strong> “现在有两个全连接层”与“比原来增加两个全连接层”不是同一件事。</p>
+<h3 id="issue-05-2">05.2 片段依赖其他地方定义的变量</h3>
+<p><strong>状态：已补齐，已同步原始笔记与博客副本。</strong> 增加 <code>torch</code>、<code>nn</code>、<code>d2l</code> 的导入；按教材补上批次大小 256、学习率 0.1、训练 10 轮、损失函数和与当前模型参数关联的 SGD 优化器；代码中的 HTML 注释已改为 Python 注释或普通解释文字。</p>
+<p><strong>审阅时的问题：示例上下文不完整。</strong> 原文直接使用 <code>nn</code>、<code>d2l</code>、<code>batch_size</code>、<code>loss</code>、<code>num_epochs</code> 和 <code>trainer</code>，但这一篇没有给出全部定义；代码中还有 HTML 注释。</p>
+<p>这作为上一节的续写可以理解，但读者单独复制这一篇时会遇到未定义名称或语法错误。</p>
+<p><strong>当前写法的关键：</strong> <code>trainer = torch.optim.SGD(net.parameters(), lr=lr)</code> 将优化器与本篇创建的模型关联起来；不能直接沿用另一个模型的优化器。各代码块按顺序执行即可给出本篇的导入、模型定义、初始化、数据加载和训练过程。笔记还注明：初始化函数只重新设置 Linear 的权重，偏置保留该层创建时的默认初始化，与教材代码一致。</p>
+<h2 id="note-06">06 模型选择 欠拟合和过拟合</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%A8%A1%E5%9E%8B%E9%80%89%E6%8B%A9%E3%80%81%E6%AC%A0%E6%8B%9F%E5%90%88%E5%92%8C%E8%BF%87%E6%8B%9F%E5%90%88.md">模型选择、欠拟合和过拟合</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/underfit-overfit.html">D2L 对应章节</a>。</p>
+<h3 id="issue-06-1">06.1 欠拟合的简短定义来自教材 须结合前文的高误差背景</h3>
+<p><strong>判断：这是 D2L 原文的小结，不能归为笔记作者概括错误；结合笔记前文可以保留。</strong> D2L 4.4.5 节逐字写道：“欠拟合是指模型无法继续减少训练误差。过拟合是指训练误差远小于验证误差。”笔记引用了这一小结，而且前面已经记下训练与验证误差都较高的讨论。</p>
+<p>这里的关键背景是：模型还没有把训练数据拟合好，训练误差仍然较高。学习率不合适、优化困难等确实可能导致拟合不足，不能因为这些是训练设置问题，就认定它们与欠拟合无关。之前审阅仅列举这些原因，没有说明真正缺少的条件，解释不充分。</p>
+<p><strong>可选补充：</strong> 若把这句话单独拿出来当判断标准，应补上“训练误差仍然较高”。已经拟合得很好、误差已经很低的模型，也可能不再明显降低训练误差；它不会仅仅因为损失进入平台期就变成欠拟合。另一方面，模型尚未拟合充分时，即使训练误差还在下降，也可能暂时处于欠拟合状态。因此重点是“拟合得不够好”，不能只看误差是否继续下降。</p>
+<p><strong>简短记法：</strong> “欠拟合是模型对训练数据也拟合不足，通常表现为训练误差和验证误差都较高；过拟合是模型在训练数据上拟合得很好，但在验证数据上的表现明显较差。”训练设置故障的排查属于判断原因和选择处理方法，不是要求把所有优化原因排除在拟合不足之外。</p>
+<p><strong>术语补充：</strong> 教材 4.4.3 节自身也有把训练与验证误差的差距叫作“泛化误差”的措辞。更严格的常见区分是：泛化误差指新样本上的预期误差，它与训练误差的差称为泛化差距。这属于对教材用词的补充，不能归为笔记作者独有的错误。</p>
+<h3 id="issue-06-2">06.2 过拟合的解释应结合笔记已有的泛化上下文理解</h3>
+<p><strong>判断：结合全文，笔记对过拟合的核心理解成立，不应整体列为知识问题；单张照片的例子可作措辞补充。</strong> 笔记先说明目标是发现能推广到新数据的规律，再介绍训练数据拟合程度与总体表现的差异。不能把其中一句抽离这些背景，认定作者只凭训练次数或误差差距作判断。</p>
+<p>“训练误差明显低于验证误差时要小心，这表明严重的过拟合”确实来自 D2L 4.4.3 节。笔记紧接着也保留了教材的提醒：“最终，我们通常更关心验证误差，而不是训练误差和验证误差之间的差距。”因此不能指责笔记没有关注验证表现、只看差距大小。</p>
+<p><strong>可选措辞补充：</strong> “一张照片重复训练多次，会导致模型记住这张照片，记住则过拟合”意在说明记忆与泛化的区别。若想避免读者把反复训练本身当作充分条件，可写成：“如果模型反复训练后，只记住了这张照片，而换成没见过的照片就表现很差，就体现了过拟合。”原例的“会导致”也可以改成“可能导致”。本次未据此改写笔记。</p>
+<p>不同数据分布、数据增强和 Dropout 评估模式可能影响误差比较，这些属于实践中的扩展排查知识；在笔记当前的教材语境下，未展开这些细节不构成知识错误。此前审阅把这些扩展条件列作本段欠缺，范围过宽。</p>
+<h3 id="issue-06-3">06.3 时间顺序与群组划分属于 K 折交叉验证的扩展实践知识</h3>
+<p><strong>判断：笔记对教材本节的概述成立，不属于已发现的内容错误。</strong> D2L 4.4.2.2 节只介绍把数据分成 K 个不重叠子集、轮流使用一个子集验证、最后对结果求平均。本节没有讨论时间序列、按群组划分或任意打乱数据。笔记也没有声称任何类型的数据都可以任意打乱，不能据此给笔记增加这项错误判断。</p>
+<p><strong>扩展阅读：</strong> 实际应用中，同一患者、同一设备或同一个人的相关样本同时进入训练折和验证折，可能让结果过于乐观；有未来预测要求的时间序列任务，还需要避免使用未来信息评估过去。这些是使用交叉验证时进一步需要了解的条件。</p>
+<p>遇到这些任务时，可进一步学习按群组划分、时间顺序验证，以及在每折训练数据上拟合标准化、特征选择等步骤。这不要求初学笔记在概述教材本节时就全部展开，本次不作为必须修改项。</p>
+<h2 id="note-07">07 权重衰减</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%9D%83%E9%87%8D%E8%A1%B0%E5%87%8F.md">权重衰减</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/weight-decay.html">D2L 权重衰减</a>、<a href="https://arxiv.org/abs/1711.05101">AdamW 论文</a>。</p>
+<h3 id="issue-07-1">07.1 权重衰减和 L2 正则化不是在所有优化器里都等价</h3>
+<p><strong>判断：缺少关键条件。</strong> 原句：“权重衰减通常也被称为 L2 正则化”。</p>
+<p>对普通 SGD，在系数定义对应时，把 L2 惩罚加入目标，与按比例收缩权重可以写成等价更新。但自适应优化器会按参数不同地缩放梯度，直接把 L2 项混进梯度，不再普遍等同于独立的权重衰减。</p>
+<p><strong>正确理解：</strong> 学习 SGD 时可以把两者联系起来；使用 Adam、AdamW 时要检查实际更新规则。AdamW 的关键就是把权重衰减与自适应梯度更新分开处理。</p>
+<h3 id="issue-07-2">07.2 权重小只是某种复杂度约束而不是通用判据</h3>
+<p><strong>判断：直觉缺少边界。</strong> 原句：“一个模型的权重越小，它就越‘简单’”。</p>
+<p>这个直觉适合解释固定特征、固定参数化下的 L2 惩罚。改变输入单位，或者在多层网络中把一层权重放大、下一层相应缩小，可能改变参数范数却不改变整个函数。</p>
+<p><strong>正确理解：</strong> L2 是对参数的一种偏好，不是能独立衡量所有模型复杂度的万能尺。比较前要统一输入尺度；公式用 <code>λ‖w‖²</code> 还是 <code>λ‖w‖²/2</code> 也要说明，因为其梯度分别是 <code>2λw</code> 和 <code>λw</code>。</p>
+<h2 id="note-08">08 暂退法 Dropout</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%9A%82%E9%80%80%E6%B3%95%EF%BC%88Dropout%EF%BC%89.md">暂退法（Dropout）</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/dropout.html">D2L 暂退法</a>、<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Dropout.html">PyTorch Dropout</a>。</p>
+<h3 id="issue-08-1">08.1 被置零的是激活值 不代表相关参数一定不更新</h3>
+<p><strong>判断：确定的过度推论。</strong> 原句：“不参与训练，也不参与参数更新”。</p>
+<p>标准 Dropout 对某次前向计算的激活值施加随机掩码。被遮住的这条路径，其当前数据损失梯度为零；但同一个参数可能还被其他样本或路径使用，也可能受优化器动量、权重衰减影响。</p>
+<p><strong>正确理解：</strong> 可以说“本次被遮住的激活不通过这条路径贡献梯度”，不能直接说“某一组模型参数这一轮一定不会改变”。</p>
+<h3 id="issue-08-2">08.2 除以保留概率保证的是局部期望</h3>
+<p><strong>判断：需要明确保证的对象。</strong> 原句：“训练时，希望还是等于预测时的输出”；示例给出 <code>[h1, 0, h3, 0, h5]</code>。</p>
+<p>常见的倒置 Dropout 在训练时将保留值除以 <code>1−p</code>，保证给定输入时，这一层输出的随机期望等于未丢弃的输入。单次输出并不相等，经过后续非线性层后的整网预测期望也不必相等。</p>
+<p><strong>正确理解：</strong> <code>p=0.4</code> 时，完整的倒置 Dropout 示例应把保留值乘以 <code>1/0.6</code>。原来的置零示例只说明了掩码步骤，没有包含缩放。推理时调用 <code>eval()</code>，标准 Dropout 就不再随机丢弃。</p>
+<h2 id="note-09">09 数值稳定性和模型初始化</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%95%B0%E5%80%BC%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%92%8C%E6%A8%A1%E5%9E%8B%E5%88%9D%E5%A7%8B%E5%8C%96.md">数值稳定性和模型初始化</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/numerical-stability-and-init.html">D2L 对应章节</a>、<a href="https://docs.pytorch.org/docs/2.14/nn.init.html">PyTorch 初始化说明</a>。</p>
+<h3 id="issue-09-1">09.1 不同矩阵连乘不能只看各自的特征值</h3>
+<p><strong>判断：数学解释不准确。</strong> 原句：“矩阵的连乘由它的特征值决定”。</p>
+<p>同一矩阵反复相乘时，特征值可以提供重要信息；不同层的矩阵相乘时，方向如何对齐也很重要。矩阵还可能不是方阵，甚至没有通常意义下的特征值。</p>
+<p><strong>正确理解：</strong> 要关心每层对向量放大、缩小的程度以及连乘后的整体效果。奇异值和矩阵范数是更合适的分析工具：可以先把它们理解成“在最容易被放大的方向上，最多能放大多少”。</p>
+<h3 id="issue-09-2">09.2 数值很大不等于已经发生浮点溢出</h3>
+<p><strong>判断：确定的数量级错误。</strong> 原句：“如10的26次方，直接导致数值溢出”。</p>
+<p>常见 float32 的最大有限数约为 <code>3.4×10³⁸</code>，所以 <code>10²⁶</code> 本身还没有超过 float32 的范围。它已经非常大，继续运算、平方或换成更小数值范围的数据类型，才可能溢出。</p>
+<p><strong>正确理解：</strong> 梯度爆炸说的是梯度过大，不要求已出现 <code>inf</code> 或 <code>NaN</code>；溢出则与数据类型和具体运算有关。</p>
+<h3 id="issue-09-3">09.3 ReLU 和 Xavier 都不是任意深度的稳定保证</h3>
+<p><strong>判断：表达过满。</strong> 原句：“ReLU在输入为正数时，梯度恒为1，不会‘衰减’信号。因此，它能让梯度在反向传播时保持稳定”；“这样，无论网络有多深……梯度也能保持稳定”。</p>
+<p>原文明确限定正输入，这一半的导数描述是正确的。问题在于从它推出整个网络的梯度稳定：负输入处的导数为 0，整个网络还包含权重矩阵的连乘。初始化的方差推导也依赖独立性、分布和激活函数等近似条件。</p>
+<p><strong>正确理解：</strong> 这些方法改善训练的起点和某些传播条件，但不能免除对实际梯度、激活分布和训练曲线的检查。</p>
+<h3 id="issue-09-4">09.4 打破对称性不等于所有参数都必须随机</h3>
+<p><strong>判断：需要补条件。</strong> 原句：“必须用随机值来初始化权重”；相同初值时“无论怎么训练，它们永远都学一样的东西”。</p>
+<p>当隐藏单元的连接、激活、初值和梯度路径完全对称时，它们确实容易收到相同更新。随机权重是常见的破坏对称方法，但不是数学上唯一的方法；偏置初始化为零通常没有问题。</p>
+<p><strong>正确理解：</strong> 关键是让需要分工的隐藏单元有不同的学习起点或路径，而不是禁止任何零初始化。线性回归也没有多隐藏单元的这种对称性问题。</p>
+<h3 id="issue-09-5">09.5 Kaiming 不是把 Xavier 的方差一律乘以二</h3>
+<p><strong>判断：确定的公式关系错误。</strong> 原句：“它在Xavier的基础上把方差再乘以2”；后面又列出 <code>2/nin</code> 与 <code>2/(nin+nout)</code>。</p>
+<p>常见、增益为 1 的 Xavier 方差是 <code>2/(nin+nout)</code>。针对 ReLU、采用 fan_in 模式的 Kaiming 方差是 <code>2/nin</code>。两者的比值是 <code>(nin+nout)/nin</code>，只有输入输出数量相等时才是 2。</p>
+<p><strong>正确理解：</strong> 若输入 100 维、输出 300 维，Xavier 方差为 <code>0.005</code>，上述 Kaiming 方差为 <code>0.02</code>，相差 4 倍。Kaiming 还可以选 fan_out 或其他激活增益，不能脱离这些选项谈固定倍数。</p>
+<h3 id="issue-09-6">09.6 ReLU 恰好把方差减半的说法不够准确</h3>
+<p><strong>判断：推导中的量混用了。</strong> 原句：“ReLU会把一半的输入‘砍掉’……输出方差减半”。</p>
+<p>在对称、零均值的输入假设下，ReLU 输出的二阶矩，即“平方后再求平均”，会减半。但 ReLU 输出的均值通常不再是零，方差还要减去均值的平方。</p>
+<p><strong>正确理解：</strong> Kaiming 推导中常跟踪的是二阶矩。不要把“约一半位置变成零”“二阶矩减半”和“方差严格减半”当成同一个结论。</p>
+<h2 id="note-10">10 环境和分布偏移</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E7%8E%AF%E5%A2%83%E5%92%8C%E5%88%86%E5%B8%83%E5%81%8F%E7%A7%BB.md">环境和分布偏移</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/environment.html">D2L 环境和分布偏移</a>。</p>
+<h3 id="issue-10-1">10.1 协变量偏移还要求输入与答案的条件关系不变</h3>
+<p><strong>判断：缺少定义中的关键条件。</strong> 原句：“输入变化了，比如说训练是真实世界的猫狗，预测的素材是卡通猫狗”。</p>
+<p>协变量偏移不只是输入看起来变了，还假设给定输入时标签的条件分布保持不变。照片变成卡通可能同时改变许多关系，不能仅凭这个例子就确认属于纯协变量偏移。</p>
+<p><strong>正确理解：</strong> 输入分布 <code>p(x)</code> 变化、条件关系 <code>p(y|x)</code> 不变，才是这里讨论的设定。用重要性权重纠正时，还需要目标域出现的输入在训练域有覆盖；训练中从未见过的区域，不能靠给已有样本加权凭空补出来。</p>
+<h3 id="issue-10-2">10.2 概念偏移不总是换任务 也不总要从零训练</h3>
+<p><strong>判断：例子范围过窄且结论过强。</strong> 原句：“同一个词，含义变了”；“除了重新收集数据、重新训练，没有别的办法”。</p>
+<p>概念偏移通常指给定同一输入时，答案的条件分布随环境变化。它可以是同一任务的规则慢慢变了，例如某类交易在新环境中更容易构成欺诈，不一定是把猫狗分类改成颜色分类。</p>
+<p><strong>正确理解：</strong> 需要新标签、更新模型、在线适应或重新设计任务，取决于变化的性质。某个任务彻底改变的例子，不能推出所有概念偏移都必须从零训练。</p>
+<h3 id="issue-10-3">10.3 混淆矩阵估计标签比例需要验证集和可解条件</h3>
+<p><strong>判断：缺少使用条件，存在评估偏乐观的风险。</strong> 原句：“混淆矩阵本身是在训练集上算出来的”。</p>
+<p>若直接拿模型已经拟合过的训练样本估计分类错误，容易把混淆矩阵估得过于理想。通常应使用来自源分布、未用于拟合模型的带标签验证数据。</p>
+<p><strong>正确理解：</strong> 把矩阵每列定义成“某个真实类别会被预测成各类别的概率”。若只发生标签比例变化、各类的输入分布保持不变，就可写“目标域预测比例 = 混淆矩阵 × 目标域真实类别比例”。还要能稳定求解这个关系；分类器无法区分类别、矩阵接近不可逆时，估计可能很不稳定。用验证集不代表估计一定精确。</p>
+<h2 id="note-11">11 深度学习计算</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E8%AE%A1%E7%AE%97.md">深度学习计算</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_deep-learning-computation/model-construction.html">D2L 模型构造</a>、<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html">PyTorch Module</a>、<a href="https://docs.pytorch.org/docs/2.14/notes/autograd.html">PyTorch 自动求导说明</a>。</p>
+<h3 id="issue-11-1">11.1 层不一定有可学习参数 自动求导也不由 Module 单独提供</h3>
+<p><strong>判断：定义需要收紧。</strong> 原句：“层……并拥有一组可调整的参数”；把“能自动求导”列为 <code>nn.Module</code> 的能力。</p>
+<p>ReLU、池化或笔记自己的 <code>CenteredLayer</code> 都可以没有可学习参数。PyTorch 自动求导由张量运算及其计算图机制承担；使用 <code>nn.Module</code> 的主要价值是组织计算、注册参数和子模块，并统一管理状态。</p>
+<p><strong>正确理解：</strong> 有 <code>nn.Module</code> 不意味着任何写进去的运算都会保留梯度。反过来，不继承它，也能用张量运算和 autograd 写训练程序，只是失去了许多模块化管理的便利。</p>
+<h3 id="issue-11-2">11.2 Sequential 可以装入内部带残差的模块</h3>
+<p><strong>判断：表达过满。</strong> 原句：“nn.Sequential 做不了跳跃连接……所以你才需要继承 nn.Module”。</p>
+<p><code>Sequential</code> 本身按顺序连接子模块，不提供“取前面某个输出再相加”的通用编排语法。但一个子模块可以在内部完成残差连接，再把它放进 <code>Sequential</code>。</p>
+<p><strong>正确理解：</strong> “Sequential 不能直接用列表表达任意连接图”是准确的；“用了 Sequential 的网络就不能有跳跃连接”则不准确。</p>
+<h3 id="issue-11-3">11.3 退化问题不能简单等同于梯度消失</h3>
+<p><strong>判断：原因解释过度简化。</strong> 原句：“它的根源在于……梯度在反向传播时逐层衰减”。</p>
+<p>退化现象是更深的普通网络训练误差反而更高。它说明优化困难，但不能只用梯度消失解释全部现象。ResNet 原论文是在已有初始化和归一化手段缓解梯度问题的背景下，继续讨论加深后的优化困难。</p>
+<p><strong>正确理解：</strong> 残差参数化让模型更容易表达“保留输入并作必要调整”，提供较直接的信号和梯度路径。它的价值比“只解决梯度太小”更广。</p>
+<h3 id="issue-11-4">11.4 残差结构不保证加层后永远不会变差</h3>
+<p><strong>判断：确定的无条件保证错误。</strong> 原句：“最坏情况也就是‘什么也没学到’，不会让网络变差”。</p>
+<p>结构允许某种恒等映射，不等于优化器一定找到它，更不等于新增结构没有过拟合、数值或计算代价。带有投影、归一化、激活的具体残差块，也要看它如何实现恒等路径。</p>
+<p><strong>正确理解：</strong> 残差网络让训练更深的模型成为可行方案，但模型是否更好仍要验证。原论文中很深的 CIFAR 网络也会面对泛化问题，不能把“更容易优化”读成“性能永不下降”。</p>
+<h3 id="issue-11-5">11.5 Inception 的时间早于 ResNet</h3>
+<p><strong>判断：历史关系不准确。</strong> 原句：“无论是 DenseNet、Inception、还是后来的 Transformer，都……借鉴了残差连接的思想”。</p>
+<p>最初的 GoogLeNet/Inception 出现在 2014 年，ResNet 论文是 2015 年。后来的 Inception-ResNet 确实结合了两者，但不能把原始 Inception 说成 ResNet 的后继。</p>
+<p><strong>正确理解：</strong> DenseNet 的稠密拼接、原始 Inception 的多分支计算、ResNet 的相加连接，是需要分开理解的结构。它们有联系，连接方式和历史顺序却不同。可对照 <a href="https://arxiv.org/abs/1409.4842">GoogLeNet 论文</a> 与 <a href="https://arxiv.org/abs/1512.03385">ResNet 论文</a>。</p>
+<h3 id="issue-11-6">11.6 state_dict 不只包含 float32 参数</h3>
+<p><strong>判断：确定的范围与类型错误。</strong> 原句：“state_dict()……每个参数都存储为 float32”。</p>
+<p><code>state_dict()</code> 通常包含参数和持久 buffer；浮点参数可以是 float32、float16、bfloat16、float64 等，某些 buffer 还是整数。它描述的是当前状态，不会强制把它们统一转换成 float32。</p>
+<p><strong>正确理解：</strong> 看实际张量的 <code>dtype</code>。读取参数数值不必使用 <code>.data</code>；打印张量即可查看，若想拿一个不跟踪梯度的视图，通常用 <code>detach()</code>。</p>
+<h3 id="issue-11-7">11.7 MyLinear 的前向计算把权重从计算图中分离了</h3>
+<p><strong>判断：会影响训练的确定问题。</strong> 原句：<code>linear = torch.matmul(X, self.weight.data) + self.bias.data</code>。</p>
+<p><code>.data</code> 绕开了这些参数原本的梯度追踪。即使 <code>self.weight</code> 与 <code>self.bias</code> 被注册为 Parameter，这个表达式也没有沿着正常的参数计算路径建立图，因此它们无法按预期从该损失获得梯度。</p>
+<p><strong>正确理解：</strong> 前向运算应直接使用参数对象。下面是修正示意，未替换原笔记：</p>
+<pre><code class="language-python">def forward(self, X):
+    linear = X @ self.weight + self.bias
+    return F.relu(linear)
+</code></pre>
+<p>注册参数只是让模型和优化器能找到它；它还需要真的参与损失的可求导计算，并交给优化器更新。</p>
+<h3 id="issue-11-8">11.8 注册为 buffer 不会自动取消张量求梯度</h3>
+<p><strong>判断：确定的机制误解。</strong> 原句：“register_buffer 注册的张量：不参与梯度计算”。</p>
+<p>普通 buffer 常由默认不求梯度的张量创建，但“是否求梯度”和“是否注册为 Parameter”是不同的机制。注册为 buffer 不会自动把一个已有张量的 <code>requires_grad</code> 改成 False。</p>
+<p><strong>正确理解：</strong> buffer 不会出现在 <code>model.parameters()</code> 中，通常不交给优化器；它会随模型迁移设备。默认持久 buffer 进入 <code>state_dict()</code>，但 <code>persistent=False</code> 的 buffer 不进入该字典。是否参与计算图，仍取决于张量和实际运算。</p>
+<h3 id="issue-11-9">11.9 有几处文本不能直接作为 Python 执行</h3>
+<p><strong>判断：确定的语法或名称问题。</strong> 原句包括 <code>)这也是块</code>、代码前单独的 <code>python</code>、<code>requires_grad = false</code> 和小写的 <code>nn.module</code>。</p>
+<p>中文说明要放到注释或代码块外；Python 布尔值是 <code>False</code>，不是 <code>false</code>；模块基类是大小写准确的 <code>nn.Module</code>。单独的 <code>python</code> 不是语言声明，在程序里会被当成名称。</p>
+<p><strong>正确理解：</strong> 排版后这些片段更容易定位，但本次保留了这些原始字符，不能把“有语法高亮”误认为“已修成可运行代码”。</p>
+<h2 id="note-12">12 卷积神经网络</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C.md">卷积神经网络</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_convolutional-neural-networks/why-conv.html">D2L 从全连接层到卷积</a>、<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Conv2d.html">PyTorch Conv2d</a>、<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.MaxPool2d.html">PyTorch MaxPool2d</a>。</p>
+<h3 id="issue-12-1">12.1 卷积的平移等变不等于整个网络平移不变</h3>
+<p><strong>判断：核心概念需要区分。</strong> 原句将“平移不变性”列为图像特性，并据此解释卷积。</p>
+<p>忽略边界、采用适当步幅等条件时，输入平移，卷积产生的特征图也跟着平移，称为等变。不变则是输入平移后最终结果不变，它不是一般卷积层自动保证的性质。</p>
+<p><strong>正确理解：</strong> 同一个检测器可以在不同位置识别相似模式，是共享卷积核的直觉；池化、聚合和训练可能让分类结果对位置不敏感。步幅和填充还可能破坏简单的平移对应关系。</p>
+<h3 id="issue-12-2">12.2 共享的是卷积权重 不是图片本身的参数</h3>
+<p><strong>判断：术语容易造成错误图景。</strong> 原句：“复用图片参数(参数共享)”；“卷积层有两个需要训练的参数”。</p>
+<p>输入图片是数据；可学习的是卷积核等模型参数。“权重和偏置”是两类参数张量，不是只有两个可学习数值。偏置也可以通过配置关闭。</p>
+<p><strong>正确理解：</strong> 同一组卷积权重在多个空间位置使用。普通、非分组卷积的权重形状为 <code>C_out × C_in × K_h × K_w</code>，其元素数量通常远不止两个。</p>
+<h3 id="issue-12-3">12.3 池化步幅没有不能大于窗口的普遍限制</h3>
+<p><strong>判断：确定的限制条件错误。</strong> 原句：“池化窗口的步幅……反正不会大于自身”。</p>
+<p>许多接口允许步幅大于窗口，只是这样可能跳过部分位置。步幅等于窗口大小是常见的不重叠配置，不是必须遵守的数学规则。</p>
+<p><strong>正确理解：</strong> 例如宽为 2 的池化窗口可以每次移动 3 格；它会留下未覆盖区域，是否合适要看目的。输出尺寸还受填充、取整方式等设置影响。</p>
+<h3 id="issue-12-4">12.4 输出尺寸公式是一个特例 要说明 padding 的含义</h3>
+<p><strong>判断：需要补条件，原特例并非本身算错。</strong> 原句：<code>n - k + p + 1</code>，并明确说 p 是 padding 总量。</p>
+<p>当步幅为 1、膨胀率为 1，且 p 表示该轴两侧填充之和时，这个式子是对的。PyTorch 的 <code>padding=1</code> 通常表示每侧填 1，合计是 2，不能直接把接口里的 1 代入笔记的总量 p。</p>
+<p><strong>正确理解：</strong> 对称填充时的一般单轴公式是 <code>floor((n + 2p − d(k−1) − 1)/s + 1)</code>。这里 p 是每侧填充，s 是步幅，d 是膨胀率。最常见的 <code>k=3、p=1、s=1、d=1</code> 才得到输出尺寸与输入相同。</p>
+<h3 id="issue-12-5">12.5 卷积核数量和参数数量混在了一起</h3>
+<p><strong>判断：数量含义不清。</strong> 原句：“卷积核的数量：输入 x 输出 x 卷积核大小”；“1x1……空间尺寸不变”。</p>
+<p>普通卷积中，每个输出通道对应一组跨越所有输入通道的滤波权重。若说输出滤波器数量，通常是 <code>C_out</code>；若说权重元素数量，则是 <code>C_out×C_in×K_h×K_w</code>，另有可选偏置。分组卷积还要考虑 groups。</p>
+<p><strong>正确理解：</strong> 输入 3 通道、输出 16 通道、3×3 的普通卷积，权重元素数为 <code>16×3×3×3=432</code>。1×1 卷积是否保持空间大小仍取决于步幅和填充；步幅为 2 时同样可以下采样。</p>
+<h3 id="issue-12-6">12.6 池化没有可学习权重 不等于不参与训练</h3>
+<p><strong>判断：表述需要修正。</strong> 原句：“池化层并没有起到训练的作用”。</p>
+<p>最大池化通常没有可学习的权重，但参与前向计算，也会把梯度传给选中的输入位置。平均池化则会把梯度按其规则分配给窗口中的输入。</p>
+<p><strong>正确理解：</strong> 不更新自己的参数，与不影响训练，是两件事。池化会影响特征、梯度传播和模型最终能学到什么。</p>
+<h3 id="issue-12-7">12.7 Conv2d 示例用了非 Python 的注释</h3>
+<p><strong>判断：确定的语法问题。</strong> 原句在 <code>nn.Conv2d(...)</code> 的参数后写 <code>//输入</code>、<code>//输出通道128</code> 等。</p>
+<p>这与前面 MLP 的问题相同：Python 的行尾注释需要 <code>#</code>。原样的 <code>//</code> 会被解释为整除运算的一部分，而不是说明文字。</p>
+<p><strong>正确理解：</strong> 调整格式只能让示例更好读，不能把这些字符自动变成合法注释；需要运行时再按审阅意见修正。</p>
+<h2 id="note-13">13 现代卷积神经网络</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C.md">现代卷积神经网络</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_convolutional-modern/alexnet.html">D2L AlexNet</a>、<a href="https://zh-v2.d2l.ai/chapter_convolutional-modern/nin.html">D2L NiN</a>、<a href="https://zh-v2.d2l.ai/chapter_convolutional-modern/googlenet.html">D2L GoogLeNet</a>、<a href="https://zh-v2.d2l.ai/chapter_convolutional-modern/densenet.html">D2L DenseNet</a>、<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.BatchNorm2d.html">PyTorch BatchNorm2d</a>。</p>
+<h3 id="issue-13-1">13.1 AlexNet 推广了 ReLU 不是发明了 ReLU</h3>
+<p><strong>判断：历史表述不准确。</strong> 原句：“AlexNet提出了创新的ReLu激活函数”；“Sigmoid……深层网络根本无法训练”。</p>
+<p>ReLU 在 AlexNet 之前已有相关研究和使用，AlexNet 展示了它在大规模视觉网络上的训练优势。“Sigmoid 容易饱和、训练困难”也不等于一切带 Sigmoid 的深层模型都根本不能训练。</p>
+<p><strong>正确理解：</strong> 可以把 AlexNet 的贡献记为大规模使用非饱和激活、数据增强和 GPU 训练等组合取得突破。可参考 <a href="https://icml.cc/Conferences/2010/papers/432.pdf">Nair 与 Hinton 2010 年论文记录</a>。</p>
+<h3 id="issue-13-2">13.2 裁剪尺寸要区分原论文和复现版本</h3>
+<p><strong>判断：版本混用。</strong> 原句：“原文……227×227 的裁剪区域”。</p>
+<p>AlexNet 原论文描述 224×224，227×227 常见于复现或特定首层尺寸约定；所引用 D2L 示例也使用 224×224 的输入。首层是否填充、步幅和后续展平尺寸必须一起看。</p>
+<p><strong>正确理解：</strong> 不能单独背一个尺寸并声称所有 AlexNet 实现都一致。复现时用代码逐层计算输出形状；不同实现得到的最后特征图大小，可能改变第一层全连接层的参数量。</p>
+<h3 id="issue-13-3">13.3 两个全连接层的参数本身不是将近 1 GB</h3>
+<p><strong>判断：确定的数量级问题。</strong> 原句：“这两个巨大的全连接层拥有将近1GB的模型参数”。</p>
+<p>用常见的最后特征图 <code>256×6×6</code> 计算，第一层全连接权重为 <code>9216×4096</code>，第二层为 <code>4096×4096</code>，合计约 5453 万个数。以 float32 的每个数 4 字节计，权重约 218 MB，另加很少量偏置。</p>
+<p><strong>正确理解：</strong> 参数存储、梯度、优化器状态、激活和临时空间是不同的显存项目。完整训练可能占用远多于 218 MB，但不能把总训练显存说成这两个层的参数大小。</p>
+<h3 id="issue-13-4">13.4 VGG 的每个块不一定都把通道翻倍</h3>
+<p><strong>判断：架构特例被写成通则。</strong> 原句：“下一个块的输出通道数就翻一倍”。</p>
+<p>常见 VGG 通道序列是 <code>64→128→256→512→512</code>，最后两个块并没有再次翻倍。</p>
+<p><strong>正确理解：</strong> “空间分辨率逐步降低，通道通常逐步增多”是结构直觉；具体每个块用多少通道由配置决定。</p>
+<h3 id="issue-13-5">13.5 NiN 的非线性不能只归因于 1×1 卷积</h3>
+<p><strong>判断：缺少关键组成。</strong> 原句：“用‘1×1卷积’增强了卷积层的非线性表达能力”。</p>
+<p>1×1 卷积本身在每个空间位置执行通道间的仿射变换。如果不夹入非线性激活，连续的这些变换仍可合并成一个仿射变换。</p>
+<p><strong>正确理解：</strong> NiN 的微型 MLP 由卷积与激活一起形成。真正的非线性来自 ReLU 等激活，1×1 卷积负责可学习的通道组合与变换。</p>
+<h3 id="issue-13-6">13.6 GoogLeNet 同时使用深度和多分支结构</h3>
+<p><strong>判断：概括有矛盾。</strong> 原句：“靠堆深度，而是靠‘拓宽’和‘并行’来变强。而不是堆深度”。</p>
+<p>GoogLeNet 并不是排斥深度；它也堆叠多个 Inception 块，利用瓶颈降维和多尺度并行控制计算量。</p>
+<p><strong>正确理解：</strong> 它把“变深”和“在块内部做多分支计算”结合起来，不能只记成拓宽。各分支拼接需要高宽一致，并不要求不同分支的输出通道数一样多。</p>
+<h3 id="issue-13-7">13.7 BatchNorm 除以尺度 不会把每层最终输出锁死为标准分布</h3>
+<p><strong>判断：一处确定笔误，多处缺少条件。</strong> 原句：“减标准差是尺度调整”；“将每层的输出重新拉回标准输入”；公式没有显示 ε。</p>
+<p>尺度调整是除以标准差相关的量，不是减去标准差。实际常见公式为 <code>γ × (x−均值)/sqrt(方差+ε) + β</code>；小正数 ε 用于避免除零等数值问题。之后的可学习 γ、β 又能改变均值和尺度。</p>
+<p><strong>正确理解：</strong> BN 不是必须放在每层的自动规则，也不保证防止过拟合。用批次统计量是训练时的常见行为；默认推理使用运行统计量，但 PyTorch 设 <code>track_running_stats=False</code> 时，推理仍使用当前批次统计量。</p>
+<h3 id="issue-13-8">13.8 DenseNet 的直接密集连接主要在同一个稠密块内</h3>
+<p><strong>判断：范围与数量描述不准确。</strong> 原句：“所有层看到前面的原始输出”；“每个稠密块内部的层数逐渐增加（例如6层、12层、24层、16层）”。</p>
+<p>稠密块内各层拼接前面层的输出；跨越过渡层后，特征已被压缩或下采样，不能说整张网络每一层都直接收到所有更早的原始特征图。<code>6、12、24、16</code> 的最后一项也不是继续增加。</p>
+<p><strong>正确理解：</strong> 分清块内密集连接与块间过渡。Depth 或模型编号更大，也不保证在每种数据和训练预算下表现更好。</p>
+<h3 id="issue-13-9">13.9 DenseNet 不具有比所有普通网络都更高的计算复杂度</h3>
+<p><strong>判断：比较对象不明确。</strong> 原句：“整体计算复杂度仍然比普通网络高”。</p>
+<p>密集拼接会增加激活存储和数据搬运压力，但计算量还取决于增长率、瓶颈、压缩率、网络宽深和比较对象。DenseNet 也常以参数效率为优势。</p>
+<p><strong>正确理解：</strong> 参数少、理论运算量低、训练显存少、实际运行快是不同指标。比较时固定输入、模型版本、精度和硬件，再分别测量，不能由“通道会增长”直接推出一个普遍排名。</p>
+<h2 id="note-14">14 循环神经网络</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C.md">循环神经网络</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_recurrent-neural-networks/sequence.html">D2L 序列模型</a>、<a href="https://zh-v2.d2l.ai/chapter_recurrent-neural-networks/text-preprocessing.html">D2L 文本预处理</a>、<a href="https://zh-v2.d2l.ai/chapter_recurrent-neural-networks/language-models-and-dataset.html">D2L 语言模型</a>、<a href="https://zh-v2.d2l.ai/chapter_recurrent-neural-networks/bptt.html">D2L 通过时间反向传播</a>、<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.RNN.html">PyTorch RNN</a>。</p>
+<h3 id="issue-14-1">14.1 普通 RNN 传递的是隐藏状态 不一定反馈预测值</h3>
+<p><strong>判断：核心概念错误。</strong> 原句：“当前的预测会作为下一步的输入”；“不断更新新的预测到h变量”。</p>
+<p>RNN 的基本递推是把当前输入 <code>x_t</code> 与上一步隐藏状态 <code>h_(t−1)</code> 结合，得到新的隐藏状态 <code>h_t</code>，再按任务需要从隐藏状态产生预测。隐藏状态不是“上一步预测值”的另一个名字。</p>
+<p><strong>正确理解：</strong> 语言模型生成文本时，常把生成的词作为下一步输入；训练时则常输入真实的前一个词。这是输入如何构造的选择，和 RNN 必有的隐藏状态递推是两件事。</p>
+<h3 id="issue-14-2">14.2 固定历史窗口是建模选择 不是说更早历史本来就没用</h3>
+<p><strong>判断：把近似假设写成事实。</strong> 原句：“自回归只看最近的T个观测，过于久远的数据则不重要”；序列增长时线性模型“就要重新开始训练”。</p>
+<p>有限阶自回归使用固定窗口，是主动限制使用的信息，并不证明早期信息不重要。选好固定长度窗口后，线性模型也可以持续用于更长序列，而不是每来一个观测就重新训练。</p>
+<p><strong>正确理解：</strong> 问题在于固定窗口如何选择、是否丢掉有用信息。MLP 也可以把一段历史拼成固定长度输入；它并非在任何用法下都只能看一个时刻。</p>
+<h3 id="issue-14-3">14.3 知道准确概率分布不代表能准确知道未来的每个结果</h3>
+<p><strong>判断：确定的概率概念错误。</strong> 原句：“理论上，它能完美预测后续的每一天数据”。</p>
+<p>知道马尔可夫转移概率，意味着可以正确计算未来状态的概率分布；除非过程本身是确定的，否则不能提前知道每次实际出现哪个结果。</p>
+<p><strong>正确理解：</strong> 即使完全知道一枚公平硬币下一次正反面各占一半，仍不能保证猜中下一次结果。概率预测准确，与逐次结果预测必对，是两种不同要求。</p>
+<h3 id="issue-14-4">14.4 时间先后和统计预测不等于已经证明因果</h3>
+<p><strong>判断：因果解释不严谨。</strong> 原句：“过去决定未来”；“下雨了地一定湿”。</p>
+<p>序列模型可学习时间上的预测关系，这本身不证明因果。现实中是否地湿还受遮挡、地面位置等条件影响，“一定”过强；棋类的马尔可夫状态也要包含轮到谁、特殊规则和必要历史信息，不能只看一张棋盘图。</p>
+<p><strong>正确理解：</strong> 把“只使用当时可获得的信息作预测”“状态足以预测未来分布”“已识别因果关系”分开理解，不要用一个直觉例子同时替代三种概念。</p>
+<h3 id="issue-14-5">14.5 多步预测不必变直线 误差也不总按指数增长</h3>
+<p><strong>判断：经验现象被写成必然规律。</strong> 原句：“就会导致预测曲线成为一条直线”；“误差随 k 指数累积”。</p>
+<p>递归使用自己的预测可能产生误差累积，但具体形状取决于模型和过程。有的趋向常数，有的衰减、振荡或发散；“数据量不够”也不是使用自回归推理的唯一起因。</p>
+<p><strong>正确理解：</strong> 模型若是 <code>下一步 = a×当前值</code>，误差会受 a 的大小影响：绝对值小于 1 时可能衰减，大于 1 时可能放大。要结合模型的动力学分析，不能统一规定成指数增长。</p>
+<h3 id="issue-14-6">14.6 28 个字符和未知词编号属于特定教材实现</h3>
+<p><strong>判断：数据集特例与原文说明混用。</strong> 原句：“按字符切割词表只有28个字母……永远不会失忆”；“原文把 &lt;unk&gt; 写作空字符串 ''”。</p>
+<p>词表大小与文本清洗规则、字符集合有关，不是所有字符级模型都有 28 个词元。未收入词表的字符仍可能成为未知词元；只要存在 <code>&lt;unk&gt;</code> 或清洗删除，原文也不一定可完整还原。教材的未知词元是字面字符串 <code>&lt;unk&gt;</code>，不应理解成空字符串。</p>
+<p><strong>正确理解：</strong> 词元化、词表映射、文本清洗是不同步骤。词频排序与 0 号未知词也是该教材词表的约定，不是所有分词器必须遵守的标准。</p>
+<h3 id="issue-14-7">14.7 n 元语法看的是前 n−1 个词 齐普夫定律也不是统计动作</h3>
+<p><strong>判断：定义有误且内容缺失。</strong> 原句：“只看前n个词，预测下一个词”；“词频分布：齐普夫定律”下面只写“统计词频率，组成词表”。</p>
+<p>标准 n-gram 中，“当前词加上它的历史”总共 n 个词，因此预测当前词时使用前 <code>n−1</code> 个词。二元语法通常只看前一个词。</p>
+<p><strong>正确理解：</strong> 齐普夫定律描述频率与频率排名近似成反比，是数据分布的经验规律，不是“做一次统计”的另一个名字。传统统计语言模型仍有应用，也不因稀疏性就一律不能使用。</p>
+<h3 id="issue-14-8">14.8 X 是输入 Y 才是标签</h3>
+<p><strong>判断：术语写反。</strong> 原句：“所以标签X是预测数据，Y是真实结果”。</p>
+<p>这一段示例中 X 是模型看到的输入序列，Y 是与它对应的目标序列。Y 通常取自原序列中每个输入词的下一个位置。</p>
+<p><strong>正确理解：</strong> 若 X 为 <code>[我, 爱, 学]</code>，目标 Y 可为 <code>[爱, 学, 习]</code>。所谓“偏移一位”要用这个具体对齐关系记忆，避免把“向右移动”误解成在数组前面补元素。</p>
+<h3 id="issue-14-9">14.9 时间维度和隐藏状态形状取决于接口约定</h3>
+<p><strong>判断：实现特例被写成通则。</strong> 原句：“时间步就是原输入矩阵的列”；“隐藏状态……每一行是一个样本”。</p>
+<p>教材的数据批次可以按“批次×时间”排列，但 PyTorch RNN 输入默认常为“时间×批次×特征”，设 <code>batch_first=True</code> 后才改成“批次×时间×特征”。API 返回的最终隐藏状态还含层数和方向维。</p>
+<p><strong>正确理解：</strong> 对 <code>nn.RNN</code>，输出序列通常给出最后一层各时间步的隐藏输出；<code>h_n</code> 通常是“层数×方向数、批次、隐藏大小”的三维张量。不要仅凭变量名或二维示意图判断轴的含义。</p>
+<h3 id="issue-14-10">14.10 完整 BPTT 不意味着一定梯度爆炸</h3>
+<p><strong>判断：确定的必然性错误。</strong> 原句：“完全计算(full computation)——连乘必爆”。</p>
+<p>长时间的雅可比矩阵连乘可能使梯度放大，也可能使其衰减，还可能在一定范围内保持稳定。是否爆炸取决于权重、激活和实际状态。</p>
+<p><strong>正确理解：</strong> 完整 BPTT 是反向传播覆盖整个展开序列；截断 BPTT 则限制反传长度，常用于控制计算和内存。截断会影响能直接学习的长距离依赖，不能只理解成不改变学习问题的省内存技巧。</p>
+<h2 id="note-15">15 现代循环神经网络</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C.md">现代循环神经网络</a>。依据：<a href="https://zh-v2.d2l.ai/chapter_recurrent-modern/gru.html">D2L GRU</a>、<a href="https://zh-v2.d2l.ai/chapter_recurrent-modern/lstm.html">D2L LSTM</a>、<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.GRU.html">PyTorch GRU</a>、<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.LSTM.html">PyTorch LSTM</a>。</p>
+<h3 id="issue-15-1">15.1 更新门为 0.3 时 原文的百分比写反了</h3>
+<p><strong>判断：确定错误，且与同篇前文矛盾。</strong> 原句：“Z_t=0.3：旧状态保留 70%，新计算的信息占 30%”。</p>
+<p>按本篇前文和 D2L、PyTorch 采用的约定，<code>h_t = z_t×旧状态 + (1−z_t)×候选状态</code>。因此 z 为 0.3 时，是 30% 的旧状态加 70% 的候选状态。</p>
+<p><strong>正确理解：</strong> 先看公式中门乘在哪一项，再解释“保留”或“更新”。有的资料会把门定义成相反的方向，不能只看 update gate 这个英文名字判断比例。</p>
+<h3 id="issue-15-2">15.2 重置门关闭 不代表最终状态已经完全清空</h3>
+<p><strong>判断：门的作用范围混用。</strong> 原句：“约等于0则旧状态被清零，退化成只看当前输入的MLP”。</p>
+<p>重置门主要控制计算候选状态时如何使用旧状态。最终隐藏状态还会由更新门混合旧状态与候选状态；只让重置门为零，未必切断旧状态进入最终结果的那条路径。</p>
+<p><strong>正确理解：</strong> 把两步分开：先算候选，再混合状态。重置门为 1 也不意味着整个 GRU 已变成普通 RNN，因为更新门仍然存在。PyTorch 的候选式与某些教材还在重置门施加的位置上有实现差异，移植公式时要对照接口说明。</p>
+<h3 id="issue-15-3">15.3 单位矩阵不是全一矩阵</h3>
+<p><strong>判断：确定的数学错误。</strong> 原句：“单位矩阵(全1矩阵)”；“当前记忆跟旧记忆的比值约等于单位矩阵”。</p>
+<p>单位矩阵只在主对角线上为 1，其余位置为 0。全一矩阵则每个位置都是 1，两者作用完全不同。“当前状态除以上一状态”也不是这里分析梯度的对象，应看它们之间的导数，即雅可比矩阵。</p>
+<p><strong>正确理解：</strong> 二维单位矩阵是 <code>[[1,0],[0,1]]</code>，乘向量后保持原样；全一矩阵 <code>[[1,1],[1,1]]</code> 会把两个分量相加并复制。若门恰为 1 且只看直接记忆路径，它才对应恒等传递。若门为 0.99，连乘 10000 次约为 <code>2.25×10⁻⁴⁴</code>，不是“一直完全不衰减”；真实总导数还包含门和候选对旧状态的依赖。</p>
+<h3 id="issue-15-4">15.4 细胞状态是随样本变化的状态 不是可学习参数本身</h3>
+<p><strong>判断：状态和参数混淆。</strong> 原句：“增加了一个细胞状态……也是一个可学习参数控制”；“记忆单元是细胞状态中的参数”。</p>
+<p>LSTM 的权重和偏置是模型参数；细胞状态 c 和隐藏状态 h 是处理具体输入时逐步计算出来的状态。门使用可学习的权重来决定怎样更新状态，不代表状态里的每个数都是固定的模型参数。</p>
+<p><strong>正确理解：</strong> 换一句话，参数决定“怎样记”，状态保存“这条序列目前记住了什么”。通常的无投影 LSTM 中 c、h 尺寸可相同；使用投影等配置时不必相同，因此本篇“通常”这个限定应保留。</p>
+<h3 id="issue-15-5">15.5 细胞状态更新后还需要生成隐藏状态</h3>
+<p><strong>判断：公式链没有写完整。</strong> 原文给出 <code>C_t = F_t ⊙ C_(t−1) + I_t ⊙ 候选C_t</code>，但没有明确写出 h 的关系。</p>
+<p>这条细胞状态公式是正确的。若读者只看这条式子，仍不知道输出门如何影响本时刻传给其他层的隐藏状态。</p>
+<p><strong>正确理解：</strong> 标准 LSTM 还有 <code>h_t = o_t ⊙ tanh(c_t)</code>。先由遗忘门和输入门更新细胞状态，再由输出门控制隐藏状态。这里的 <code>⊙</code> 是对应位置相乘，不是矩阵乘法。</p>
+<h2 id="note-16">16 附加芝士</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E9%99%84%E5%8A%A0%E8%8A%9D%E5%A3%AB.md">附加芝士</a>。依据：<a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.LayerNorm.html">PyTorch LayerNorm</a>、<a href="https://arxiv.org/abs/1910.07467">RMSNorm 论文</a>、<a href="https://arxiv.org/abs/1805.11604">BatchNorm 优化机制论文</a>、<a href="https://github.com/meta-llama/llama-models">Meta Llama 官方仓库</a>。</p>
+<h3 id="issue-16-1">16.1 LayerNorm 归一化哪些轴需要看配置</h3>
+<p><strong>判断：概括过宽。</strong> 原句：“对一个样本内部、跨越它的所有特征/通道算均值和方差”；括号里写“当前行”。</p>
+<p>PyTorch 的 LayerNorm 对 <code>normalized_shape</code> 指定的最后若干维计算统计量，不是无论张量怎么排列都处理整条样本。Transformer 中常对每个词元最后的隐藏特征维归一化；图像也可以配置成对通道与空间维一起归一化。</p>
+<p><strong>正确理解：</strong> 先写清输入形状，再看配置覆盖哪几条轴。“训练和预测行为一致”说的是这一层统计量的使用方式，不代表含 Dropout 等模块的整个网络在两种模式下完全一致。可学习的仿射参数也会改变归一化后最终输出的均值和尺度。</p>
+<h3 id="issue-16-2">16.2 RMSNorm 的加速比例不是固定常数</h3>
+<p><strong>判断：数字缺少实验范围。</strong> 原句：“计算量少了约15%（少一次减法、少一个待学参数β）”。</p>
+<p>RMSNorm 少了求均值和中心化步骤，但论文的速度提升依赖网络和实现，不是一个普遍固定的 15% 计算量结论。端到端速度还受硬件、融合算子和其他层的开销影响。</p>
+<p><strong>正确理解：</strong> 常见 RMSNorm 形式为 <code>x / sqrt(mean(x²)+ε) × γ</code>，通常不带 β。这里的 ε 同样用于数值稳定。论文给出的是特定实验中的速度表现，不能直接推算任何 LLaMA 程序都能快 15%。</p>
+<h3 id="issue-16-3">16.3 研究证据不能写成归一化唯一有效机制的定论</h3>
+<p><strong>判断：结论超过证据范围。</strong> 原句：“唯一真正起作用”的缩放；“BN 家族的有效性……而不是减均值、稳定中间分布”。</p>
+<p>相关论文反驳或重新解释某些动机，并展示减少中心化操作仍然有效的设计，但并没有证明所有架构、任务和归一化方法中，中心化都毫无作用。BN、LN、RMSNorm 的统计轴、随机性和参数化也不同。</p>
+<p><strong>正确理解：</strong> 可以记为“归一化的效果不能只用内部协变量偏移解释；某些设计去掉中心化也有效”。不要进一步推成“缩放是所有归一化唯一有用的部分”。</p>
+<h3 id="issue-16-4">16.4 LLaMA 的模型开放程度和商业条件要按版本区分</h3>
+<p><strong>判断：历史与许可范围混用。</strong> 原句把从初代 LLaMA 到 Llama 3 统称“开源可商用”。</p>
+<p>初代 LLaMA 的发布条件与后续 Llama 2、Llama 3 的社区许可不同；“可取得权重”“可以某些商业使用”“符合通行的开源定义”也不是同一件事。</p>
+<p><strong>正确理解：</strong> 讨论某个模型时写明版本，并看对应版本的许可和可接受使用条款。架构部分对 RMSNorm、SwiGLU、RoPE 的概括可以保留，不能用架构相似性代替许可判断。</p>
+<h3 id="issue-16-5">16.5 SVM 小节只有名字 没有知识内容</h3>
+<p><strong>判断：内容缺失，不是已经写出的理论错误。</strong> 原文只有“SVM(支持向量机):”。</p>
+<p>读者无法从这一行知道它解决什么问题，也无法理解前文为何用它和手工特征搭配。不能把一个占位标题当作已经掌握该概念。</p>
+<p><strong>正确理解：</strong> 后续若补写，先交代最大间隔分类、支持向量和核方法分别是什么，不需要一开始就展开完整优化推导。本次按要求保留占位，不补正文。</p>
+<h3 id="issue-16-6">16.6 利普希茨常数和雅可比的关系要注明范围</h3>
+<p><strong>判断：需要补数学条件。</strong> 原句把利普希茨常数比作“最陡斜率上限”，接着介绍雅可比矩阵。</p>
+<p>一维可导函数在合适区间内，可以用导数绝对值的上界理解这个常数；多维情形还要指定距离所使用的范数，通常对应控制雅可比的算子范数。某点的导数不能直接当成整个区域的统一上界。</p>
+<p><strong>正确理解：</strong> <code>f(x)=x²</code> 在 <code>[-1,1]</code> 上可以用 L=2 控制变化，但在整个实数轴上不存在一个有限的统一 L。讨论“平滑”或“稳定”前，必须说明在哪个范围、用什么距离。</p>
+<h2 id="note-17">17 How Does Batch Normalization Help Optimization</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/How%20Does%20Batch%20Normalization%20Help%20Optimization.md">论文阅读记录</a>。依据：<a href="https://arxiv.org/abs/1805.11604">Santurkar 等人的论文与摘要</a>。</p>
+<h3 id="issue-17-1">17.1 目前是阅读书签 还没有可复用的论文结论</h3>
+<p><strong>判断：内容尚未形成。</strong> 原文只有论文链接、标题和“虽然阅读这个没什么作用就是了感觉”。</p>
+<p>这表达的是阅读感受，不能作为论文内容的摘要。尤其《附加芝士》已对归一化的作用机制作出强判断，却没有记录这些判断来自什么实验、有什么范围。</p>
+<p><strong>正确理解：</strong> 这篇论文的重要主张是：BN 的收益不能仅用层输入分布稳定来解释，作者从更平滑的优化地形与更可预测的梯度行为解释训练改善。这不是“所有归一化只有缩放有效”的证明。后续可补“研究问题、实验比较、主要结论、不能推出什么”四部分；本次不代写进笔记。</p>
+<h2 id="note-18">18 超参数调优</h2>
+<p>对应笔记：<a href="../public/postDir/major/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98.md">超参数调优</a>。依据：<a href="https://docs.ultralytics.com/guides/hyperparameter-tuning/">Ultralytics 超参数调优指南</a>、<a href="https://docs.ultralytics.com/usage/cfg/">Ultralytics 训练配置</a>。</p>
+<p>这一篇对 lr0、batch、epochs 以及配置文件的基本介绍没有发现确定的概念性错误。官方指南确实使用遗传进化与变异来描述调优，不能仅凭这个说法就判为错误。需要补的是实际使用范围。</p>
+<h3 id="issue-18-1">18.1 指标要区分单个检测框和整套检测结果</h3>
+<p><strong>判断：实践条件不够完整。</strong> 原句：“IoU：当精确的目标定位至关重要时……必不可少”。</p>
+<p>IoU 衡量两个框的重叠程度，也常参与判断预测框是否匹配真值框；单看匹配成功框的 IoU，不能完整反映漏检、误检或类别判断。Precision、Recall、F1 也受置信度阈值和匹配条件影响。</p>
+<p><strong>正确理解：</strong> 比较检测器时使用明确的 mAP 计算标准，并按任务额外查看定位、误检、漏检和速度。不能把提高某些框的 IoU 直接等同于整个检测器更好。</p>
+<h3 id="issue-18-2">18.2 调参需要独立验证和可比较的测量条件</h3>
+<p><strong>判断：缺少执行说明。</strong> 原文罗列可调参数与指标，但没有说明怎样避免挑到偶然成绩最好的配置。</p>
+<p>反复在最终测试集上选参数，会让测试集失去独立评估意义。速度还受输入尺寸、批量大小、硬件、预热和是否计入预处理影响；更高 FPS 不一定意味着单张延迟更低。</p>
+<p><strong>正确理解：</strong> 用验证集选配置，保留测试集作最终确认；记录 Ultralytics 版本、数据划分、输入尺寸和测量条件。必要时用多个随机种子复查较好的配置。具体可调参数与搜索方式也要对照所用版本。</p>
+<h2 id="glossary">遇到术语时查这里</h2>
+<p>这些解释用于帮助阅读本报告；公式成立的具体条件仍以对应条目为准。</p>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>在这份报告里怎样理解</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>张量、形状</td>
+<td>张量可先理解为装数值的多维数组；形状说明每一维有多少元素。<code>N×D</code> 通常表示 N 条样本，每条 D 个特征。</td>
+</tr>
+<tr>
+<td>参数、状态</td>
+<td>参数是训练要学习的权重和偏置；状态是处理当前数据时计算、传递的记忆。LSTM 的细胞状态通常属于后者。</td>
+</tr>
+<tr>
+<td>batch、epoch</td>
+<td>batch 是一次处理的一小批样本；一个 epoch 通常指完整遍历一次训练数据。</td>
+</tr>
+<tr>
+<td>损失、梯度、学习率</td>
+<td>损失衡量预测与目标的差距；梯度描述参数小幅改变时损失怎样变化；学习率控制沿更新方向走多远。</td>
+</tr>
+<tr>
+<td>优化器、SGD、动量</td>
+<td>优化器根据梯度更新参数。SGD 是常见方法；动量还保留过去更新方向的信息，所以当前梯度为零时参数也可能继续变化。</td>
+</tr>
+<tr>
+<td>自动求导、计算图</td>
+<td>自动求导根据运算关系计算梯度；计算图记录这些关系。参数被从图中分离后，损失就可能无法沿该路径给它传回梯度。</td>
+</tr>
+<tr>
+<td>logits、Softmax、独热标签</td>
+<td>logits 是分类器尚未归一化的得分；Softmax 将得分变成总和为 1 的概率；独热标签只在真实类别位置为 1，其余为 0。</td>
+</tr>
+<tr>
+<td>交叉熵、KL 散度</td>
+<td>交叉熵衡量用预测分布描述真实分布的代价。KL 散度衡量分布差异；它通常不对称，因此不是普通的几何距离。</td>
+</tr>
+<tr>
+<td>归约 reduction</td>
+<td>把多个样本的损失合并的规则：<code>none</code> 保留各项，<code>sum</code> 求和，<code>mean</code> 求平均。训练函数与损失函数必须采用相容约定。</td>
+</tr>
+<tr>
+<td>范数、二阶矩、方差</td>
+<td>范数衡量向量或矩阵的大小；二阶矩是数值平方的平均；方差是偏离均值的平方的平均。后两者并不总相等。</td>
+</tr>
+<tr>
+<td>fan_in、fan_out</td>
+<td>初始化时所说的输入连接数、输出连接数。普通全连接层中通常对应输入维数和输出维数；卷积层还要考虑卷积核等设置。</td>
+</tr>
+<tr>
+<td>雅可比、奇异值、特征值</td>
+<td>雅可比把多个输出对多个输入的导数排成矩阵。奇异值描述矩阵对长度的缩放；特征值描述方阵在某些特殊方向上的作用。它们不能随意互换。</td>
+</tr>
+<tr>
+<td>buffer、state_dict</td>
+<td>buffer 是随模块管理、但不作为普通参数列出的张量；<code>state_dict</code> 是用于保存或加载模块状态的字典。具体是否含某个 buffer 要看持久化设置。</td>
+</tr>
+<tr>
+<td>验证集、测试集、泛化</td>
+<td>验证集用于选模型和设置；测试集留作最终评估。泛化指模型面对未用于训练的新数据时的表现。</td>
+</tr>
+<tr>
+<td>QR、SVD、伪逆</td>
+<td>都是处理矩阵或求解最小二乘时会遇到的方法。这里提它们，是说明求解不必强行计算一个可能不存在的普通逆矩阵，不要求先掌握其完整推导。</td>
+</tr>
+<tr>
+<td>mAP、IoU、FPS</td>
+<td>mAP 综合评估检测器；IoU 衡量框的重叠；FPS 是每秒处理帧数。它们关注不同方面，不能互相替代。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="preservation">格式调整与内容保留</h2>
+<p>本次对博客副本做了以下排版处理：把原有章节行标为二级至四级标题；把原有枚举组织成列表；把原有代码、矩阵输出和公式放进相应代码块；补足段落间距。个别独立的 HTML 注释标题转成可见标题，保留注释里的文字。</p>
+<p>首次排版时，正文中的事实判断、例子、数字、公式内容、代码表达式及已知错误均未按本报告替换。后续按你的要求修订了 01.2 的公式，以及第 04、05 篇的代码与相关说明；这些内容修订独立于首次排版，原始学习目录中的对应笔记也已同步。博客副本的 <code>publishedAt</code>、<code>updatedAt</code> 和分类元数据保持不变。较短、只有一个实质小节或仅有书签内容的笔记，没有为凑目录而新增章节内容。</p>
+<p>首次排版的内容核对采用格式前后的逐行文字比较：忽略新增标题、列表、引用、代码围栏这些格式标记及段落空白，对比其余文字，并单独核对日期元数据。后续明确授权的内容修订以各条目的状态说明为准。网站构建还会检查文章、目录锚点和站内链接能否生成。</p>
+<p>本报告的建议优先级是：先处理会导致概念方向错误或训练失败的项，再补公式与 API 的适用条件，最后补阅读占位和实验记录。排版改善只解决阅读与导航，不代表内容错误已经被修正。</p>
+<aside class="priority" aria-label="优先阅读条目"><h2>优先回看这八条</h2><ul><li><a href="#issue-15-1">15.1 更新门为 0.3 时 原文的百分比写反了</a></li><li><a href="#issue-15-3">15.3 单位矩阵不是全一矩阵</a></li><li><a href="#issue-11-7">11.7 MyLinear 的前向计算把权重从计算图中分离了</a></li><li><a href="#issue-11-4">11.4 残差结构不保证加层后永远不会变差</a></li><li><a href="#issue-11-8">11.8 注册为 buffer 不会自动取消张量求梯度</a></li><li><a href="#issue-09-5">09.5 Kaiming 不是把 Xavier 的方差一律乘以二</a></li><li><a href="#issue-02-1">02.1 教材切换了权重矩阵的排法 笔记需要保留这项说明</a></li><li><a href="#issue-14-1">14.1 普通 RNN 传递的是隐藏状态 不一定反馈预测值</a></li></ul></aside><a class="top-link" href="#top">回到开头 ↑</a></main></div><script>if(matchMedia('(max-width:850px)').matches)document.querySelector('.toc').removeAttribute('open');</script></body></html>

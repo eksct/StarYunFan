@@ -3,7 +3,8 @@ const natural = new Intl.Collator('zh-CN', { numeric: true, sensitivity: 'base' 
 export const noteDirectory = note => note.path.slice(0, note.path.lastIndexOf('/'))
 export function compareNotes(left, right) {
   const file = note => note.path.slice(note.path.lastIndexOf('/') + 1)
-  return natural.compare(file(left), file(right)) || left.path.localeCompare(right.path)
+  const label = note => note.title || file(note)
+  return natural.compare(label(left), label(right)) || left.path.localeCompare(right.path)
 }
 export function findSiblings(notes, currentPath) {
   const current = notes.find(note => note.path === currentPath)

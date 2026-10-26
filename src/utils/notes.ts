@@ -192,7 +192,7 @@ export function groupBySubfolder(notes: NoteFile[], collection: string): FolderG
     }))
 }
 
-// 和集合内列表一致：同目录、文件名自然顺序（02 在 10 前）。
+// 和集合内列表一致：同目录、标题自然顺序（02 在 10 前），无标题时使用文件名。
 export function getSiblings(path: string): { prev?: NoteFile; next?: NoteFile } {
   return findSiblings(published, path)
 }
