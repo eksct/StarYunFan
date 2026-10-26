@@ -45,6 +45,138 @@
       "wordCount": 111
     },
     {
+      "path": "major/深度学习/现代循环神经网络.md",
+      "title": "现代循环神经网络",
+      "category": "深度学习",
+      "publishedAt": "2026-10-10",
+      "updatedAt": "2026-10-12",
+      "date": "2026-10-12",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-modern/gru.html 门控循环单元（GRU）： GRU（Gated Recurrent Unit，门控循环",
+      "wordCount": 1434
+    },
+    {
+      "path": "major/深度学习/附加芝士.md",
+      "title": "附加芝士",
+      "category": "深度学习",
+      "publishedAt": "2026-09-28",
+      "updatedAt": "2026-10-10",
+      "date": "2026-10-10",
+      "tags": [],
+      "description": "SVM(支持向量机): LayerNorm（层归一化）： 对一个样本内部、跨越它的所有特征/通道算均值和方差，把这个样本自己归一化到 0 中心、1 尺度。它不碰“批次”那个维度——每个样本各算各的。（",
+      "wordCount": 896
+    },
+    {
+      "path": "major/深度学习/循环神经网络.md",
+      "title": "循环神经网络",
+      "category": "深度学习",
+      "publishedAt": "2026-10-08",
+      "updatedAt": "2026-10-10",
+      "date": "2026-10-10",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-neural-networks/sequence.html 序列模型： 序列模型处理的是数据之间存在时间/先后顺序。",
+      "wordCount": 2188
+    },
+    {
+      "path": "major/深度学习/现代卷积神经网络.md",
+      "title": "现代卷积神经网络",
+      "category": "深度学习",
+      "publishedAt": "2026-09-28",
+      "updatedAt": "2026-09-30",
+      "date": "2026-09-30",
+      "tags": [],
+      "description": "参考https://zh-v2.d2l.ai/chapter_convolutional-modern/alexnet.html 当然是整章： AlexNet深度卷积神经网络： 在 AlexNet 出",
+      "wordCount": 4479
+    },
+    {
+      "path": "major/深度学习/How Does Batch Normalization Help Optimization.md",
+      "title": "How Does Batch Normalization Help Optimization",
+      "category": "深度学习",
+      "publishedAt": "2026-09-29",
+      "updatedAt": "2026-09-29",
+      "date": "2026-09-29",
+      "tags": [],
+      "description": "https://arxiv.org/pdf/1805.11604 How Does Batch Normalization Help Optimization? 虽然阅读这个没什么作用就是了感觉。",
+      "wordCount": 28
+    },
+    {
+      "path": "major/深度学习/卷积神经网络.md",
+      "title": "卷积神经网络",
+      "category": "深度学习",
+      "publishedAt": "2026-09-24",
+      "updatedAt": "2026-09-28",
+      "date": "2026-09-28",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_convolutional-neural-networks/why-conv.html 当然是这一整章: 为什么处理图像时不直接用全连接",
+      "wordCount": 1581
+    },
+    {
+      "path": "major/深度学习/深度学习计算.md",
+      "title": "深度学习计算",
+      "category": "深度学习",
+      "publishedAt": "2026-09-23",
+      "updatedAt": "2026-09-24",
+      "date": "2026-09-24",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_deep-learning-computation/model-construction.html 当然是这一整章 层和块: 层(Lay",
+      "wordCount": 2703
+    },
+    {
+      "path": "major/深度学习/环境和分布偏移.md",
+      "title": "环境和分布偏移",
+      "category": "深度学习",
+      "publishedAt": "2026-09-23",
+      "updatedAt": "2026-09-23",
+      "date": "2026-09-23",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/environment.html 这是一个讲分布偏移的篇章。 三种偏移： 协变量偏移： 输",
+      "wordCount": 629
+    },
+    {
+      "path": "major/深度学习/数值稳定性和模型初始化.md",
+      "title": "数值稳定性和模型初始化",
+      "category": "深度学习",
+      "publishedAt": "2026-09-21",
+      "updatedAt": "2026-09-22",
+      "date": "2026-09-22",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/backprop.html （废止） https://zh-v2.d2l.ai/chapt",
+      "wordCount": 1430
+    },
+    {
+      "path": "major/深度学习/模型选择、欠拟合和过拟合.md",
+      "title": "模型选择、欠拟合和过拟合",
+      "category": "深度学习",
+      "publishedAt": "2026-09-21",
+      "updatedAt": "2026-09-21",
+      "date": "2026-09-21",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/underfit-overfit.html 作为机器学习科学家，我们的目标是发现模式（pa",
+      "wordCount": 971
+    },
+    {
+      "path": "major/深度学习/权重衰减.md",
+      "title": "权重衰减",
+      "category": "深度学习",
+      "publishedAt": "2026-09-21",
+      "updatedAt": "2026-09-21",
+      "date": "2026-09-21",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/weight-decay.html 决过拟合最直接的办法是收集更多训练数据。但原文指出，这",
+      "wordCount": 477
+    },
+    {
+      "path": "major/深度学习/暂退法（Dropout）.md",
+      "title": "暂退法（Dropout）",
+      "category": "深度学习",
+      "publishedAt": "2026-09-21",
+      "updatedAt": "2026-09-21",
+      "date": "2026-09-21",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/dropout.html 暂退法： 训练神经网络时，随机“关掉”一部分神经元，迫使模型不要",
+      "wordCount": 659
+    },
+    {
       "path": "major/编程语言/JAVA/其他/（后续扩写）计算机网络的基本概念.md",
       "title": "（后续扩写）计算机网络的基本概念",
       "category": "Java",
@@ -351,6 +483,39 @@
       "tags": [],
       "description": "🧭 Java 后端进阶中间件 & 类库学习计划（Markdown 学习清单） 🎯 目标：强化中间件实战能力，整合进中型项目，迈向后端架构师之路 📅 总时长：约 3~6 个月，按模块分阶段进行 ✅",
       "wordCount": 1082
+    },
+    {
+      "path": "major/深度学习/多层感知机.md",
+      "title": "多层感知机",
+      "category": "深度学习",
+      "publishedAt": "2026-09-20",
+      "updatedAt": "2026-09-20",
+      "date": "2026-09-20",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/mlp.html 多层感知机通过“隐藏层”和“激活函数”解决更复杂问题 线性模型有一个很强",
+      "wordCount": 796
+    },
+    {
+      "path": "major/深度学习/多层感知机的从零开始实现.md",
+      "title": "多层感知机的从零开始实现",
+      "category": "深度学习",
+      "publishedAt": "2026-09-20",
+      "updatedAt": "2026-09-20",
+      "date": "2026-09-20",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/mlp-scratch.html from d2l import torch as d2l",
+      "wordCount": 619
+    },
+    {
+      "path": "major/深度学习/多层感知机的简洁实现.md",
+      "title": "多层感知机的简洁实现",
+      "category": "深度学习",
+      "publishedAt": "2026-09-20",
+      "updatedAt": "2026-09-20",
+      "date": "2026-09-20",
+      "tags": [],
+      "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/mlp-concise.html 与softmax回归的简洁实现（ 3.7节）相比， 唯一",
+      "wordCount": 303
     },
     {
       "path": "major/Caffeine本地缓存/缓存策略.md",
@@ -824,6 +989,39 @@
       "tags": [],
       "description": "Java中的Stream流是从Java 8引入的一个新特性，主要用于处理集合框架（如List、Set等）的数据，提供了对数据进行声明式操作的能力，简化了代码，并且支持并行操作。通过Stream，我们可",
       "wordCount": 806
+    },
+    {
+      "path": "major/深度学习/softmax回归.md",
+      "title": "softmax回归",
+      "category": "深度学习",
+      "publishedAt": "2026-09-08",
+      "updatedAt": "2026-09-09",
+      "date": "2026-09-09",
+      "tags": [],
+      "description": "来源于《动手学深度学习》：：https://zh-v2.d2l.ai/chapter_linear-networks/softmax-regression.html softmax回归，它是线性回归在",
+      "wordCount": 955
+    },
+    {
+      "path": "major/深度学习/线性回归.md",
+      "title": "线性回归",
+      "category": "深度学习",
+      "publishedAt": "2026-09-07",
+      "updatedAt": "2026-09-07",
+      "date": "2026-09-07",
+      "tags": [],
+      "description": "来源于《动手学深度学习》：https://zh-v2.d2l.ai/chapter_linear-networks/linear-regression.html 它从零开始，系统性地讲解了线性回归的基",
+      "wordCount": 1014
+    },
+    {
+      "path": "major/深度学习/超参数调优.md",
+      "title": "超参数调优",
+      "category": "深度学习",
+      "publishedAt": "2026-08-26",
+      "updatedAt": "2026-09-03",
+      "date": "2026-09-03",
+      "tags": [],
+      "description": "Ultralytics YOLO 中一些常用的调优超参数： 学习率 lr0：决定了在损失函数中向最小值移动时每一步的步长。 批次大小 batch：在前向传播中同时处理的图像数量。 轮次数 epochs",
+      "wordCount": 316
     },
     {
       "path": "major/Redis/布隆过滤器.md",
