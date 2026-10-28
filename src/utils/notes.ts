@@ -74,7 +74,7 @@ function sortByCategory(notes: NoteFile[]): NoteFile[] {
   return [...notes].sort(
     (left, right) =>
       left.category.localeCompare(right.category, 'zh-CN')
-      || right.date.localeCompare(left.date)
+      || right.publishedAt.localeCompare(left.publishedAt)
       || left.title.localeCompare(right.title, 'zh-CN'),
   )
 }
@@ -83,7 +83,7 @@ export function groupByMonth(notes: NoteFile[]): MonthGroup[] {
   const groups = new Map<string, NoteFile[]>()
 
   for (const note of notes) {
-    const key = note.date ? note.date.slice(0, 7) : '未标注'
+    const key = note.publishedAt ? note.publishedAt.slice(0, 7) : '未标注'
     const bucket = groups.get(key)
     if (bucket) bucket.push(note)
     else groups.set(key, [note])
@@ -147,9 +147,9 @@ export function getCollections(): Collection[] {
     const bucket = counter.get(name)
     if (bucket) {
       bucket.count += 1
-      if (note.date > bucket.latestDate) bucket.latestDate = note.date
+      if (note.updatedAt > bucket.latestDate) bucket.latestDate = note.updatedAt
     } else {
-      counter.set(name, { count: 1, latestDate: note.date })
+      counter.set(name, { count: 1, latestDate: note.updatedAt })
     }
   }
 

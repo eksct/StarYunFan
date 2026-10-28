@@ -11,7 +11,7 @@
       <div v-if="activeCollection" class="row collection-head">
         <button type="button" class="btn" @click="activeCollection = ''">← 全部集合</button>
         <h2 class="collection-title">{{ activeCollection }}</h2>
-        <span class="dim">{{ collectionNotes.length }} 篇</span>
+        <span class="dim">{{ collectionNotes.length }} 篇 · 日期为首次发布</span>
       </div>
       <input v-model="keyword" type="search" class="input search" aria-label="搜索笔记"
         :placeholder="activeCollection ? `搜索 ${activeCollection} 内的笔记…` : '搜索标题、分类、标签、正文、代码…'" />
@@ -31,7 +31,8 @@
           <ul class="group-list">
             <li v-for="note in group.notes" :key="note.path">
               <router-link :to="`/notes/${note.path}`" class="entry">
-                <span class="entry-date">{{ note.date ? note.date.slice(5) : '——' }}</span>
+                <time class="entry-date" :datetime="note.publishedAt" :title="`首次发布 ${note.publishedAt}`"
+                  :aria-label="`首次发布 ${note.publishedAt}`">{{ note.publishedAt ? note.publishedAt.slice(5) : '——' }}</time>
                 <span class="entry-main">
                   <span class="entry-title">{{ note.title }}</span>
                   <span v-if="note.description" class="entry-desc">{{ note.description }}</span>
@@ -74,7 +75,8 @@
           <ul class="group-list">
             <li v-for="note in filteredResults" :key="note.path">
               <router-link :to="`/notes/${note.path}`" class="entry">
-                <span class="entry-date">{{ note.date ? note.date.slice(5) : '——' }}</span>
+                <time class="entry-date" :datetime="note.publishedAt" :title="`首次发布 ${note.publishedAt}`"
+                  :aria-label="`首次发布 ${note.publishedAt}`">{{ note.publishedAt ? note.publishedAt.slice(5) : '——' }}</time>
                 <span class="entry-main">
                   <span class="entry-title">{{ note.title }}</span>
                   <span class="entry-desc search-snippet"><template v-for="(part, index) in highlightSnippet(note.snippet, keyword)" :key="index"><mark v-if="part.match">{{ part.text }}</mark><template v-else>{{ part.text }}</template></template></span>

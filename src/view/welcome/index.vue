@@ -34,7 +34,7 @@
         <li v-for="note in latestNotes" :key="note.path">
           <a :href="noteUrl(note.path)" class="latest-item">
             <span class="latest-title">{{ note.title }}</span>
-            <span class="latest-meta">{{ note.category }} · {{ formatDate(note.date) }}</span>
+            <span class="latest-meta">{{ note.category }} · {{ formatDate(note.updatedAt) }}</span>
           </a>
         </li>
       </ul>
@@ -48,7 +48,9 @@ import { formatDate, getNotes, noteUrl } from '@/utils/notes'
 
 defineOptions({ name: 'HomeView' })
 
-const latestNotes = getNotes().slice(0, 5)
+const latestNotes = [...getNotes()]
+  .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt) || left.title.localeCompare(right.title, 'zh-CN'))
+  .slice(0, 5)
 </script>
 
 <style scoped lang="scss">
