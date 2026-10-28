@@ -1,6 +1,35 @@
 {
   "notes": [
     {
+      "path": "major/深度学习/01 引言.md",
+      "title": "01 引言",
+      "category": "深度学习",
+      "publishedAt": "2026-10-26",
+      "updatedAt": "2026-10-28",
+      "date": "2026-10-28",
+      "tags": [
+        "D2L",
+        "基础入门"
+      ],
+      "description": "机器学习中的数据、模型、损失和优化，以及监督学习、强化学习与深度学习的基本思路。",
+      "wordCount": 2119
+    },
+    {
+      "path": "major/深度学习/02 预备知识.md",
+      "title": "02 预备知识",
+      "category": "深度学习",
+      "publishedAt": "2026-10-26",
+      "updatedAt": "2026-10-28",
+      "date": "2026-10-28",
+      "tags": [
+        "D2L",
+        "基础入门",
+        "PyTorch"
+      ],
+      "description": "张量操作、表格预处理、线性代数、微积分、自动微分、概率和查阅文档。",
+      "wordCount": 4232
+    },
+    {
       "path": "major/深度学习/线性回归.md",
       "title": "03.01 线性回归",
       "category": "深度学习",
@@ -164,35 +193,6 @@
       "tags": [],
       "description": "https://arxiv.org/pdf/1805.11604 How Does Batch Normalization Help Optimization? 虽然阅读这个没什么作用就是了感觉。",
       "wordCount": 28
-    },
-    {
-      "path": "major/深度学习/01 引言.md",
-      "title": "01 引言",
-      "category": "深度学习",
-      "publishedAt": "2026-10-26",
-      "updatedAt": "2026-10-26",
-      "date": "2026-10-26",
-      "tags": [
-        "D2L",
-        "基础入门"
-      ],
-      "description": "从房价和语音识别的例子出发，理解机器学习的数据、模型、损失、训练，以及深度学习在做什么。",
-      "wordCount": 4058
-    },
-    {
-      "path": "major/深度学习/02 预备知识.md",
-      "title": "02 预备知识",
-      "category": "深度学习",
-      "publishedAt": "2026-10-26",
-      "updatedAt": "2026-10-26",
-      "date": "2026-10-26",
-      "tags": [
-        "D2L",
-        "基础入门",
-        "PyTorch"
-      ],
-      "description": "按 D2L 第 2 章顺序，用生活例子和逐步计算学习张量、数据预处理、线性代数、导数、自动微分和概率。",
-      "wordCount": 11928
     },
     {
       "path": "major/深度学习/多层感知机的从零开始实现.md",
