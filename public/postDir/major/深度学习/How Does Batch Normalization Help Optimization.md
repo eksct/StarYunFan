@@ -1,7 +1,7 @@
 ---
 title: 补充02 How Does Batch Normalization Help Optimization
 publishedAt: 2026-09-29
-updatedAt: 2026-09-29
+updatedAt: 2026-10-28
 category: 深度学习
 ---
 

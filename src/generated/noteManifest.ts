@@ -2,6 +2,171 @@
 export interface NoteFile { path: string; title: string; category: string; date: string; publishedAt: string; updatedAt: string; wordCount: number; tags: string[]; description: string }
 export const noteFiles: NoteFile[] = [
   {
+    "path": "major/深度学习/线性回归.md",
+    "title": "03.01 线性回归",
+    "category": "深度学习",
+    "publishedAt": "2026-09-07",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "来源于《动手学深度学习》：https://zh-v2.d2l.ai/chapter_linear-networks/linear-regression.html 它从零开始，系统性地讲解了线性回归的基",
+    "wordCount": 1271
+  },
+  {
+    "path": "major/深度学习/softmax回归.md",
+    "title": "03.04 softmax回归",
+    "category": "深度学习",
+    "publishedAt": "2026-09-08",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "来源于《动手学深度学习》：：https://zh-v2.d2l.ai/chapter_linear-networks/softmax-regression.html softmax回归，它是线性回归在",
+    "wordCount": 1234
+  },
+  {
+    "path": "major/深度学习/多层感知机.md",
+    "title": "04.01 多层感知机",
+    "category": "深度学习",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/mlp.html 多层感知机通过“隐藏层”和“激活函数”解决更复杂问题 线性模型有一个很强",
+    "wordCount": 788
+  },
+  {
+    "path": "major/深度学习/模型选择、欠拟合和过拟合.md",
+    "title": "04.04 模型选择、欠拟合和过拟合",
+    "category": "深度学习",
+    "publishedAt": "2026-09-21",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/underfit-overfit.html 作为机器学习科学家，我们的目标是发现模式（pa",
+    "wordCount": 1060
+  },
+  {
+    "path": "major/深度学习/权重衰减.md",
+    "title": "04.05 权重衰减",
+    "category": "深度学习",
+    "publishedAt": "2026-09-21",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/weight-decay.html 决过拟合最直接的办法是收集更多训练数据。但原文指出，这",
+    "wordCount": 528
+  },
+  {
+    "path": "major/深度学习/暂退法（Dropout）.md",
+    "title": "04.06 暂退法（Dropout）",
+    "category": "深度学习",
+    "publishedAt": "2026-09-21",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/dropout.html 暂退法： 训练神经网络时，随机“关掉”一部分神经元，迫使模型不要",
+    "wordCount": 755
+  },
+  {
+    "path": "major/深度学习/数值稳定性和模型初始化.md",
+    "title": "04.08 数值稳定性和模型初始化",
+    "category": "深度学习",
+    "publishedAt": "2026-09-21",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/backprop.html （废止） https://zh-v2.d2l.ai/chapt",
+    "wordCount": 1680
+  },
+  {
+    "path": "major/深度学习/环境和分布偏移.md",
+    "title": "04.09 环境和分布偏移",
+    "category": "深度学习",
+    "publishedAt": "2026-09-23",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/environment.html 这是一个讲分布偏移的篇章。 三种偏移： 协变量偏移： 输",
+    "wordCount": 770
+  },
+  {
+    "path": "major/深度学习/深度学习计算.md",
+    "title": "05 深度学习计算",
+    "category": "深度学习",
+    "publishedAt": "2026-09-23",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_deep-learning-computation/model-construction.html 当然是这一整章 层和块: 层(Lay",
+    "wordCount": 2713
+  },
+  {
+    "path": "major/深度学习/卷积神经网络.md",
+    "title": "06 卷积神经网络",
+    "category": "深度学习",
+    "publishedAt": "2026-09-24",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_convolutional-neural-networks/why-conv.html 当然是这一整章: 为什么处理图像时不直接用全连接",
+    "wordCount": 1666
+  },
+  {
+    "path": "major/深度学习/现代卷积神经网络.md",
+    "title": "07 现代卷积神经网络",
+    "category": "深度学习",
+    "publishedAt": "2026-09-28",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考https://zh-v2.d2l.ai/chapter_convolutional-modern/alexnet.html 当然是整章： AlexNet深度卷积神经网络： 在 AlexNet 出",
+    "wordCount": 4644
+  },
+  {
+    "path": "major/深度学习/循环神经网络.md",
+    "title": "08 循环神经网络",
+    "category": "深度学习",
+    "publishedAt": "2026-10-08",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-neural-networks/sequence.html 序列模型： 序列模型处理的是数据之间存在时间/先后顺序。",
+    "wordCount": 2416
+  },
+  {
+    "path": "major/深度学习/现代循环神经网络.md",
+    "title": "09 现代循环神经网络",
+    "category": "深度学习",
+    "publishedAt": "2026-10-10",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-modern/gru.html 门控循环单元（GRU）： GRU（Gated Recurrent Unit，门控循环",
+    "wordCount": 1468
+  },
+  {
+    "path": "major/深度学习/附加芝士.md",
+    "title": "补充01 附加芝士",
+    "category": "深度学习",
+    "publishedAt": "2026-09-28",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "SVM（支持向量机） SVM 是 Support Vector Machine 的缩写，中文叫“支持向量机”。先把它理解成一种根据已经标好类别的例子，学习如何分类的方法。它不是神经网络；除了分类，也有",
+    "wordCount": 3098
+  },
+  {
+    "path": "major/深度学习/How Does Batch Normalization Help Optimization.md",
+    "title": "补充02 How Does Batch Normalization Help Optimization",
+    "category": "深度学习",
+    "publishedAt": "2026-09-29",
+    "updatedAt": "2026-10-28",
+    "date": "2026-10-28",
+    "tags": [],
+    "description": "https://arxiv.org/pdf/1805.11604 How Does Batch Normalization Help Optimization? 虽然阅读这个没什么作用就是了感觉。",
+    "wordCount": 28
+  },
+  {
     "path": "major/深度学习/01 引言.md",
     "title": "01 引言",
     "category": "深度学习",
@@ -31,39 +196,6 @@ export const noteFiles: NoteFile[] = [
     "wordCount": 11928
   },
   {
-    "path": "major/深度学习/线性回归.md",
-    "title": "03.01 线性回归",
-    "category": "深度学习",
-    "publishedAt": "2026-09-07",
-    "updatedAt": "2026-10-26",
-    "date": "2026-10-26",
-    "tags": [],
-    "description": "来源于《动手学深度学习》：https://zh-v2.d2l.ai/chapter_linear-networks/linear-regression.html 它从零开始，系统性地讲解了线性回归的基",
-    "wordCount": 1271
-  },
-  {
-    "path": "major/深度学习/softmax回归.md",
-    "title": "03.04 softmax回归",
-    "category": "深度学习",
-    "publishedAt": "2026-09-08",
-    "updatedAt": "2026-10-26",
-    "date": "2026-10-26",
-    "tags": [],
-    "description": "来源于《动手学深度学习》：：https://zh-v2.d2l.ai/chapter_linear-networks/softmax-regression.html softmax回归，它是线性回归在",
-    "wordCount": 1234
-  },
-  {
-    "path": "major/深度学习/多层感知机.md",
-    "title": "04.01 多层感知机",
-    "category": "深度学习",
-    "publishedAt": "2026-09-20",
-    "updatedAt": "2026-10-26",
-    "date": "2026-10-26",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/mlp.html 多层感知机通过“隐藏层”和“激活函数”解决更复杂问题 线性模型有一个很强",
-    "wordCount": 788
-  },
-  {
     "path": "major/深度学习/多层感知机的从零开始实现.md",
     "title": "04.02 多层感知机的从零开始实现",
     "category": "深度学习",
@@ -84,28 +216,6 @@ export const noteFiles: NoteFile[] = [
     "tags": [],
     "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/mlp-concise.html 与 Softmax 回归的简洁实现（3.7 节）相比，这",
     "wordCount": 370
-  },
-  {
-    "path": "major/深度学习/模型选择、欠拟合和过拟合.md",
-    "title": "04.04 模型选择、欠拟合和过拟合",
-    "category": "深度学习",
-    "publishedAt": "2026-09-21",
-    "updatedAt": "2026-10-26",
-    "date": "2026-10-26",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/underfit-overfit.html 作为机器学习科学家，我们的目标是发现模式（pa",
-    "wordCount": 1060
-  },
-  {
-    "path": "major/深度学习/权重衰减.md",
-    "title": "04.05 权重衰减",
-    "category": "深度学习",
-    "publishedAt": "2026-09-21",
-    "updatedAt": "2026-10-26",
-    "date": "2026-10-26",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/weight-decay.html 决过拟合最直接的办法是收集更多训练数据。但原文指出，这",
-    "wordCount": 461
   },
   {
     "path": "major/编程语言/JAVA/设计模式.md",
@@ -150,116 +260,6 @@ export const noteFiles: NoteFile[] = [
     "tags": [],
     "description": "支付方面的话前端调用后端的发起支付接口，后端判断一下是微信还是其他什么什么的支付方式，塞入神必的apikey，以及指定神必service，最后指定一个32位长度的？神必随机字符串，然后构建请求对象，对",
     "wordCount": 111
-  },
-  {
-    "path": "major/深度学习/现代循环神经网络.md",
-    "title": "09 现代循环神经网络",
-    "category": "深度学习",
-    "publishedAt": "2026-10-10",
-    "updatedAt": "2026-10-12",
-    "date": "2026-10-12",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-modern/gru.html 门控循环单元（GRU）： GRU（Gated Recurrent Unit，门控循环",
-    "wordCount": 1414
-  },
-  {
-    "path": "major/深度学习/循环神经网络.md",
-    "title": "08 循环神经网络",
-    "category": "深度学习",
-    "publishedAt": "2026-10-08",
-    "updatedAt": "2026-10-10",
-    "date": "2026-10-10",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-neural-networks/sequence.html 序列模型： 序列模型处理的是数据之间存在时间/先后顺序。",
-    "wordCount": 2153
-  },
-  {
-    "path": "major/深度学习/附加芝士.md",
-    "title": "补充01 附加芝士",
-    "category": "深度学习",
-    "publishedAt": "2026-09-28",
-    "updatedAt": "2026-10-10",
-    "date": "2026-10-10",
-    "tags": [],
-    "description": "SVM(支持向量机): LayerNorm（层归一化）： 对一个样本内部、跨越它的所有特征/通道算均值和方差，把这个样本自己归一化到 0 中心、1 尺度。它不碰“批次”那个维度——每个样本各算各的。（",
-    "wordCount": 894
-  },
-  {
-    "path": "major/深度学习/现代卷积神经网络.md",
-    "title": "07 现代卷积神经网络",
-    "category": "深度学习",
-    "publishedAt": "2026-09-28",
-    "updatedAt": "2026-09-30",
-    "date": "2026-09-30",
-    "tags": [],
-    "description": "参考https://zh-v2.d2l.ai/chapter_convolutional-modern/alexnet.html 当然是整章： AlexNet深度卷积神经网络： 在 AlexNet 出",
-    "wordCount": 4464
-  },
-  {
-    "path": "major/深度学习/How Does Batch Normalization Help Optimization.md",
-    "title": "补充02 How Does Batch Normalization Help Optimization",
-    "category": "深度学习",
-    "publishedAt": "2026-09-29",
-    "updatedAt": "2026-09-29",
-    "date": "2026-09-29",
-    "tags": [],
-    "description": "https://arxiv.org/pdf/1805.11604 How Does Batch Normalization Help Optimization? 虽然阅读这个没什么作用就是了感觉。",
-    "wordCount": 28
-  },
-  {
-    "path": "major/深度学习/卷积神经网络.md",
-    "title": "06 卷积神经网络",
-    "category": "深度学习",
-    "publishedAt": "2026-09-24",
-    "updatedAt": "2026-09-28",
-    "date": "2026-09-28",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_convolutional-neural-networks/why-conv.html 当然是这一整章: 为什么处理图像时不直接用全连接",
-    "wordCount": 1505
-  },
-  {
-    "path": "major/深度学习/深度学习计算.md",
-    "title": "05 深度学习计算",
-    "category": "深度学习",
-    "publishedAt": "2026-09-23",
-    "updatedAt": "2026-09-24",
-    "date": "2026-09-24",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_deep-learning-computation/model-construction.html 当然是这一整章 层和块: 层(Lay",
-    "wordCount": 2241
-  },
-  {
-    "path": "major/深度学习/环境和分布偏移.md",
-    "title": "04.09 环境和分布偏移",
-    "category": "深度学习",
-    "publishedAt": "2026-09-23",
-    "updatedAt": "2026-09-23",
-    "date": "2026-09-23",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/environment.html 这是一个讲分布偏移的篇章。 三种偏移： 协变量偏移： 输",
-    "wordCount": 629
-  },
-  {
-    "path": "major/深度学习/数值稳定性和模型初始化.md",
-    "title": "04.08 数值稳定性和模型初始化",
-    "category": "深度学习",
-    "publishedAt": "2026-09-21",
-    "updatedAt": "2026-09-22",
-    "date": "2026-09-22",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/backprop.html （废止） https://zh-v2.d2l.ai/chapt",
-    "wordCount": 1414
-  },
-  {
-    "path": "major/深度学习/暂退法（Dropout）.md",
-    "title": "04.06 暂退法（Dropout）",
-    "category": "深度学习",
-    "publishedAt": "2026-09-21",
-    "updatedAt": "2026-09-21",
-    "date": "2026-09-21",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_multilayer-perceptrons/dropout.html 暂退法： 训练神经网络时，随机“关掉”一部分神经元，迫使模型不要",
-    "wordCount": 649
   },
   {
     "path": "major/编程语言/JAVA/其他/（后续扩写）计算机网络的基本概念.md",

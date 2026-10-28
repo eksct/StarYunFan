@@ -1,7 +1,7 @@
 ---
 title: 03.04 softmax回归
 publishedAt: 2026-09-08
-updatedAt: 2026-10-26
+updatedAt: 2026-10-28
 category: 深度学习
 ---
 
