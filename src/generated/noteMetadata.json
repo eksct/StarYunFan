@@ -151,8 +151,8 @@
       "updatedAt": "2026-10-28",
       "date": "2026-10-28",
       "tags": [],
-      "description": "SVM（支持向量机） SVM 是 Support Vector Machine 的缩写，中文叫“支持向量机”。先把它理解成一种根据已经标好类别的例子，学习如何分类的方法。它不是神经网络；除了分类，也有",
-      "wordCount": 3098
+      "description": "SVM（支持向量机） SVM（Support Vector Machine）是一种常见的机器学习方法，先把它理解成一个分类器。比如根据水果的重量、甜度判断它是苹果还是橘子：每个水果对应图上的一个点，S",
+      "wordCount": 1487
     },
     {
       "path": "major/深度学习/How Does Batch Normalization Help Optimization.md",
