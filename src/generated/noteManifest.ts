@@ -2,6 +2,28 @@
 export interface NoteFile { path: string; title: string; category: string; date: string; publishedAt: string; updatedAt: string; wordCount: number; tags: string[]; description: string }
 export const noteFiles: NoteFile[] = [
   {
+    "path": "major/深度学习/现代循环神经网络.md",
+    "title": "09 现代循环神经网络",
+    "category": "深度学习",
+    "publishedAt": "2026-10-10",
+    "updatedAt": "2026-10-30",
+    "date": "2026-10-30",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-modern/gru.html 门控循环单元（GRU）： GRU（Gated Recurrent Unit，门控循环",
+    "wordCount": 2735
+  },
+  {
+    "path": "major/深度学习/注意力机制.md",
+    "title": "10 注意力机制",
+    "category": "深度学习",
+    "publishedAt": "2026-10-30",
+    "updatedAt": "2026-10-30",
+    "date": "2026-10-30",
+    "tags": [],
+    "description": "参考：https://zh-v2.d2l.ai/chapter_attention-mechanisms/attention-cues.html 注意力提示：让模型按当前需要挑信息 注意力机制允许解码",
+    "wordCount": 2298
+  },
+  {
     "path": "major/深度学习/01 引言.md",
     "title": "01 引言",
     "category": "深度学习",
@@ -161,17 +183,6 @@ export const noteFiles: NoteFile[] = [
     "tags": [],
     "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-neural-networks/sequence.html 序列模型： 序列模型处理的是数据之间存在时间/先后顺序。",
     "wordCount": 2416
-  },
-  {
-    "path": "major/深度学习/现代循环神经网络.md",
-    "title": "09 现代循环神经网络",
-    "category": "深度学习",
-    "publishedAt": "2026-10-10",
-    "updatedAt": "2026-10-28",
-    "date": "2026-10-28",
-    "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-modern/gru.html 门控循环单元（GRU）： GRU（Gated Recurrent Unit，门控循环",
-    "wordCount": 1468
   },
   {
     "path": "major/深度学习/附加芝士.md",
