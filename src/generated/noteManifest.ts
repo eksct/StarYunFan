@@ -6,22 +6,22 @@ export const noteFiles: NoteFile[] = [
     "title": "09 现代循环神经网络",
     "category": "深度学习",
     "publishedAt": "2026-10-10",
-    "updatedAt": "2026-10-30",
-    "date": "2026-10-30",
+    "updatedAt": "2026-11-02",
+    "date": "2026-11-02",
     "tags": [],
     "description": "参考：https://zh-v2.d2l.ai/chapter_recurrent-modern/gru.html 门控循环单元（GRU）： GRU（Gated Recurrent Unit，门控循环",
-    "wordCount": 2735
+    "wordCount": 2902
   },
   {
     "path": "major/深度学习/注意力机制.md",
     "title": "10 注意力机制",
     "category": "深度学习",
     "publishedAt": "2026-10-30",
-    "updatedAt": "2026-10-30",
-    "date": "2026-10-30",
+    "updatedAt": "2026-11-02",
+    "date": "2026-11-02",
     "tags": [],
-    "description": "参考：https://zh-v2.d2l.ai/chapter_attention-mechanisms/attention-cues.html 注意力提示：让模型按当前需要挑信息 注意力机制允许解码",
-    "wordCount": 2298
+    "description": "参考：https://zh-v2.d2l.ai/chapter_attention-mechanisms/attention-cues.html 注意力是一种计算机制，通常不是一个完整的神经网络。 注",
+    "wordCount": 3723
   },
   {
     "path": "major/深度学习/01 引言.md",
@@ -193,7 +193,7 @@ export const noteFiles: NoteFile[] = [
     "date": "2026-10-28",
     "tags": [],
     "description": "SVM（支持向量机） SVM（Support Vector Machine）是一种常见的机器学习方法，先把它理解成一个分类器。比如根据水果的重量、甜度判断它是苹果还是橘子：每个水果对应图上的一个点，S",
-    "wordCount": 1487
+    "wordCount": 1909
   },
   {
     "path": "major/深度学习/How Does Batch Normalization Help Optimization.md",
